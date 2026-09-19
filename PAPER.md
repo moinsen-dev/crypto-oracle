@@ -17,6 +17,25 @@ V2 changes only the version and initial allocation policy. It does not lower thr
 
 Enable alongside V1 using `ORACLE_PAPER_V2_ENABLED=1` in the existing worker (also requires `ORACLE_PAPER_ENABLED=1`). Disabling only V2 pauses its decisions and valuations, while V1 continues. Re-enabling resumes the same ledger. Never launch another worker. Public snapshots are retained per run; `/api/paper` returns the latest experiment, `/api/paper/runs` lists published runs, and `/api/paper?run=RUN_ID` selects one explicitly.
 
+## Third experiment: a fixed trend rule
+
+`paper-v3-a30412605673` is a separate prospective run with its own deposits, journal and hash chain. It uses **no forecast, no news and no fitted parameter**. Its rule was frozen from the published backtest on the [evidence page](https://cryptooracle.moinsen.dev/evidence/) (`crypto-oracle study`) before the run began; the backtest halved the deepest loss at similar growth and did not earn more. This run tests that prospectively. It is not enabled until the operator sets the flag below.
+
+Three accounts, USD 10,000 each: `trend`, `rebalanced` and `reference`.
+
+- **Signal.** At each completed daily close (the Binance hourly candle closing at 00:00 UTC) the rule compares that close with the closes exactly 7, 14, 28 and 56 days earlier. The share of positive comparisons (0, ¼, ½, ¾, 1) times 20% is the wanted weight per coin; the rest is cash. All five closes must already be in the database. A missing close blocks the trend account with `trend_input_missing`; nothing is interpolated and yesterday's signal is not reused. Later intraday candles never enter today's signal.
+- **Acting.** Decisions are recorded hourly like the other runs. An account acts only when current and wanted weights differ by more than five points in total, decided once per account and hour before any of its orders moves the weights, and at most once per coin and UTC day (a cancelled order may retry within the day). Buys respect the 60% crypto and 25% per-coin limits; orders under USD 25 are skipped. Execution, costs, order age and the seven market checks are identical to the first two runs.
+- **Comparisons.** `rebalanced` always wants 20% per coin and follows the same five-point and once-per-day rules, which is the benchmark the backtest used. `reference` buys 20% per coin once and holds; its purchase is retried hourly until it has actually filled, so a thin book at the start cannot leave the benchmark under-invested.
+- **Deliberately absent.** No position stop and no drawdown brake: the backtested rule had neither, and adding them would test a different rule. There is no common atomic start either; each account follows its own rule from the first hour, so the trend account may begin partly or fully in cash.
+
+Decision reasons: `trend_up`, `trend_down`, `rebalance`, `reference_entry`, `reference_hold`, `within_band`, `cooldown`, `allocation_limit`, `data_quality`, `execution_invalid`, `trend_input_missing`, `pending_order`. Each decision stores the five closes with their payload hashes, the share, the wanted and the current weight.
+
+Enable with `ORACLE_PAPER_V3_ENABLED=1` next to `ORACLE_PAPER_ENABLED=1` in the existing single worker. **Deploy the website first**: the public schema must know the third run, its accounts and its frozen rule (`lookback_days`, `asset_weight`, `total_cap`, `rebalance_band` are checked literally) before the server publishes it. Disabling the flag pauses only this run; re-enabling continues the same ledger. One month of this run will contain at most a handful of trend changes. It can show that the machinery works and what the rule costs; it cannot confirm or refute a drawdown benefit that the backtest measured over two long declines in six years.
+
+## Explained trades
+
+Every published trade carries the `reason` of the decision behind it and that decision's journal number. The export keeps the 90 most recent decisions **plus** up to 40 older decisions that ended in a fill, so hours of later holds no longer push the explanation of a trade out of the public window. The public schema accepts a trade reason only together with its decision, and when that decision is in the snapshot, account, coin, side, reason and execution price must match it. Snapshots written before this change remain valid.
+
 ## Fixed policies
 
 `oracle/paper.py:POLICY` is hashed into the run identifier and stored at inception. Changing its financial parameters creates a separate run, with a separate history and deposit; do not combine its performance with an earlier run. Preserve the source archive alongside each experiment. Fixes to presentation or enforcement of existing limits do not rewrite past events.

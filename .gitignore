@@ -41,3 +41,6 @@ website/.dev.vars*
 /website/UX-REVIEW.md
 /scripts/dashboard.sh
 /scripts/enable-ax41-dashboard.sh
+
+# Agent worktrees and local tool state
+.claude/

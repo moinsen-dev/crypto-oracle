@@ -182,3 +182,5 @@
 .experiment-picker select { min-width:230px }
 .experiment-caveat { grid-column:1/-1;border-top:1px solid var(--line);padding-top:.8rem;margin:0 }
 @media(max-width:760px) { .experiment-picker { grid-template-columns:1fr;padding:1.1rem;gap:1rem }.experiment-picker select { width:100%;min-width:0 } }
+
+.trade-story{list-style:none;margin:0 0 22px;padding:0;border-top:1px solid var(--line)}.trade-story li{display:grid;grid-template-columns:150px 1fr 1.3fr;gap:8px 18px;align-items:baseline;padding:12px 2px;border-bottom:1px solid var(--line);font-size:.84rem}.trade-story time{font:.7rem var(--mono);color:var(--muted)}.trade-story span{font-weight:600}.trade-story small{font-size:.8rem;color:var(--muted)}@media(max-width:760px){.trade-story li{grid-template-columns:1fr;gap:3px;padding:12px 0}}

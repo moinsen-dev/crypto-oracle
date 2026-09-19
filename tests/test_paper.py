@@ -417,3 +417,21 @@ def test_common_start_then_forecast_exit_waits_for_six_hour_cooldown(monkeypatch
     assert all(p["quantity"] == 0 for p in state["positions"].values())
     assert paper.balance(v2_rows(), "reference", paper.POLICY_V2)["fills"] == 3
     assert any(r["kind"] == "decision" and r["payload"]["reason"] == "negative_forecast" for r in v2_rows())
+
+
+def test_every_published_trade_keeps_its_reason_after_many_later_holds():
+    forecasts()
+    run()
+    run(NOW + 3600, price=90)  # position stops sell all three coins
+    for hour in range(2, 40):  # later hours only add decisions without trades
+        run(NOW + hour * 3600, price=90)
+    data = paper.public_snapshot()
+    assert sum(d["account"] == "news-guarded" for d in data["decisions"][:90]) and len(data["decisions"]) > 90
+    decisions = {d["seq"]: d for d in data["decisions"]}
+    assert {t["reason"] for t in data["trades"]} == {"positive_forecast", "reference_entry", "position_stop"}
+    for trade in data["trades"]:
+        decision = decisions[trade["decision"]]
+        assert decision["outcome"] == "fill" and decision["reason"] == trade["reason"]
+        assert (decision["account"], decision["asset"]) == (trade["account"], trade["asset"])
+        assert decision["execution"]["price"] == trade["price"] and decision["seq"] < trade["seq"]
+    assert [d["seq"] for d in data["decisions"]] == sorted(decisions, reverse=True)

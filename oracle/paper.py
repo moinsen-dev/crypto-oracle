@@ -41,7 +41,31 @@ POLICY = {
 RUN = "paper-v1-" + digest(POLICY)[:12]
 POLICY_V2 = {**POLICY, "version": "paper-v2", "initial_weights": [0.2, 0.2, 0.2]}
 RUN_V2 = "paper-v2-" + digest(POLICY_V2)[:12]
-POLICIES = {RUN: POLICY, RUN_V2: POLICY_V2}
+# Third run: no forecasts and no news. Its decision rule lives in paper_trend.py; the ledger is shared.
+TREND_ACCOUNTS = ("trend", "rebalanced", "reference")
+POLICY_V3 = {
+    "version": "paper-v3",
+    "starting_usd": 10000,
+    "execution": "coinbase-usd",
+    "fee_rate": 0.001,
+    "slippage_rate": 0.0005,
+    "max_order_age": 120,
+    "asset_weight": 0.2,
+    "asset_cap": 0.25,
+    "total_cap": 0.60,
+    "lookback_days": [7, 14, 28, 56],
+    "rebalance_band": 0.05,
+    "min_order_usd": 25,
+    "max_book_age": market.MAX_AGE,
+    "max_spread_bps": market.MAX_SPREAD_BPS,
+    "max_divergence": market.MAX_DIVERGENCE,
+}
+RUN_V3 = "paper-v3-" + digest(POLICY_V3)[:12]
+POLICIES = {RUN: POLICY, RUN_V2: POLICY_V2, RUN_V3: POLICY_V3}
+
+
+def accounts(run_id):
+    return TREND_ACCOUNTS if run_id == RUN_V3 else ACCOUNTS
 
 
 def init_schema():
@@ -100,7 +124,7 @@ def start(now, run_id=RUN):
         db.execute("BEGIN IMMEDIATE")
         db.execute("INSERT OR IGNORE INTO paper_runs VALUES(?,?,?)", (run_id, now, packed(policy)))
         started = db.execute("SELECT started_at FROM paper_runs WHERE id=?", (run_id,)).fetchone()[0]
-        for account in ACCOUNTS:
+        for account in accounts(run_id):
             append(
                 db,
                 "deposit:" + account,
@@ -453,7 +477,7 @@ def _settle(db, order, snapshot, now):
                 or after_cash < after_nav * (1 - policy["total_cap"]) - 1e-7
                 or position_value > after_nav * policy["asset_cap"] + 1e-7
                 or state["braked"]
-                or value["drawdown"] >= policy["drawdown_brake"]
+                or value["drawdown"] >= policy.get("drawdown_brake", math.inf)
             ):
                 reason = "execution_risk_limit"
         elif p["quantity"] > state["positions"][asset]["quantity"] + 1e-12:
@@ -629,7 +653,12 @@ def cycle(collector=None, clock=None):
     runs = [RUN]
     if os.getenv("ORACLE_PAPER_V2_ENABLED") == "1":
         runs.append(RUN_V2)
-    return {"state": "running", "runs": [_cycle(collector, clock, r) for r in runs]}
+    results = [_cycle(collector, clock, r) for r in runs]
+    if os.getenv("ORACLE_PAPER_V3_ENABLED") == "1":
+        from .paper_trend import cycle as trend_cycle
+
+        results.append(trend_cycle(collector, clock))
+    return {"state": "running", "runs": results}
 
 
 def _cycle(collector, clock, run_id):
@@ -802,8 +831,8 @@ def public_snapshot(run_id=None):
             return None
         rows = events(db, run_id)
     head = verify_chain(rows)
-    accounts, history = [], []
-    for account in ACCOUNTS:
+    names, summaries, history = accounts(run_id), [], []
+    for account in names:
         state = balance(rows, account, policy)
         valuations = [r for r in rows if r["account"] == account and r["kind"] == "valuation"]
         value = (
@@ -822,7 +851,7 @@ def public_snapshot(run_id=None):
                 "equity": state["cash"]
                 + sum(p["quantity"] * (value["marks"].get(a) or 0) for a, p in state["positions"].items()),
             }
-        accounts.append(
+        summaries.append(
             {
                 "id": account,
                 "cash": state["cash"],
@@ -860,8 +889,12 @@ def public_snapshot(run_id=None):
             }
         )
     outcomes = {r["payload"]["decision_key"]: r for r in rows if r["kind"] in ("fill", "cancel")}
+    recorded = [r for r in rows if r["kind"] == "decision"]
+    origin = {r["event_key"]: r for r in recorded}
+    # Hours of later holds must not push the reason for a trade out of public view.
+    acted = [r for r in recorded if outcomes.get(r["event_key"], {}).get("kind") == "fill"][-40:]
     decisions = []
-    for r in [r for r in rows if r["kind"] == "decision"][-90:][::-1]:
+    for r in sorted({r["seq"]: r for r in recorded[-90:] + acted}.values(), key=lambda r: -r["seq"]):
         p, outcome = r["payload"], outcomes.get(r["event_key"])
         decisions.append(
             {
@@ -874,7 +907,7 @@ def public_snapshot(run_id=None):
                 "hash": r["hash"],
                 "quality": p["quality"],
                 "signal": p["signal"],
-                "news": p["news"],
+                "news": p.get("news"),
                 "outcome": outcome["kind"] if outcome else "none",
                 "execution": outcome["payload"] if outcome else None,
             }
@@ -891,13 +924,15 @@ def public_snapshot(run_id=None):
             "gross": r["payload"]["gross"],
             "fee": r["payload"]["fee"],
             "hash": r["hash"],
+            "reason": origin[r["payload"]["decision_key"]]["payload"]["reason"],
+            "decision": origin[r["payload"]["decision_key"]]["seq"],
         }
         for r in rows
         if r["kind"] == "fill"
     ][-60:][::-1]
     reasons = {}
     for r in rows:
-        if r["kind"] == "decision" and r["account"] == "news-guarded":
+        if r["kind"] == "decision" and r["account"] == names[0]:
             reason = r["payload"]["reason"]
             reasons[reason] = reasons.get(reason, 0) + 1
     return {
@@ -907,7 +942,7 @@ def public_snapshot(run_id=None):
         "started_at": run["started_at"],
         "generated_at": time.time(),
         "policy": policy,
-        "accounts": accounts,
+        "accounts": summaries,
         "history": history,
         "decisions": decisions,
         "trades": trades,
