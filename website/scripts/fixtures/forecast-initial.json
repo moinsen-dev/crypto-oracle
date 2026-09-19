@@ -1,0 +1,3540 @@
+{
+  "schema": 1,
+  "generated_at": 1789808891,
+  "experiment": "learning-v1-6d8eb57fe265",
+  "started_at": null,
+  "policy": {
+    "version": "calibration-shadow-v1",
+    "parent": "v1-log512-h24-72-hourly",
+    "min_samples": 120,
+    "min_days": 21,
+    "window_days": 90,
+    "train_fraction": 0.75,
+    "min_train": 60,
+    "min_calibration": 30,
+    "shrinkage": 24,
+    "max_log_adjustment": 0.1,
+    "outcome_policy": "outcome-three-venues-1pct-v1",
+    "review_days": 28,
+    "required_gain": 0.05,
+    "min_coverage": 0.7,
+    "min_availability": 0.9,
+    "auto_promote": false
+  },
+  "groups": [
+    {
+      "asset": "BTC",
+      "horizon": 24,
+      "model": "timesfm",
+      "issued": 16,
+      "scored": 15,
+      "paired": 15,
+      "mae": 0.039609138095045876,
+      "baseline_mae": 0.02955880224154443,
+      "direction": 0.0,
+      "coverage": 1.0,
+      "calendar_days": 2
+    }
+  ],
+  "learning": [
+    {
+      "asset": "BTC",
+      "horizon": 24,
+      "samples": 0,
+      "span_days": 0,
+      "training": 0,
+      "calibration": 0,
+      "ready": false,
+      "issued": 0,
+      "evaluated": 0,
+      "first_origin": null,
+      "review_due": null,
+      "review": null
+    },
+    {
+      "asset": "BTC",
+      "horizon": 72,
+      "samples": 0,
+      "span_days": 0,
+      "training": 0,
+      "calibration": 0,
+      "ready": false,
+      "issued": 0,
+      "evaluated": 0,
+      "first_origin": null,
+      "review_due": null,
+      "review": null
+    },
+    {
+      "asset": "ETH",
+      "horizon": 24,
+      "samples": 0,
+      "span_days": 0,
+      "training": 0,
+      "calibration": 0,
+      "ready": false,
+      "issued": 0,
+      "evaluated": 0,
+      "first_origin": null,
+      "review_due": null,
+      "review": null
+    },
+    {
+      "asset": "ETH",
+      "horizon": 72,
+      "samples": 0,
+      "span_days": 0,
+      "training": 0,
+      "calibration": 0,
+      "ready": false,
+      "issued": 0,
+      "evaluated": 0,
+      "first_origin": null,
+      "review_due": null,
+      "review": null
+    },
+    {
+      "asset": "SOL",
+      "horizon": 24,
+      "samples": 0,
+      "span_days": 0,
+      "training": 0,
+      "calibration": 0,
+      "ready": false,
+      "issued": 0,
+      "evaluated": 0,
+      "first_origin": null,
+      "review_due": null,
+      "review": null
+    },
+    {
+      "asset": "SOL",
+      "horizon": 72,
+      "samples": 0,
+      "span_days": 0,
+      "training": 0,
+      "calibration": 0,
+      "ready": false,
+      "issued": 0,
+      "evaluated": 0,
+      "first_origin": null,
+      "review_due": null,
+      "review": null
+    }
+  ],
+  "news": [
+    {
+      "asset": "BTC",
+      "horizon": 24,
+      "samples": 0,
+      "span_days": 0,
+      "news_ids": 0,
+      "issued": 0
+    },
+    {
+      "asset": "BTC",
+      "horizon": 72,
+      "samples": 0,
+      "span_days": 0,
+      "news_ids": 0,
+      "issued": 0
+    },
+    {
+      "asset": "ETH",
+      "horizon": 24,
+      "samples": 0,
+      "span_days": 0,
+      "news_ids": 0,
+      "issued": 0
+    },
+    {
+      "asset": "ETH",
+      "horizon": 72,
+      "samples": 0,
+      "span_days": 0,
+      "news_ids": 0,
+      "issued": 0
+    },
+    {
+      "asset": "SOL",
+      "horizon": 24,
+      "samples": 0,
+      "span_days": 0,
+      "news_ids": 0,
+      "issued": 0
+    },
+    {
+      "asset": "SOL",
+      "horizon": 72,
+      "samples": 0,
+      "span_days": 0,
+      "news_ids": 0,
+      "issued": 0
+    }
+  ],
+  "records": [
+    {
+      "id": "2cb688053ca13ef472e75c5c784ec3c847f6262eac4adf89943ffac6b41b9067",
+      "claim": {
+        "experiment": "v1-log512-h24-72-hourly",
+        "model": "timesfm",
+        "asset": "BTC",
+        "origin": 1789671600,
+        "issued_at": 1789671602,
+        "target": 1789758000,
+        "horizon": 24,
+        "base": 100.0,
+        "prediction": 99.0,
+        "lower": 96.0,
+        "upper": 104.0,
+        "revision": "1d952420fba87f3c6dee4f240de0f1a0fbc790e3",
+        "input_hash": "325bfa8380659cac4ad74189e1ce0cc2525c5619f85bbe4bc42bd6e65d186e59",
+        "artifact_id": null,
+        "parent_id": null,
+        "path": [
+          {
+            "t": 1789675200,
+            "p": 99
+          },
+          {
+            "t": 1789678800,
+            "p": 99
+          },
+          {
+            "t": 1789682400,
+            "p": 99
+          },
+          {
+            "t": 1789686000,
+            "p": 99
+          },
+          {
+            "t": 1789689600,
+            "p": 99
+          },
+          {
+            "t": 1789693200,
+            "p": 99
+          },
+          {
+            "t": 1789696800,
+            "p": 99
+          },
+          {
+            "t": 1789700400,
+            "p": 99
+          },
+          {
+            "t": 1789704000,
+            "p": 99
+          },
+          {
+            "t": 1789707600,
+            "p": 99
+          },
+          {
+            "t": 1789711200,
+            "p": 99
+          },
+          {
+            "t": 1789714800,
+            "p": 99
+          },
+          {
+            "t": 1789718400,
+            "p": 99
+          },
+          {
+            "t": 1789722000,
+            "p": 99
+          },
+          {
+            "t": 1789725600,
+            "p": 99
+          },
+          {
+            "t": 1789729200,
+            "p": 99
+          },
+          {
+            "t": 1789732800,
+            "p": 99
+          },
+          {
+            "t": 1789736400,
+            "p": 99
+          },
+          {
+            "t": 1789740000,
+            "p": 99
+          },
+          {
+            "t": 1789743600,
+            "p": 99
+          },
+          {
+            "t": 1789747200,
+            "p": 99
+          },
+          {
+            "t": 1789750800,
+            "p": 99
+          },
+          {
+            "t": 1789754400,
+            "p": 99
+          },
+          {
+            "t": 1789758000,
+            "p": 99
+          }
+        ]
+      },
+      "outcome": {
+        "actual": 103.0,
+        "evaluated_at": 1789808891,
+        "actual_hash": "babbb2fa87d0da44b12b64fddad9af067e24959e05ec74901519bb8d7169c300",
+        "absolute_log_error": 0.039609138095045876,
+        "pinball": 0.004002135383676823,
+        "direction_correct": false,
+        "covered": true,
+        "interval_score": 0.08004270767353638
+      },
+      "quality": {
+        "id": "dc99b6a3008b0346e34b0ef4c76d168fff17ecc5f3498efeb7995dde2ebef58a",
+        "at": 1789808891,
+        "version": "outcome-three-venues-1pct-v1",
+        "status": "qualified",
+        "actual_observed_at": 1789758005,
+        "divergence": 0.0,
+        "fx": 1.0,
+        "input_verified": true,
+        "references": [
+          {
+            "source": "coinbase",
+            "asset": "BTC",
+            "ts": 1789758000,
+            "close": 103.0,
+            "observed_at": 1789758010,
+            "payload_hash": "f983931fffa7bb17d9eea1d4d66ef986a0615a9247585026107e306791aef943"
+          },
+          {
+            "source": "kraken",
+            "asset": "BTC",
+            "ts": 1789758000,
+            "close": 103.0,
+            "observed_at": 1789758010,
+            "payload_hash": "02ad34d3d119f2386297032ea6c4cf1ca87bddc62c4a0cfd21e4f14c48734de5"
+          },
+          {
+            "source": "coinbase",
+            "asset": "USDT",
+            "ts": 1789758000,
+            "close": 1.0,
+            "observed_at": 1789758010,
+            "payload_hash": "62b854228f7756e2422b8dd8dfd66adbfeaf3145ad88f2543177cfa3bc2a26e7"
+          }
+        ]
+      },
+      "actual_path": [
+        {
+          "t": 1789758000,
+          "p": 103.0
+        }
+      ],
+      "baselines": [
+        {
+          "model": "momentum",
+          "prediction": 101.0,
+          "error": 0.019608471388376337
+        },
+        {
+          "model": "persistence",
+          "prediction": 100.0,
+          "error": 0.02955880224154443
+        },
+        {
+          "model": "timesfm",
+          "prediction": 99.0,
+          "error": 0.039609138095045876
+        }
+      ]
+    },
+    {
+      "id": "1dee8cfac71900318db315b600592db348ee17200b344a12554b786ceb3e8142",
+      "claim": {
+        "experiment": "v1-log512-h24-72-hourly",
+        "model": "timesfm",
+        "asset": "BTC",
+        "origin": 1789675200,
+        "issued_at": 1789675202,
+        "target": 1789761600,
+        "horizon": 24,
+        "base": 100.0,
+        "prediction": 99.0,
+        "lower": 96.0,
+        "upper": 104.0,
+        "revision": "1d952420fba87f3c6dee4f240de0f1a0fbc790e3",
+        "input_hash": "8275d486346ce798df611213c167f7c177fb3de8982260b79cbd6c199567951f",
+        "artifact_id": null,
+        "parent_id": null,
+        "path": [
+          {
+            "t": 1789678800,
+            "p": 99
+          },
+          {
+            "t": 1789682400,
+            "p": 99
+          },
+          {
+            "t": 1789686000,
+            "p": 99
+          },
+          {
+            "t": 1789689600,
+            "p": 99
+          },
+          {
+            "t": 1789693200,
+            "p": 99
+          },
+          {
+            "t": 1789696800,
+            "p": 99
+          },
+          {
+            "t": 1789700400,
+            "p": 99
+          },
+          {
+            "t": 1789704000,
+            "p": 99
+          },
+          {
+            "t": 1789707600,
+            "p": 99
+          },
+          {
+            "t": 1789711200,
+            "p": 99
+          },
+          {
+            "t": 1789714800,
+            "p": 99
+          },
+          {
+            "t": 1789718400,
+            "p": 99
+          },
+          {
+            "t": 1789722000,
+            "p": 99
+          },
+          {
+            "t": 1789725600,
+            "p": 99
+          },
+          {
+            "t": 1789729200,
+            "p": 99
+          },
+          {
+            "t": 1789732800,
+            "p": 99
+          },
+          {
+            "t": 1789736400,
+            "p": 99
+          },
+          {
+            "t": 1789740000,
+            "p": 99
+          },
+          {
+            "t": 1789743600,
+            "p": 99
+          },
+          {
+            "t": 1789747200,
+            "p": 99
+          },
+          {
+            "t": 1789750800,
+            "p": 99
+          },
+          {
+            "t": 1789754400,
+            "p": 99
+          },
+          {
+            "t": 1789758000,
+            "p": 99
+          },
+          {
+            "t": 1789761600,
+            "p": 99
+          }
+        ]
+      },
+      "outcome": {
+        "actual": 103.0,
+        "evaluated_at": 1789808891,
+        "actual_hash": "126612605b2a4e7e593d312ab9cfef18fbd1e8f94fb2f5ebd01b832098b192be",
+        "absolute_log_error": 0.039609138095045876,
+        "pinball": 0.004002135383676823,
+        "direction_correct": false,
+        "covered": true,
+        "interval_score": 0.08004270767353638
+      },
+      "quality": {
+        "id": "f5da627b458b0976e0c090552930fdc4d8dde3700ea560dad5637bc7a82031a4",
+        "at": 1789808891,
+        "version": "outcome-three-venues-1pct-v1",
+        "status": "qualified",
+        "actual_observed_at": 1789761605,
+        "divergence": 0.0,
+        "fx": 1.0,
+        "input_verified": true,
+        "references": [
+          {
+            "source": "coinbase",
+            "asset": "BTC",
+            "ts": 1789761600,
+            "close": 103.0,
+            "observed_at": 1789761610,
+            "payload_hash": "0751b41642934d84b5805786e3099d0d0dd167842613a28a41e5672b02a592dc"
+          },
+          {
+            "source": "kraken",
+            "asset": "BTC",
+            "ts": 1789761600,
+            "close": 103.0,
+            "observed_at": 1789761610,
+            "payload_hash": "0bb0df0f75ba10aced48bace200f1b5d463a640580e75bb56afd173f05acb4f9"
+          },
+          {
+            "source": "coinbase",
+            "asset": "USDT",
+            "ts": 1789761600,
+            "close": 1.0,
+            "observed_at": 1789761610,
+            "payload_hash": "bd241426116f416f6195e263bc878fbf3b3d365eb4146ded40298192d7fd56bd"
+          }
+        ]
+      },
+      "actual_path": [
+        {
+          "t": 1789758000,
+          "p": 103.0
+        },
+        {
+          "t": 1789761600,
+          "p": 103.0
+        }
+      ],
+      "baselines": [
+        {
+          "model": "momentum",
+          "prediction": 101.0,
+          "error": 0.019608471388376337
+        },
+        {
+          "model": "persistence",
+          "prediction": 100.0,
+          "error": 0.02955880224154443
+        },
+        {
+          "model": "timesfm",
+          "prediction": 99.0,
+          "error": 0.039609138095045876
+        }
+      ]
+    },
+    {
+      "id": "42419ea919d8a8a883ca2a9f086fec419f383479d87f6a7c2767083fa1a39577",
+      "claim": {
+        "experiment": "v1-log512-h24-72-hourly",
+        "model": "timesfm",
+        "asset": "BTC",
+        "origin": 1789678800,
+        "issued_at": 1789678802,
+        "target": 1789765200,
+        "horizon": 24,
+        "base": 100.0,
+        "prediction": 99.0,
+        "lower": 96.0,
+        "upper": 104.0,
+        "revision": "1d952420fba87f3c6dee4f240de0f1a0fbc790e3",
+        "input_hash": "53beb11045e10b0c9e62a7572d5f080a63086ed65575e1073f6f240fac3bb13c",
+        "artifact_id": null,
+        "parent_id": null,
+        "path": [
+          {
+            "t": 1789682400,
+            "p": 99
+          },
+          {
+            "t": 1789686000,
+            "p": 99
+          },
+          {
+            "t": 1789689600,
+            "p": 99
+          },
+          {
+            "t": 1789693200,
+            "p": 99
+          },
+          {
+            "t": 1789696800,
+            "p": 99
+          },
+          {
+            "t": 1789700400,
+            "p": 99
+          },
+          {
+            "t": 1789704000,
+            "p": 99
+          },
+          {
+            "t": 1789707600,
+            "p": 99
+          },
+          {
+            "t": 1789711200,
+            "p": 99
+          },
+          {
+            "t": 1789714800,
+            "p": 99
+          },
+          {
+            "t": 1789718400,
+            "p": 99
+          },
+          {
+            "t": 1789722000,
+            "p": 99
+          },
+          {
+            "t": 1789725600,
+            "p": 99
+          },
+          {
+            "t": 1789729200,
+            "p": 99
+          },
+          {
+            "t": 1789732800,
+            "p": 99
+          },
+          {
+            "t": 1789736400,
+            "p": 99
+          },
+          {
+            "t": 1789740000,
+            "p": 99
+          },
+          {
+            "t": 1789743600,
+            "p": 99
+          },
+          {
+            "t": 1789747200,
+            "p": 99
+          },
+          {
+            "t": 1789750800,
+            "p": 99
+          },
+          {
+            "t": 1789754400,
+            "p": 99
+          },
+          {
+            "t": 1789758000,
+            "p": 99
+          },
+          {
+            "t": 1789761600,
+            "p": 99
+          },
+          {
+            "t": 1789765200,
+            "p": 99
+          }
+        ]
+      },
+      "outcome": {
+        "actual": 103.0,
+        "evaluated_at": 1789808891,
+        "actual_hash": "25585d6ddcedd6d31f6cdf95e4a46416862d42363b21c4825ed8ca807de81f32",
+        "absolute_log_error": 0.039609138095045876,
+        "pinball": 0.004002135383676823,
+        "direction_correct": false,
+        "covered": true,
+        "interval_score": 0.08004270767353638
+      },
+      "quality": {
+        "id": "71e8faf3ecb43d7195e475e6b37421fcc822782a72778115e2dc79f3baef4b6c",
+        "at": 1789808891,
+        "version": "outcome-three-venues-1pct-v1",
+        "status": "qualified",
+        "actual_observed_at": 1789765205,
+        "divergence": 0.0,
+        "fx": 1.0,
+        "input_verified": true,
+        "references": [
+          {
+            "source": "coinbase",
+            "asset": "BTC",
+            "ts": 1789765200,
+            "close": 103.0,
+            "observed_at": 1789765210,
+            "payload_hash": "3315c0dfa6d54e1f922052d296475de6bbacfba469772eb43c8612370991e8d6"
+          },
+          {
+            "source": "kraken",
+            "asset": "BTC",
+            "ts": 1789765200,
+            "close": 103.0,
+            "observed_at": 1789765210,
+            "payload_hash": "6de3d8adbc6fdc8877fa8e4d4059664d7ac51f7134c510d6e606c74bf96c4c38"
+          },
+          {
+            "source": "coinbase",
+            "asset": "USDT",
+            "ts": 1789765200,
+            "close": 1.0,
+            "observed_at": 1789765210,
+            "payload_hash": "49a33325e87262f0becad2ee3c0bcfdf394a6aa7802742450d4c1ac29593e24b"
+          }
+        ]
+      },
+      "actual_path": [
+        {
+          "t": 1789758000,
+          "p": 103.0
+        },
+        {
+          "t": 1789761600,
+          "p": 103.0
+        },
+        {
+          "t": 1789765200,
+          "p": 103.0
+        }
+      ],
+      "baselines": [
+        {
+          "model": "momentum",
+          "prediction": 101.0,
+          "error": 0.019608471388376337
+        },
+        {
+          "model": "persistence",
+          "prediction": 100.0,
+          "error": 0.02955880224154443
+        },
+        {
+          "model": "timesfm",
+          "prediction": 99.0,
+          "error": 0.039609138095045876
+        }
+      ]
+    },
+    {
+      "id": "f1edd53e9aec1a585139f3292a7789a582922dea424f16f49ddd512e882f0a31",
+      "claim": {
+        "experiment": "v1-log512-h24-72-hourly",
+        "model": "timesfm",
+        "asset": "BTC",
+        "origin": 1789682400,
+        "issued_at": 1789682402,
+        "target": 1789768800,
+        "horizon": 24,
+        "base": 100.0,
+        "prediction": 99.0,
+        "lower": 96.0,
+        "upper": 104.0,
+        "revision": "1d952420fba87f3c6dee4f240de0f1a0fbc790e3",
+        "input_hash": "5ad49465112d1d88c01d0fa8264828a798206d4af14319019ceabbd663647869",
+        "artifact_id": null,
+        "parent_id": null,
+        "path": [
+          {
+            "t": 1789686000,
+            "p": 99
+          },
+          {
+            "t": 1789689600,
+            "p": 99
+          },
+          {
+            "t": 1789693200,
+            "p": 99
+          },
+          {
+            "t": 1789696800,
+            "p": 99
+          },
+          {
+            "t": 1789700400,
+            "p": 99
+          },
+          {
+            "t": 1789704000,
+            "p": 99
+          },
+          {
+            "t": 1789707600,
+            "p": 99
+          },
+          {
+            "t": 1789711200,
+            "p": 99
+          },
+          {
+            "t": 1789714800,
+            "p": 99
+          },
+          {
+            "t": 1789718400,
+            "p": 99
+          },
+          {
+            "t": 1789722000,
+            "p": 99
+          },
+          {
+            "t": 1789725600,
+            "p": 99
+          },
+          {
+            "t": 1789729200,
+            "p": 99
+          },
+          {
+            "t": 1789732800,
+            "p": 99
+          },
+          {
+            "t": 1789736400,
+            "p": 99
+          },
+          {
+            "t": 1789740000,
+            "p": 99
+          },
+          {
+            "t": 1789743600,
+            "p": 99
+          },
+          {
+            "t": 1789747200,
+            "p": 99
+          },
+          {
+            "t": 1789750800,
+            "p": 99
+          },
+          {
+            "t": 1789754400,
+            "p": 99
+          },
+          {
+            "t": 1789758000,
+            "p": 99
+          },
+          {
+            "t": 1789761600,
+            "p": 99
+          },
+          {
+            "t": 1789765200,
+            "p": 99
+          },
+          {
+            "t": 1789768800,
+            "p": 99
+          }
+        ]
+      },
+      "outcome": {
+        "actual": 103.0,
+        "evaluated_at": 1789808891,
+        "actual_hash": "7e871320eb0fece247bc45fe141a71d6ce473471748609a94b649e82bd1f940f",
+        "absolute_log_error": 0.039609138095045876,
+        "pinball": 0.004002135383676823,
+        "direction_correct": false,
+        "covered": true,
+        "interval_score": 0.08004270767353638
+      },
+      "quality": {
+        "id": "1dd3f570814e57f9028de22bb167712cf2a54e282f251af3cf9f626ef7ce7d37",
+        "at": 1789808891,
+        "version": "outcome-three-venues-1pct-v1",
+        "status": "qualified",
+        "actual_observed_at": 1789768805,
+        "divergence": 0.0,
+        "fx": 1.0,
+        "input_verified": true,
+        "references": [
+          {
+            "source": "coinbase",
+            "asset": "BTC",
+            "ts": 1789768800,
+            "close": 103.0,
+            "observed_at": 1789768810,
+            "payload_hash": "2344be835ddcbae59dabae5aeee6f81d793027297d9b0333d42474095338b1cb"
+          },
+          {
+            "source": "kraken",
+            "asset": "BTC",
+            "ts": 1789768800,
+            "close": 103.0,
+            "observed_at": 1789768810,
+            "payload_hash": "3b904a33ad4c4933b5d124a84da009d069ce6507a8a796ba15e2b117fb76a8cd"
+          },
+          {
+            "source": "coinbase",
+            "asset": "USDT",
+            "ts": 1789768800,
+            "close": 1.0,
+            "observed_at": 1789768810,
+            "payload_hash": "fbed1ec379d9409de343f79eb7f1603b038b18b5f47b099a42c1305172949232"
+          }
+        ]
+      },
+      "actual_path": [
+        {
+          "t": 1789758000,
+          "p": 103.0
+        },
+        {
+          "t": 1789761600,
+          "p": 103.0
+        },
+        {
+          "t": 1789765200,
+          "p": 103.0
+        },
+        {
+          "t": 1789768800,
+          "p": 103.0
+        }
+      ],
+      "baselines": [
+        {
+          "model": "momentum",
+          "prediction": 101.0,
+          "error": 0.019608471388376337
+        },
+        {
+          "model": "persistence",
+          "prediction": 100.0,
+          "error": 0.02955880224154443
+        },
+        {
+          "model": "timesfm",
+          "prediction": 99.0,
+          "error": 0.039609138095045876
+        }
+      ]
+    },
+    {
+      "id": "78390aeeab1c0936b0f0fe52a10ecf4692fcc6a10d7edcf291eb81c289ad777b",
+      "claim": {
+        "experiment": "v1-log512-h24-72-hourly",
+        "model": "timesfm",
+        "asset": "BTC",
+        "origin": 1789686000,
+        "issued_at": 1789686002,
+        "target": 1789772400,
+        "horizon": 24,
+        "base": 100.0,
+        "prediction": 99.0,
+        "lower": 96.0,
+        "upper": 104.0,
+        "revision": "1d952420fba87f3c6dee4f240de0f1a0fbc790e3",
+        "input_hash": "48d08f4020d7f1f6fbf9c1e82d9f6c99d858bffa232fe125eae1a9d4cc816486",
+        "artifact_id": null,
+        "parent_id": null,
+        "path": [
+          {
+            "t": 1789689600,
+            "p": 99
+          },
+          {
+            "t": 1789693200,
+            "p": 99
+          },
+          {
+            "t": 1789696800,
+            "p": 99
+          },
+          {
+            "t": 1789700400,
+            "p": 99
+          },
+          {
+            "t": 1789704000,
+            "p": 99
+          },
+          {
+            "t": 1789707600,
+            "p": 99
+          },
+          {
+            "t": 1789711200,
+            "p": 99
+          },
+          {
+            "t": 1789714800,
+            "p": 99
+          },
+          {
+            "t": 1789718400,
+            "p": 99
+          },
+          {
+            "t": 1789722000,
+            "p": 99
+          },
+          {
+            "t": 1789725600,
+            "p": 99
+          },
+          {
+            "t": 1789729200,
+            "p": 99
+          },
+          {
+            "t": 1789732800,
+            "p": 99
+          },
+          {
+            "t": 1789736400,
+            "p": 99
+          },
+          {
+            "t": 1789740000,
+            "p": 99
+          },
+          {
+            "t": 1789743600,
+            "p": 99
+          },
+          {
+            "t": 1789747200,
+            "p": 99
+          },
+          {
+            "t": 1789750800,
+            "p": 99
+          },
+          {
+            "t": 1789754400,
+            "p": 99
+          },
+          {
+            "t": 1789758000,
+            "p": 99
+          },
+          {
+            "t": 1789761600,
+            "p": 99
+          },
+          {
+            "t": 1789765200,
+            "p": 99
+          },
+          {
+            "t": 1789768800,
+            "p": 99
+          },
+          {
+            "t": 1789772400,
+            "p": 99
+          }
+        ]
+      },
+      "outcome": {
+        "actual": 103.0,
+        "evaluated_at": 1789808891,
+        "actual_hash": "262378bb25407e1ece2f5e2f3c6db4ea5053ab012808e7731e399624f53f59ee",
+        "absolute_log_error": 0.039609138095045876,
+        "pinball": 0.004002135383676823,
+        "direction_correct": false,
+        "covered": true,
+        "interval_score": 0.08004270767353638
+      },
+      "quality": {
+        "id": "1551010ac382e43a5d56c353a1a99f8ae684ac3ce8531d84770c26140fb13d0a",
+        "at": 1789808891,
+        "version": "outcome-three-venues-1pct-v1",
+        "status": "qualified",
+        "actual_observed_at": 1789772405,
+        "divergence": 0.0,
+        "fx": 1.0,
+        "input_verified": true,
+        "references": [
+          {
+            "source": "coinbase",
+            "asset": "BTC",
+            "ts": 1789772400,
+            "close": 103.0,
+            "observed_at": 1789772410,
+            "payload_hash": "645f4bfdac8906a44d656ab4058ea39361e6dab06d52ea615eb55e05911ce10c"
+          },
+          {
+            "source": "kraken",
+            "asset": "BTC",
+            "ts": 1789772400,
+            "close": 103.0,
+            "observed_at": 1789772410,
+            "payload_hash": "f59cf57388eb9025ff4c61ffe8b48aa049512a4905dcd2fb9edb85ab23b1d80e"
+          },
+          {
+            "source": "coinbase",
+            "asset": "USDT",
+            "ts": 1789772400,
+            "close": 1.0,
+            "observed_at": 1789772410,
+            "payload_hash": "ab7ee990065c6f63fef2a5b9b1480d0cbf8d61c615ffcd249af4cf931196f24d"
+          }
+        ]
+      },
+      "actual_path": [
+        {
+          "t": 1789758000,
+          "p": 103.0
+        },
+        {
+          "t": 1789761600,
+          "p": 103.0
+        },
+        {
+          "t": 1789765200,
+          "p": 103.0
+        },
+        {
+          "t": 1789768800,
+          "p": 103.0
+        },
+        {
+          "t": 1789772400,
+          "p": 103.0
+        }
+      ],
+      "baselines": [
+        {
+          "model": "momentum",
+          "prediction": 101.0,
+          "error": 0.019608471388376337
+        },
+        {
+          "model": "persistence",
+          "prediction": 100.0,
+          "error": 0.02955880224154443
+        },
+        {
+          "model": "timesfm",
+          "prediction": 99.0,
+          "error": 0.039609138095045876
+        }
+      ]
+    },
+    {
+      "id": "92d5db3e3dbf08f2e55caf07f1f7e4ffcd854e064effd902a60a021fc8d6a2ac",
+      "claim": {
+        "experiment": "v1-log512-h24-72-hourly",
+        "model": "timesfm",
+        "asset": "BTC",
+        "origin": 1789689600,
+        "issued_at": 1789689602,
+        "target": 1789776000,
+        "horizon": 24,
+        "base": 100.0,
+        "prediction": 99.0,
+        "lower": 96.0,
+        "upper": 104.0,
+        "revision": "1d952420fba87f3c6dee4f240de0f1a0fbc790e3",
+        "input_hash": "dda8852313f12a6270665826e976c24a22a8da285d4374911ee76125dad5a204",
+        "artifact_id": null,
+        "parent_id": null,
+        "path": [
+          {
+            "t": 1789693200,
+            "p": 99
+          },
+          {
+            "t": 1789696800,
+            "p": 99
+          },
+          {
+            "t": 1789700400,
+            "p": 99
+          },
+          {
+            "t": 1789704000,
+            "p": 99
+          },
+          {
+            "t": 1789707600,
+            "p": 99
+          },
+          {
+            "t": 1789711200,
+            "p": 99
+          },
+          {
+            "t": 1789714800,
+            "p": 99
+          },
+          {
+            "t": 1789718400,
+            "p": 99
+          },
+          {
+            "t": 1789722000,
+            "p": 99
+          },
+          {
+            "t": 1789725600,
+            "p": 99
+          },
+          {
+            "t": 1789729200,
+            "p": 99
+          },
+          {
+            "t": 1789732800,
+            "p": 99
+          },
+          {
+            "t": 1789736400,
+            "p": 99
+          },
+          {
+            "t": 1789740000,
+            "p": 99
+          },
+          {
+            "t": 1789743600,
+            "p": 99
+          },
+          {
+            "t": 1789747200,
+            "p": 99
+          },
+          {
+            "t": 1789750800,
+            "p": 99
+          },
+          {
+            "t": 1789754400,
+            "p": 99
+          },
+          {
+            "t": 1789758000,
+            "p": 99
+          },
+          {
+            "t": 1789761600,
+            "p": 99
+          },
+          {
+            "t": 1789765200,
+            "p": 99
+          },
+          {
+            "t": 1789768800,
+            "p": 99
+          },
+          {
+            "t": 1789772400,
+            "p": 99
+          },
+          {
+            "t": 1789776000,
+            "p": 99
+          }
+        ]
+      },
+      "outcome": {
+        "actual": 103.0,
+        "evaluated_at": 1789808891,
+        "actual_hash": "0728baafd294652d096ce80b44993c350e18fb04098a86e64d926c45fcf0e098",
+        "absolute_log_error": 0.039609138095045876,
+        "pinball": 0.004002135383676823,
+        "direction_correct": false,
+        "covered": true,
+        "interval_score": 0.08004270767353638
+      },
+      "quality": {
+        "id": "b3c2ccc8ebc1d96a03e80742d92d2a43cfc3c5119a3dce8ac0a91b81eedbaa76",
+        "at": 1789808891,
+        "version": "outcome-three-venues-1pct-v1",
+        "status": "qualified",
+        "actual_observed_at": 1789776005,
+        "divergence": 0.0,
+        "fx": 1.0,
+        "input_verified": true,
+        "references": [
+          {
+            "source": "coinbase",
+            "asset": "BTC",
+            "ts": 1789776000,
+            "close": 103.0,
+            "observed_at": 1789776010,
+            "payload_hash": "e738ef9ffe8119694b2569ca5a23397021de9ad63ccbb89bbff278c52db47fef"
+          },
+          {
+            "source": "kraken",
+            "asset": "BTC",
+            "ts": 1789776000,
+            "close": 103.0,
+            "observed_at": 1789776010,
+            "payload_hash": "0055822287d5646b915ac6855e33b4c653193094ad0430ecaf655f2e86f43d23"
+          },
+          {
+            "source": "coinbase",
+            "asset": "USDT",
+            "ts": 1789776000,
+            "close": 1.0,
+            "observed_at": 1789776010,
+            "payload_hash": "a0dbc445531220a8145c3d1e05a8f994d962e88280b03a9bf09e3519acd7d6d0"
+          }
+        ]
+      },
+      "actual_path": [
+        {
+          "t": 1789758000,
+          "p": 103.0
+        },
+        {
+          "t": 1789761600,
+          "p": 103.0
+        },
+        {
+          "t": 1789765200,
+          "p": 103.0
+        },
+        {
+          "t": 1789768800,
+          "p": 103.0
+        },
+        {
+          "t": 1789772400,
+          "p": 103.0
+        },
+        {
+          "t": 1789776000,
+          "p": 103.0
+        }
+      ],
+      "baselines": [
+        {
+          "model": "momentum",
+          "prediction": 101.0,
+          "error": 0.019608471388376337
+        },
+        {
+          "model": "persistence",
+          "prediction": 100.0,
+          "error": 0.02955880224154443
+        },
+        {
+          "model": "timesfm",
+          "prediction": 99.0,
+          "error": 0.039609138095045876
+        }
+      ]
+    },
+    {
+      "id": "3fdf40d720b73d32b9e0869661396175b0df222df4a69f7c499e1466336c8093",
+      "claim": {
+        "experiment": "v1-log512-h24-72-hourly",
+        "model": "timesfm",
+        "asset": "BTC",
+        "origin": 1789693200,
+        "issued_at": 1789693202,
+        "target": 1789779600,
+        "horizon": 24,
+        "base": 100.0,
+        "prediction": 99.0,
+        "lower": 96.0,
+        "upper": 104.0,
+        "revision": "1d952420fba87f3c6dee4f240de0f1a0fbc790e3",
+        "input_hash": "c9b8437b3b697f84e0c8260ba4d0f8936ab9ddfbf006bc789d6a249496c6556e",
+        "artifact_id": null,
+        "parent_id": null,
+        "path": [
+          {
+            "t": 1789696800,
+            "p": 99
+          },
+          {
+            "t": 1789700400,
+            "p": 99
+          },
+          {
+            "t": 1789704000,
+            "p": 99
+          },
+          {
+            "t": 1789707600,
+            "p": 99
+          },
+          {
+            "t": 1789711200,
+            "p": 99
+          },
+          {
+            "t": 1789714800,
+            "p": 99
+          },
+          {
+            "t": 1789718400,
+            "p": 99
+          },
+          {
+            "t": 1789722000,
+            "p": 99
+          },
+          {
+            "t": 1789725600,
+            "p": 99
+          },
+          {
+            "t": 1789729200,
+            "p": 99
+          },
+          {
+            "t": 1789732800,
+            "p": 99
+          },
+          {
+            "t": 1789736400,
+            "p": 99
+          },
+          {
+            "t": 1789740000,
+            "p": 99
+          },
+          {
+            "t": 1789743600,
+            "p": 99
+          },
+          {
+            "t": 1789747200,
+            "p": 99
+          },
+          {
+            "t": 1789750800,
+            "p": 99
+          },
+          {
+            "t": 1789754400,
+            "p": 99
+          },
+          {
+            "t": 1789758000,
+            "p": 99
+          },
+          {
+            "t": 1789761600,
+            "p": 99
+          },
+          {
+            "t": 1789765200,
+            "p": 99
+          },
+          {
+            "t": 1789768800,
+            "p": 99
+          },
+          {
+            "t": 1789772400,
+            "p": 99
+          },
+          {
+            "t": 1789776000,
+            "p": 99
+          },
+          {
+            "t": 1789779600,
+            "p": 99
+          }
+        ]
+      },
+      "outcome": {
+        "actual": 103.0,
+        "evaluated_at": 1789808891,
+        "actual_hash": "30945beb2e246f9dabecc506c8a7097a2f330e0556f8a9b5d34068f742ba3e53",
+        "absolute_log_error": 0.039609138095045876,
+        "pinball": 0.004002135383676823,
+        "direction_correct": false,
+        "covered": true,
+        "interval_score": 0.08004270767353638
+      },
+      "quality": {
+        "id": "f729cec5bd0b18f26157518851b4ec561d20cbc911fd2f3cb711f7340128a51c",
+        "at": 1789808891,
+        "version": "outcome-three-venues-1pct-v1",
+        "status": "qualified",
+        "actual_observed_at": 1789779605,
+        "divergence": 0.0,
+        "fx": 1.0,
+        "input_verified": true,
+        "references": [
+          {
+            "source": "coinbase",
+            "asset": "BTC",
+            "ts": 1789779600,
+            "close": 103.0,
+            "observed_at": 1789779610,
+            "payload_hash": "8a759429ce336c9c68c2bb9638f7e330cf59db12cb42f25f9828d8a9cb8078d9"
+          },
+          {
+            "source": "kraken",
+            "asset": "BTC",
+            "ts": 1789779600,
+            "close": 103.0,
+            "observed_at": 1789779610,
+            "payload_hash": "1c4c21ec3ab2f90c9fb3a98b13425d5f9825df301eaa422eeacc381bd9626c00"
+          },
+          {
+            "source": "coinbase",
+            "asset": "USDT",
+            "ts": 1789779600,
+            "close": 1.0,
+            "observed_at": 1789779610,
+            "payload_hash": "7a9a7e53a2bc87e97318dd0d556c5ccf20fb1985541b804b0b41b1b7a71ff253"
+          }
+        ]
+      },
+      "actual_path": [
+        {
+          "t": 1789758000,
+          "p": 103.0
+        },
+        {
+          "t": 1789761600,
+          "p": 103.0
+        },
+        {
+          "t": 1789765200,
+          "p": 103.0
+        },
+        {
+          "t": 1789768800,
+          "p": 103.0
+        },
+        {
+          "t": 1789772400,
+          "p": 103.0
+        },
+        {
+          "t": 1789776000,
+          "p": 103.0
+        },
+        {
+          "t": 1789779600,
+          "p": 103.0
+        }
+      ],
+      "baselines": [
+        {
+          "model": "momentum",
+          "prediction": 101.0,
+          "error": 0.019608471388376337
+        },
+        {
+          "model": "persistence",
+          "prediction": 100.0,
+          "error": 0.02955880224154443
+        },
+        {
+          "model": "timesfm",
+          "prediction": 99.0,
+          "error": 0.039609138095045876
+        }
+      ]
+    },
+    {
+      "id": "6a24c543594a0a4c6900b0fa35d68cb73707469e4b2e19f437ba0039d8237e3f",
+      "claim": {
+        "experiment": "v1-log512-h24-72-hourly",
+        "model": "timesfm",
+        "asset": "BTC",
+        "origin": 1789696800,
+        "issued_at": 1789696802,
+        "target": 1789783200,
+        "horizon": 24,
+        "base": 100.0,
+        "prediction": 99.0,
+        "lower": 96.0,
+        "upper": 104.0,
+        "revision": "1d952420fba87f3c6dee4f240de0f1a0fbc790e3",
+        "input_hash": "b8edd69fd99e46a633b2a20f7477b72ea12e16407b4a345dbaad5a6b02127c53",
+        "artifact_id": null,
+        "parent_id": null,
+        "path": [
+          {
+            "t": 1789700400,
+            "p": 99
+          },
+          {
+            "t": 1789704000,
+            "p": 99
+          },
+          {
+            "t": 1789707600,
+            "p": 99
+          },
+          {
+            "t": 1789711200,
+            "p": 99
+          },
+          {
+            "t": 1789714800,
+            "p": 99
+          },
+          {
+            "t": 1789718400,
+            "p": 99
+          },
+          {
+            "t": 1789722000,
+            "p": 99
+          },
+          {
+            "t": 1789725600,
+            "p": 99
+          },
+          {
+            "t": 1789729200,
+            "p": 99
+          },
+          {
+            "t": 1789732800,
+            "p": 99
+          },
+          {
+            "t": 1789736400,
+            "p": 99
+          },
+          {
+            "t": 1789740000,
+            "p": 99
+          },
+          {
+            "t": 1789743600,
+            "p": 99
+          },
+          {
+            "t": 1789747200,
+            "p": 99
+          },
+          {
+            "t": 1789750800,
+            "p": 99
+          },
+          {
+            "t": 1789754400,
+            "p": 99
+          },
+          {
+            "t": 1789758000,
+            "p": 99
+          },
+          {
+            "t": 1789761600,
+            "p": 99
+          },
+          {
+            "t": 1789765200,
+            "p": 99
+          },
+          {
+            "t": 1789768800,
+            "p": 99
+          },
+          {
+            "t": 1789772400,
+            "p": 99
+          },
+          {
+            "t": 1789776000,
+            "p": 99
+          },
+          {
+            "t": 1789779600,
+            "p": 99
+          },
+          {
+            "t": 1789783200,
+            "p": 99
+          }
+        ]
+      },
+      "outcome": {
+        "actual": 103.0,
+        "evaluated_at": 1789808891,
+        "actual_hash": "9c09fc3f1178d902bd527e0f0e2e4b149a8ecf5e1f106883899fe1dee0a33bc6",
+        "absolute_log_error": 0.039609138095045876,
+        "pinball": 0.004002135383676823,
+        "direction_correct": false,
+        "covered": true,
+        "interval_score": 0.08004270767353638
+      },
+      "quality": {
+        "id": "173bea06e788ae271759c3c45bf20ab2ec56805d1ee05cf2936af26bad569410",
+        "at": 1789808891,
+        "version": "outcome-three-venues-1pct-v1",
+        "status": "qualified",
+        "actual_observed_at": 1789783205,
+        "divergence": 0.0,
+        "fx": 1.0,
+        "input_verified": true,
+        "references": [
+          {
+            "source": "coinbase",
+            "asset": "BTC",
+            "ts": 1789783200,
+            "close": 103.0,
+            "observed_at": 1789783210,
+            "payload_hash": "d45efa24812fe85db711821ad7fee9df05d6440c8a72d222b97072320471bec0"
+          },
+          {
+            "source": "kraken",
+            "asset": "BTC",
+            "ts": 1789783200,
+            "close": 103.0,
+            "observed_at": 1789783210,
+            "payload_hash": "babcb6dffd3748ffadb58a081c28c672c95d49c6118fe57b292628a202b11382"
+          },
+          {
+            "source": "coinbase",
+            "asset": "USDT",
+            "ts": 1789783200,
+            "close": 1.0,
+            "observed_at": 1789783210,
+            "payload_hash": "b99b0823aa8a97927d2f47ec10298c82d9ca08f36de101b6811c0b3df196c93b"
+          }
+        ]
+      },
+      "actual_path": [
+        {
+          "t": 1789758000,
+          "p": 103.0
+        },
+        {
+          "t": 1789761600,
+          "p": 103.0
+        },
+        {
+          "t": 1789765200,
+          "p": 103.0
+        },
+        {
+          "t": 1789768800,
+          "p": 103.0
+        },
+        {
+          "t": 1789772400,
+          "p": 103.0
+        },
+        {
+          "t": 1789776000,
+          "p": 103.0
+        },
+        {
+          "t": 1789779600,
+          "p": 103.0
+        },
+        {
+          "t": 1789783200,
+          "p": 103.0
+        }
+      ],
+      "baselines": [
+        {
+          "model": "momentum",
+          "prediction": 101.0,
+          "error": 0.019608471388376337
+        },
+        {
+          "model": "persistence",
+          "prediction": 100.0,
+          "error": 0.02955880224154443
+        },
+        {
+          "model": "timesfm",
+          "prediction": 99.0,
+          "error": 0.039609138095045876
+        }
+      ]
+    },
+    {
+      "id": "6971d0f215cdb617a24dd122e8f6a6545fa4cfb0cafa3c8e1587ff86cdce11f1",
+      "claim": {
+        "experiment": "v1-log512-h24-72-hourly",
+        "model": "timesfm",
+        "asset": "BTC",
+        "origin": 1789700400,
+        "issued_at": 1789700402,
+        "target": 1789786800,
+        "horizon": 24,
+        "base": 100.0,
+        "prediction": 99.0,
+        "lower": 96.0,
+        "upper": 104.0,
+        "revision": "1d952420fba87f3c6dee4f240de0f1a0fbc790e3",
+        "input_hash": "518c82be080ba13c3eeb2b26d56a2ef5416986b6efa289d1f2fd44da244765e4",
+        "artifact_id": null,
+        "parent_id": null,
+        "path": [
+          {
+            "t": 1789704000,
+            "p": 99
+          },
+          {
+            "t": 1789707600,
+            "p": 99
+          },
+          {
+            "t": 1789711200,
+            "p": 99
+          },
+          {
+            "t": 1789714800,
+            "p": 99
+          },
+          {
+            "t": 1789718400,
+            "p": 99
+          },
+          {
+            "t": 1789722000,
+            "p": 99
+          },
+          {
+            "t": 1789725600,
+            "p": 99
+          },
+          {
+            "t": 1789729200,
+            "p": 99
+          },
+          {
+            "t": 1789732800,
+            "p": 99
+          },
+          {
+            "t": 1789736400,
+            "p": 99
+          },
+          {
+            "t": 1789740000,
+            "p": 99
+          },
+          {
+            "t": 1789743600,
+            "p": 99
+          },
+          {
+            "t": 1789747200,
+            "p": 99
+          },
+          {
+            "t": 1789750800,
+            "p": 99
+          },
+          {
+            "t": 1789754400,
+            "p": 99
+          },
+          {
+            "t": 1789758000,
+            "p": 99
+          },
+          {
+            "t": 1789761600,
+            "p": 99
+          },
+          {
+            "t": 1789765200,
+            "p": 99
+          },
+          {
+            "t": 1789768800,
+            "p": 99
+          },
+          {
+            "t": 1789772400,
+            "p": 99
+          },
+          {
+            "t": 1789776000,
+            "p": 99
+          },
+          {
+            "t": 1789779600,
+            "p": 99
+          },
+          {
+            "t": 1789783200,
+            "p": 99
+          },
+          {
+            "t": 1789786800,
+            "p": 99
+          }
+        ]
+      },
+      "outcome": {
+        "actual": 103.0,
+        "evaluated_at": 1789808891,
+        "actual_hash": "28e87e32dc2de43931109a0df65bc6aa243cec1b477a4e971121b01888c7f8ff",
+        "absolute_log_error": 0.039609138095045876,
+        "pinball": 0.004002135383676823,
+        "direction_correct": false,
+        "covered": true,
+        "interval_score": 0.08004270767353638
+      },
+      "quality": {
+        "id": "5a31695f0309892c0ce8ec349d60c3064558d0a02e16c7b7ef930118de3572d9",
+        "at": 1789808891,
+        "version": "outcome-three-venues-1pct-v1",
+        "status": "qualified",
+        "actual_observed_at": 1789786805,
+        "divergence": 0.0,
+        "fx": 1.0,
+        "input_verified": true,
+        "references": [
+          {
+            "source": "coinbase",
+            "asset": "BTC",
+            "ts": 1789786800,
+            "close": 103.0,
+            "observed_at": 1789786810,
+            "payload_hash": "b7f0d2b0dc6b404be3d5034efd352eb96e88b6f0469af561704173d27b46fe8a"
+          },
+          {
+            "source": "kraken",
+            "asset": "BTC",
+            "ts": 1789786800,
+            "close": 103.0,
+            "observed_at": 1789786810,
+            "payload_hash": "2a6b17e20cb5f673eefcbd2653237ed8e9a099df0d4928e7ec18fe12357cb742"
+          },
+          {
+            "source": "coinbase",
+            "asset": "USDT",
+            "ts": 1789786800,
+            "close": 1.0,
+            "observed_at": 1789786810,
+            "payload_hash": "c6c0203bcc907d8d81121f575d3eb92fa42d8312a2aa1cc1bd435e44eed7535d"
+          }
+        ]
+      },
+      "actual_path": [
+        {
+          "t": 1789758000,
+          "p": 103.0
+        },
+        {
+          "t": 1789761600,
+          "p": 103.0
+        },
+        {
+          "t": 1789765200,
+          "p": 103.0
+        },
+        {
+          "t": 1789768800,
+          "p": 103.0
+        },
+        {
+          "t": 1789772400,
+          "p": 103.0
+        },
+        {
+          "t": 1789776000,
+          "p": 103.0
+        },
+        {
+          "t": 1789779600,
+          "p": 103.0
+        },
+        {
+          "t": 1789783200,
+          "p": 103.0
+        },
+        {
+          "t": 1789786800,
+          "p": 103.0
+        }
+      ],
+      "baselines": [
+        {
+          "model": "momentum",
+          "prediction": 101.0,
+          "error": 0.019608471388376337
+        },
+        {
+          "model": "persistence",
+          "prediction": 100.0,
+          "error": 0.02955880224154443
+        },
+        {
+          "model": "timesfm",
+          "prediction": 99.0,
+          "error": 0.039609138095045876
+        }
+      ]
+    },
+    {
+      "id": "04053c355d1178d72dcdefaecec13f6178ede9baef3b5bcb759407f3b11e1972",
+      "claim": {
+        "experiment": "v1-log512-h24-72-hourly",
+        "model": "timesfm",
+        "asset": "BTC",
+        "origin": 1789704000,
+        "issued_at": 1789704002,
+        "target": 1789790400,
+        "horizon": 24,
+        "base": 100.0,
+        "prediction": 99.0,
+        "lower": 96.0,
+        "upper": 104.0,
+        "revision": "1d952420fba87f3c6dee4f240de0f1a0fbc790e3",
+        "input_hash": "e92891922b8fee1d6f79455c984810e351612f938cdaaf03c8ae34291644e2c4",
+        "artifact_id": null,
+        "parent_id": null,
+        "path": [
+          {
+            "t": 1789707600,
+            "p": 99
+          },
+          {
+            "t": 1789711200,
+            "p": 99
+          },
+          {
+            "t": 1789714800,
+            "p": 99
+          },
+          {
+            "t": 1789718400,
+            "p": 99
+          },
+          {
+            "t": 1789722000,
+            "p": 99
+          },
+          {
+            "t": 1789725600,
+            "p": 99
+          },
+          {
+            "t": 1789729200,
+            "p": 99
+          },
+          {
+            "t": 1789732800,
+            "p": 99
+          },
+          {
+            "t": 1789736400,
+            "p": 99
+          },
+          {
+            "t": 1789740000,
+            "p": 99
+          },
+          {
+            "t": 1789743600,
+            "p": 99
+          },
+          {
+            "t": 1789747200,
+            "p": 99
+          },
+          {
+            "t": 1789750800,
+            "p": 99
+          },
+          {
+            "t": 1789754400,
+            "p": 99
+          },
+          {
+            "t": 1789758000,
+            "p": 99
+          },
+          {
+            "t": 1789761600,
+            "p": 99
+          },
+          {
+            "t": 1789765200,
+            "p": 99
+          },
+          {
+            "t": 1789768800,
+            "p": 99
+          },
+          {
+            "t": 1789772400,
+            "p": 99
+          },
+          {
+            "t": 1789776000,
+            "p": 99
+          },
+          {
+            "t": 1789779600,
+            "p": 99
+          },
+          {
+            "t": 1789783200,
+            "p": 99
+          },
+          {
+            "t": 1789786800,
+            "p": 99
+          },
+          {
+            "t": 1789790400,
+            "p": 99
+          }
+        ]
+      },
+      "outcome": {
+        "actual": 103.0,
+        "evaluated_at": 1789808891,
+        "actual_hash": "d81bf370712e14df788259acdb5258c6e37859df994a6009108988c31d4d1101",
+        "absolute_log_error": 0.039609138095045876,
+        "pinball": 0.004002135383676823,
+        "direction_correct": false,
+        "covered": true,
+        "interval_score": 0.08004270767353638
+      },
+      "quality": {
+        "id": "a50e22ea46c1edfa2d7421cca23d76adf3487b8e980b19d18c903753cef5a61a",
+        "at": 1789808891,
+        "version": "outcome-three-venues-1pct-v1",
+        "status": "qualified",
+        "actual_observed_at": 1789790405,
+        "divergence": 0.0,
+        "fx": 1.0,
+        "input_verified": true,
+        "references": [
+          {
+            "source": "coinbase",
+            "asset": "BTC",
+            "ts": 1789790400,
+            "close": 103.0,
+            "observed_at": 1789790410,
+            "payload_hash": "9361e3598571241d883782a4c0a132a6ad158f1aac3b274163be632d0a945053"
+          },
+          {
+            "source": "kraken",
+            "asset": "BTC",
+            "ts": 1789790400,
+            "close": 103.0,
+            "observed_at": 1789790410,
+            "payload_hash": "0315a75d9706961b6f648a782668d9b45040bef455fdd1900c6f12b25bbccba3"
+          },
+          {
+            "source": "coinbase",
+            "asset": "USDT",
+            "ts": 1789790400,
+            "close": 1.0,
+            "observed_at": 1789790410,
+            "payload_hash": "af2889eb04173a81aa74341e28dadbdd8491dff91de44a2cec02e930b4f8e0c3"
+          }
+        ]
+      },
+      "actual_path": [
+        {
+          "t": 1789758000,
+          "p": 103.0
+        },
+        {
+          "t": 1789761600,
+          "p": 103.0
+        },
+        {
+          "t": 1789765200,
+          "p": 103.0
+        },
+        {
+          "t": 1789768800,
+          "p": 103.0
+        },
+        {
+          "t": 1789772400,
+          "p": 103.0
+        },
+        {
+          "t": 1789776000,
+          "p": 103.0
+        },
+        {
+          "t": 1789779600,
+          "p": 103.0
+        },
+        {
+          "t": 1789783200,
+          "p": 103.0
+        },
+        {
+          "t": 1789786800,
+          "p": 103.0
+        },
+        {
+          "t": 1789790400,
+          "p": 103.0
+        }
+      ],
+      "baselines": [
+        {
+          "model": "momentum",
+          "prediction": 101.0,
+          "error": 0.019608471388376337
+        },
+        {
+          "model": "persistence",
+          "prediction": 100.0,
+          "error": 0.02955880224154443
+        },
+        {
+          "model": "timesfm",
+          "prediction": 99.0,
+          "error": 0.039609138095045876
+        }
+      ]
+    },
+    {
+      "id": "c7efe06482397cb85a0d3fcfdf9036a8bb693f995d043c490918e5f2383d94c8",
+      "claim": {
+        "experiment": "v1-log512-h24-72-hourly",
+        "model": "timesfm",
+        "asset": "BTC",
+        "origin": 1789707600,
+        "issued_at": 1789707602,
+        "target": 1789794000,
+        "horizon": 24,
+        "base": 100.0,
+        "prediction": 99.0,
+        "lower": 96.0,
+        "upper": 104.0,
+        "revision": "1d952420fba87f3c6dee4f240de0f1a0fbc790e3",
+        "input_hash": "fc6ee5020c1aaeda2a883d8f4cc91309874c71b9e4f114c303b8fc9a943d2ecc",
+        "artifact_id": null,
+        "parent_id": null,
+        "path": [
+          {
+            "t": 1789711200,
+            "p": 99
+          },
+          {
+            "t": 1789714800,
+            "p": 99
+          },
+          {
+            "t": 1789718400,
+            "p": 99
+          },
+          {
+            "t": 1789722000,
+            "p": 99
+          },
+          {
+            "t": 1789725600,
+            "p": 99
+          },
+          {
+            "t": 1789729200,
+            "p": 99
+          },
+          {
+            "t": 1789732800,
+            "p": 99
+          },
+          {
+            "t": 1789736400,
+            "p": 99
+          },
+          {
+            "t": 1789740000,
+            "p": 99
+          },
+          {
+            "t": 1789743600,
+            "p": 99
+          },
+          {
+            "t": 1789747200,
+            "p": 99
+          },
+          {
+            "t": 1789750800,
+            "p": 99
+          },
+          {
+            "t": 1789754400,
+            "p": 99
+          },
+          {
+            "t": 1789758000,
+            "p": 99
+          },
+          {
+            "t": 1789761600,
+            "p": 99
+          },
+          {
+            "t": 1789765200,
+            "p": 99
+          },
+          {
+            "t": 1789768800,
+            "p": 99
+          },
+          {
+            "t": 1789772400,
+            "p": 99
+          },
+          {
+            "t": 1789776000,
+            "p": 99
+          },
+          {
+            "t": 1789779600,
+            "p": 99
+          },
+          {
+            "t": 1789783200,
+            "p": 99
+          },
+          {
+            "t": 1789786800,
+            "p": 99
+          },
+          {
+            "t": 1789790400,
+            "p": 99
+          },
+          {
+            "t": 1789794000,
+            "p": 99
+          }
+        ]
+      },
+      "outcome": {
+        "actual": 103.0,
+        "evaluated_at": 1789808891,
+        "actual_hash": "db6adb8e9de3f80ace33d9944d0101f98d400dc019c125d5ba6ab4ee6aed4539",
+        "absolute_log_error": 0.039609138095045876,
+        "pinball": 0.004002135383676823,
+        "direction_correct": false,
+        "covered": true,
+        "interval_score": 0.08004270767353638
+      },
+      "quality": {
+        "id": "04df22beefbf43dd9b7a1a68dedb5d3172826988c3aef05783bc12d102409397",
+        "at": 1789808891,
+        "version": "outcome-three-venues-1pct-v1",
+        "status": "qualified",
+        "actual_observed_at": 1789794005,
+        "divergence": 0.0,
+        "fx": 1.0,
+        "input_verified": true,
+        "references": [
+          {
+            "source": "coinbase",
+            "asset": "BTC",
+            "ts": 1789794000,
+            "close": 103.0,
+            "observed_at": 1789794010,
+            "payload_hash": "32515a9bf44b89f2a4cca5f65130ef9995aa47d7bfcc364fd2145a44e69bd6cf"
+          },
+          {
+            "source": "kraken",
+            "asset": "BTC",
+            "ts": 1789794000,
+            "close": 103.0,
+            "observed_at": 1789794010,
+            "payload_hash": "8736c54bc6c9f9cc32328bf9f0892e1e0ff6e13457f8c738a8cb8502927e85c8"
+          },
+          {
+            "source": "coinbase",
+            "asset": "USDT",
+            "ts": 1789794000,
+            "close": 1.0,
+            "observed_at": 1789794010,
+            "payload_hash": "22aa75eff841553225f6d77b85c05ed4f5d7af902cdd5de64e56889a70402b8d"
+          }
+        ]
+      },
+      "actual_path": [
+        {
+          "t": 1789758000,
+          "p": 103.0
+        },
+        {
+          "t": 1789761600,
+          "p": 103.0
+        },
+        {
+          "t": 1789765200,
+          "p": 103.0
+        },
+        {
+          "t": 1789768800,
+          "p": 103.0
+        },
+        {
+          "t": 1789772400,
+          "p": 103.0
+        },
+        {
+          "t": 1789776000,
+          "p": 103.0
+        },
+        {
+          "t": 1789779600,
+          "p": 103.0
+        },
+        {
+          "t": 1789783200,
+          "p": 103.0
+        },
+        {
+          "t": 1789786800,
+          "p": 103.0
+        },
+        {
+          "t": 1789790400,
+          "p": 103.0
+        },
+        {
+          "t": 1789794000,
+          "p": 103.0
+        }
+      ],
+      "baselines": [
+        {
+          "model": "momentum",
+          "prediction": 101.0,
+          "error": 0.019608471388376337
+        },
+        {
+          "model": "persistence",
+          "prediction": 100.0,
+          "error": 0.02955880224154443
+        },
+        {
+          "model": "timesfm",
+          "prediction": 99.0,
+          "error": 0.039609138095045876
+        }
+      ]
+    },
+    {
+      "id": "d9f7f3a5b71646d40e622c0ff0652f21f3cfa50183fd71268417c2c125e8e8be",
+      "claim": {
+        "experiment": "v1-log512-h24-72-hourly",
+        "model": "timesfm",
+        "asset": "BTC",
+        "origin": 1789711200,
+        "issued_at": 1789711202,
+        "target": 1789797600,
+        "horizon": 24,
+        "base": 100.0,
+        "prediction": 99.0,
+        "lower": 96.0,
+        "upper": 104.0,
+        "revision": "1d952420fba87f3c6dee4f240de0f1a0fbc790e3",
+        "input_hash": "0e24e2759b4f5a2890de6746d10af54ba4bf67c1c83d158d0df45f9ab8704cd9",
+        "artifact_id": null,
+        "parent_id": null,
+        "path": [
+          {
+            "t": 1789714800,
+            "p": 99
+          },
+          {
+            "t": 1789718400,
+            "p": 99
+          },
+          {
+            "t": 1789722000,
+            "p": 99
+          },
+          {
+            "t": 1789725600,
+            "p": 99
+          },
+          {
+            "t": 1789729200,
+            "p": 99
+          },
+          {
+            "t": 1789732800,
+            "p": 99
+          },
+          {
+            "t": 1789736400,
+            "p": 99
+          },
+          {
+            "t": 1789740000,
+            "p": 99
+          },
+          {
+            "t": 1789743600,
+            "p": 99
+          },
+          {
+            "t": 1789747200,
+            "p": 99
+          },
+          {
+            "t": 1789750800,
+            "p": 99
+          },
+          {
+            "t": 1789754400,
+            "p": 99
+          },
+          {
+            "t": 1789758000,
+            "p": 99
+          },
+          {
+            "t": 1789761600,
+            "p": 99
+          },
+          {
+            "t": 1789765200,
+            "p": 99
+          },
+          {
+            "t": 1789768800,
+            "p": 99
+          },
+          {
+            "t": 1789772400,
+            "p": 99
+          },
+          {
+            "t": 1789776000,
+            "p": 99
+          },
+          {
+            "t": 1789779600,
+            "p": 99
+          },
+          {
+            "t": 1789783200,
+            "p": 99
+          },
+          {
+            "t": 1789786800,
+            "p": 99
+          },
+          {
+            "t": 1789790400,
+            "p": 99
+          },
+          {
+            "t": 1789794000,
+            "p": 99
+          },
+          {
+            "t": 1789797600,
+            "p": 99
+          }
+        ]
+      },
+      "outcome": {
+        "actual": 103.0,
+        "evaluated_at": 1789808891,
+        "actual_hash": "6907285024d919fd124c9eeece32d65e40e65f2556cb6ae48b438697508f6a70",
+        "absolute_log_error": 0.039609138095045876,
+        "pinball": 0.004002135383676823,
+        "direction_correct": false,
+        "covered": true,
+        "interval_score": 0.08004270767353638
+      },
+      "quality": {
+        "id": "14141b4a611ed1aa902ea84b2f0d739ea1bbfc78539bea515d3f2fb7447b8f77",
+        "at": 1789808891,
+        "version": "outcome-three-venues-1pct-v1",
+        "status": "qualified",
+        "actual_observed_at": 1789797605,
+        "divergence": 0.0,
+        "fx": 1.0,
+        "input_verified": true,
+        "references": [
+          {
+            "source": "coinbase",
+            "asset": "BTC",
+            "ts": 1789797600,
+            "close": 103.0,
+            "observed_at": 1789797610,
+            "payload_hash": "4ce2b5317cf251033a8edd273b2896dc707c334d784f3f8c46979267cd46aebf"
+          },
+          {
+            "source": "kraken",
+            "asset": "BTC",
+            "ts": 1789797600,
+            "close": 103.0,
+            "observed_at": 1789797610,
+            "payload_hash": "5d1b345ae5652ea6fc63ed9dc7dfb463fe21084ac8a84a893fec5bfcaa5743e3"
+          },
+          {
+            "source": "coinbase",
+            "asset": "USDT",
+            "ts": 1789797600,
+            "close": 1.0,
+            "observed_at": 1789797610,
+            "payload_hash": "55501b20c0e875872298b78c7a4595d257bde3aa75fcc2774e35e3e855dab635"
+          }
+        ]
+      },
+      "actual_path": [
+        {
+          "t": 1789758000,
+          "p": 103.0
+        },
+        {
+          "t": 1789761600,
+          "p": 103.0
+        },
+        {
+          "t": 1789765200,
+          "p": 103.0
+        },
+        {
+          "t": 1789768800,
+          "p": 103.0
+        },
+        {
+          "t": 1789772400,
+          "p": 103.0
+        },
+        {
+          "t": 1789776000,
+          "p": 103.0
+        },
+        {
+          "t": 1789779600,
+          "p": 103.0
+        },
+        {
+          "t": 1789783200,
+          "p": 103.0
+        },
+        {
+          "t": 1789786800,
+          "p": 103.0
+        },
+        {
+          "t": 1789790400,
+          "p": 103.0
+        },
+        {
+          "t": 1789794000,
+          "p": 103.0
+        },
+        {
+          "t": 1789797600,
+          "p": 103.0
+        }
+      ],
+      "baselines": [
+        {
+          "model": "momentum",
+          "prediction": 101.0,
+          "error": 0.019608471388376337
+        },
+        {
+          "model": "persistence",
+          "prediction": 100.0,
+          "error": 0.02955880224154443
+        },
+        {
+          "model": "timesfm",
+          "prediction": 99.0,
+          "error": 0.039609138095045876
+        }
+      ]
+    },
+    {
+      "id": "71353a6ec1ebd7114920aa7273966454d65ea87cfdc0f4c525b365e9ab2cd11b",
+      "claim": {
+        "experiment": "v1-log512-h24-72-hourly",
+        "model": "timesfm",
+        "asset": "BTC",
+        "origin": 1789714800,
+        "issued_at": 1789714802,
+        "target": 1789801200,
+        "horizon": 24,
+        "base": 100.0,
+        "prediction": 99.0,
+        "lower": 96.0,
+        "upper": 104.0,
+        "revision": "1d952420fba87f3c6dee4f240de0f1a0fbc790e3",
+        "input_hash": "e8523747d1a97c8e52006ac07bd8c5760f97cecfbbc78456ffed47d9e7bd07bd",
+        "artifact_id": null,
+        "parent_id": null,
+        "path": [
+          {
+            "t": 1789718400,
+            "p": 99
+          },
+          {
+            "t": 1789722000,
+            "p": 99
+          },
+          {
+            "t": 1789725600,
+            "p": 99
+          },
+          {
+            "t": 1789729200,
+            "p": 99
+          },
+          {
+            "t": 1789732800,
+            "p": 99
+          },
+          {
+            "t": 1789736400,
+            "p": 99
+          },
+          {
+            "t": 1789740000,
+            "p": 99
+          },
+          {
+            "t": 1789743600,
+            "p": 99
+          },
+          {
+            "t": 1789747200,
+            "p": 99
+          },
+          {
+            "t": 1789750800,
+            "p": 99
+          },
+          {
+            "t": 1789754400,
+            "p": 99
+          },
+          {
+            "t": 1789758000,
+            "p": 99
+          },
+          {
+            "t": 1789761600,
+            "p": 99
+          },
+          {
+            "t": 1789765200,
+            "p": 99
+          },
+          {
+            "t": 1789768800,
+            "p": 99
+          },
+          {
+            "t": 1789772400,
+            "p": 99
+          },
+          {
+            "t": 1789776000,
+            "p": 99
+          },
+          {
+            "t": 1789779600,
+            "p": 99
+          },
+          {
+            "t": 1789783200,
+            "p": 99
+          },
+          {
+            "t": 1789786800,
+            "p": 99
+          },
+          {
+            "t": 1789790400,
+            "p": 99
+          },
+          {
+            "t": 1789794000,
+            "p": 99
+          },
+          {
+            "t": 1789797600,
+            "p": 99
+          },
+          {
+            "t": 1789801200,
+            "p": 99
+          }
+        ]
+      },
+      "outcome": {
+        "actual": 103.0,
+        "evaluated_at": 1789808891,
+        "actual_hash": "92479822473398b6c6fb1edf5a698eebbbb1eaabdd191bd0653aa821e670e8f0",
+        "absolute_log_error": 0.039609138095045876,
+        "pinball": 0.004002135383676823,
+        "direction_correct": false,
+        "covered": true,
+        "interval_score": 0.08004270767353638
+      },
+      "quality": {
+        "id": "f9b839392f247d3d3d83ce59caa4bb5cf31704c0e481d83dbcf0a3a7aadeddf7",
+        "at": 1789808891,
+        "version": "outcome-three-venues-1pct-v1",
+        "status": "qualified",
+        "actual_observed_at": 1789801205,
+        "divergence": 0.0,
+        "fx": 1.0,
+        "input_verified": true,
+        "references": [
+          {
+            "source": "coinbase",
+            "asset": "BTC",
+            "ts": 1789801200,
+            "close": 103.0,
+            "observed_at": 1789801210,
+            "payload_hash": "f79080e3bef56552cc3ea9070c28819b0df6a66c093a2c359fdae4e781ae3a89"
+          },
+          {
+            "source": "kraken",
+            "asset": "BTC",
+            "ts": 1789801200,
+            "close": 103.0,
+            "observed_at": 1789801210,
+            "payload_hash": "293bee091f57448e0cae3e097c0b70af2cef2e351840110b6175e4548bc98901"
+          },
+          {
+            "source": "coinbase",
+            "asset": "USDT",
+            "ts": 1789801200,
+            "close": 1.0,
+            "observed_at": 1789801210,
+            "payload_hash": "e727c0cc3d47cd2e890215b077f8aaa95c088976d4344746d3880c0d4925a919"
+          }
+        ]
+      },
+      "actual_path": [
+        {
+          "t": 1789758000,
+          "p": 103.0
+        },
+        {
+          "t": 1789761600,
+          "p": 103.0
+        },
+        {
+          "t": 1789765200,
+          "p": 103.0
+        },
+        {
+          "t": 1789768800,
+          "p": 103.0
+        },
+        {
+          "t": 1789772400,
+          "p": 103.0
+        },
+        {
+          "t": 1789776000,
+          "p": 103.0
+        },
+        {
+          "t": 1789779600,
+          "p": 103.0
+        },
+        {
+          "t": 1789783200,
+          "p": 103.0
+        },
+        {
+          "t": 1789786800,
+          "p": 103.0
+        },
+        {
+          "t": 1789790400,
+          "p": 103.0
+        },
+        {
+          "t": 1789794000,
+          "p": 103.0
+        },
+        {
+          "t": 1789797600,
+          "p": 103.0
+        },
+        {
+          "t": 1789801200,
+          "p": 103.0
+        }
+      ],
+      "baselines": [
+        {
+          "model": "momentum",
+          "prediction": 101.0,
+          "error": 0.019608471388376337
+        },
+        {
+          "model": "persistence",
+          "prediction": 100.0,
+          "error": 0.02955880224154443
+        },
+        {
+          "model": "timesfm",
+          "prediction": 99.0,
+          "error": 0.039609138095045876
+        }
+      ]
+    },
+    {
+      "id": "4094c9e0c3cd9b622654c302abfc045dccc55b15c12976864bcb18743b4872c5",
+      "claim": {
+        "experiment": "v1-log512-h24-72-hourly",
+        "model": "timesfm",
+        "asset": "BTC",
+        "origin": 1789718400,
+        "issued_at": 1789718402,
+        "target": 1789804800,
+        "horizon": 24,
+        "base": 100.0,
+        "prediction": 99.0,
+        "lower": 96.0,
+        "upper": 104.0,
+        "revision": "1d952420fba87f3c6dee4f240de0f1a0fbc790e3",
+        "input_hash": "97978d5602924d4f7c086126cada5172ae80d5be71c61b0b438f68d85caacb71",
+        "artifact_id": null,
+        "parent_id": null,
+        "path": [
+          {
+            "t": 1789722000,
+            "p": 99
+          },
+          {
+            "t": 1789725600,
+            "p": 99
+          },
+          {
+            "t": 1789729200,
+            "p": 99
+          },
+          {
+            "t": 1789732800,
+            "p": 99
+          },
+          {
+            "t": 1789736400,
+            "p": 99
+          },
+          {
+            "t": 1789740000,
+            "p": 99
+          },
+          {
+            "t": 1789743600,
+            "p": 99
+          },
+          {
+            "t": 1789747200,
+            "p": 99
+          },
+          {
+            "t": 1789750800,
+            "p": 99
+          },
+          {
+            "t": 1789754400,
+            "p": 99
+          },
+          {
+            "t": 1789758000,
+            "p": 99
+          },
+          {
+            "t": 1789761600,
+            "p": 99
+          },
+          {
+            "t": 1789765200,
+            "p": 99
+          },
+          {
+            "t": 1789768800,
+            "p": 99
+          },
+          {
+            "t": 1789772400,
+            "p": 99
+          },
+          {
+            "t": 1789776000,
+            "p": 99
+          },
+          {
+            "t": 1789779600,
+            "p": 99
+          },
+          {
+            "t": 1789783200,
+            "p": 99
+          },
+          {
+            "t": 1789786800,
+            "p": 99
+          },
+          {
+            "t": 1789790400,
+            "p": 99
+          },
+          {
+            "t": 1789794000,
+            "p": 99
+          },
+          {
+            "t": 1789797600,
+            "p": 99
+          },
+          {
+            "t": 1789801200,
+            "p": 99
+          },
+          {
+            "t": 1789804800,
+            "p": 99
+          }
+        ]
+      },
+      "outcome": {
+        "actual": 103.0,
+        "evaluated_at": 1789808891,
+        "actual_hash": "152ed58a5f4fc7d6c396ee9ab63ad6033ed445b06f24898f65079e90d1cf0bdf",
+        "absolute_log_error": 0.039609138095045876,
+        "pinball": 0.004002135383676823,
+        "direction_correct": false,
+        "covered": true,
+        "interval_score": 0.08004270767353638
+      },
+      "quality": {
+        "id": "0949420f81bc7220d40139bbb086ea99d24d04d130d424a5f840d50b3cfebd2a",
+        "at": 1789808891,
+        "version": "outcome-three-venues-1pct-v1",
+        "status": "qualified",
+        "actual_observed_at": 1789804805,
+        "divergence": 0.0,
+        "fx": 1.0,
+        "input_verified": true,
+        "references": [
+          {
+            "source": "coinbase",
+            "asset": "BTC",
+            "ts": 1789804800,
+            "close": 103.0,
+            "observed_at": 1789804810,
+            "payload_hash": "a0f461e138695bfb1722c42e4455040f2e0b2d7214d48fe4d0c70b40eb52e89e"
+          },
+          {
+            "source": "kraken",
+            "asset": "BTC",
+            "ts": 1789804800,
+            "close": 103.0,
+            "observed_at": 1789804810,
+            "payload_hash": "c890cf5b11897558aef2df3146b4276eaeecbd0eaa4498f6b6204b99e6ee2298"
+          },
+          {
+            "source": "coinbase",
+            "asset": "USDT",
+            "ts": 1789804800,
+            "close": 1.0,
+            "observed_at": 1789804810,
+            "payload_hash": "ae982ea912fa82d7cb68d0a380d169071ca6342b7e8ec6342a11ae82851a07a3"
+          }
+        ]
+      },
+      "actual_path": [
+        {
+          "t": 1789758000,
+          "p": 103.0
+        },
+        {
+          "t": 1789761600,
+          "p": 103.0
+        },
+        {
+          "t": 1789765200,
+          "p": 103.0
+        },
+        {
+          "t": 1789768800,
+          "p": 103.0
+        },
+        {
+          "t": 1789772400,
+          "p": 103.0
+        },
+        {
+          "t": 1789776000,
+          "p": 103.0
+        },
+        {
+          "t": 1789779600,
+          "p": 103.0
+        },
+        {
+          "t": 1789783200,
+          "p": 103.0
+        },
+        {
+          "t": 1789786800,
+          "p": 103.0
+        },
+        {
+          "t": 1789790400,
+          "p": 103.0
+        },
+        {
+          "t": 1789794000,
+          "p": 103.0
+        },
+        {
+          "t": 1789797600,
+          "p": 103.0
+        },
+        {
+          "t": 1789801200,
+          "p": 103.0
+        },
+        {
+          "t": 1789804800,
+          "p": 103.0
+        }
+      ],
+      "baselines": [
+        {
+          "model": "momentum",
+          "prediction": 101.0,
+          "error": 0.019608471388376337
+        },
+        {
+          "model": "persistence",
+          "prediction": 100.0,
+          "error": 0.02955880224154443
+        },
+        {
+          "model": "timesfm",
+          "prediction": 99.0,
+          "error": 0.039609138095045876
+        }
+      ]
+    },
+    {
+      "id": "d6ff41ebf59cd54b22d6ccca1ba9ac646bdd5b355d33bd7b1f4a7ebeb65575a9",
+      "claim": {
+        "experiment": "v1-log512-h24-72-hourly",
+        "model": "timesfm",
+        "asset": "BTC",
+        "origin": 1789722000,
+        "issued_at": 1789722002,
+        "target": 1789808400,
+        "horizon": 24,
+        "base": 100.0,
+        "prediction": 99.0,
+        "lower": 96.0,
+        "upper": 104.0,
+        "revision": "1d952420fba87f3c6dee4f240de0f1a0fbc790e3",
+        "input_hash": "f9db2fc0f0e2ad1838df730c3ec46bdf6790230251aee4af1a396169e734d85e",
+        "artifact_id": null,
+        "parent_id": null,
+        "path": [
+          {
+            "t": 1789725600,
+            "p": 99
+          },
+          {
+            "t": 1789729200,
+            "p": 99
+          },
+          {
+            "t": 1789732800,
+            "p": 99
+          },
+          {
+            "t": 1789736400,
+            "p": 99
+          },
+          {
+            "t": 1789740000,
+            "p": 99
+          },
+          {
+            "t": 1789743600,
+            "p": 99
+          },
+          {
+            "t": 1789747200,
+            "p": 99
+          },
+          {
+            "t": 1789750800,
+            "p": 99
+          },
+          {
+            "t": 1789754400,
+            "p": 99
+          },
+          {
+            "t": 1789758000,
+            "p": 99
+          },
+          {
+            "t": 1789761600,
+            "p": 99
+          },
+          {
+            "t": 1789765200,
+            "p": 99
+          },
+          {
+            "t": 1789768800,
+            "p": 99
+          },
+          {
+            "t": 1789772400,
+            "p": 99
+          },
+          {
+            "t": 1789776000,
+            "p": 99
+          },
+          {
+            "t": 1789779600,
+            "p": 99
+          },
+          {
+            "t": 1789783200,
+            "p": 99
+          },
+          {
+            "t": 1789786800,
+            "p": 99
+          },
+          {
+            "t": 1789790400,
+            "p": 99
+          },
+          {
+            "t": 1789794000,
+            "p": 99
+          },
+          {
+            "t": 1789797600,
+            "p": 99
+          },
+          {
+            "t": 1789801200,
+            "p": 99
+          },
+          {
+            "t": 1789804800,
+            "p": 99
+          },
+          {
+            "t": 1789808400,
+            "p": 99
+          }
+        ]
+      },
+      "outcome": {
+        "actual": 103.0,
+        "evaluated_at": 1789808891,
+        "actual_hash": "fc04f7cf6fa286344c450a94ef86b663911a16fb9f9a337160c8c51d7afb24d2",
+        "absolute_log_error": 0.039609138095045876,
+        "pinball": 0.004002135383676823,
+        "direction_correct": false,
+        "covered": true,
+        "interval_score": 0.08004270767353638
+      },
+      "quality": {
+        "id": "aa381585f7c1ba041aceba63620ab688879412b255cbb14877ae64719756993e",
+        "at": 1789808891,
+        "version": "outcome-three-venues-1pct-v1",
+        "status": "qualified",
+        "actual_observed_at": 1789808405,
+        "divergence": 0.0,
+        "fx": 1.0,
+        "input_verified": true,
+        "references": [
+          {
+            "source": "coinbase",
+            "asset": "BTC",
+            "ts": 1789808400,
+            "close": 103.0,
+            "observed_at": 1789808410,
+            "payload_hash": "fbfdb7923b34f2fc290629ef7fd84af94db38f0229154e1edb2c00450a38db89"
+          },
+          {
+            "source": "kraken",
+            "asset": "BTC",
+            "ts": 1789808400,
+            "close": 103.0,
+            "observed_at": 1789808410,
+            "payload_hash": "e6390f80aba65f35662c13448877093bbe8a906e5af90834abee5706c4f0f816"
+          },
+          {
+            "source": "coinbase",
+            "asset": "USDT",
+            "ts": 1789808400,
+            "close": 1.0,
+            "observed_at": 1789808410,
+            "payload_hash": "29c2a703e85634b6061892ea220bdb35fa53825b3438abd115a91887aa78fda5"
+          }
+        ]
+      },
+      "actual_path": [
+        {
+          "t": 1789758000,
+          "p": 103.0
+        },
+        {
+          "t": 1789761600,
+          "p": 103.0
+        },
+        {
+          "t": 1789765200,
+          "p": 103.0
+        },
+        {
+          "t": 1789768800,
+          "p": 103.0
+        },
+        {
+          "t": 1789772400,
+          "p": 103.0
+        },
+        {
+          "t": 1789776000,
+          "p": 103.0
+        },
+        {
+          "t": 1789779600,
+          "p": 103.0
+        },
+        {
+          "t": 1789783200,
+          "p": 103.0
+        },
+        {
+          "t": 1789786800,
+          "p": 103.0
+        },
+        {
+          "t": 1789790400,
+          "p": 103.0
+        },
+        {
+          "t": 1789794000,
+          "p": 103.0
+        },
+        {
+          "t": 1789797600,
+          "p": 103.0
+        },
+        {
+          "t": 1789801200,
+          "p": 103.0
+        },
+        {
+          "t": 1789804800,
+          "p": 103.0
+        },
+        {
+          "t": 1789808400,
+          "p": 103.0
+        }
+      ],
+      "baselines": [
+        {
+          "model": "momentum",
+          "prediction": 101.0,
+          "error": 0.019608471388376337
+        },
+        {
+          "model": "persistence",
+          "prediction": 100.0,
+          "error": 0.02955880224154443
+        },
+        {
+          "model": "timesfm",
+          "prediction": 99.0,
+          "error": 0.039609138095045876
+        }
+      ]
+    },
+    {
+      "id": "ee7d2302422bc31f80a88e95028a46d78680ed17503c96716738056e6a4bfcdf",
+      "claim": {
+        "experiment": "v1-log512-h24-72-hourly",
+        "model": "timesfm",
+        "asset": "BTC",
+        "origin": 1789808400,
+        "issued_at": 1789808402,
+        "target": 1789894800,
+        "horizon": 24,
+        "base": 100.0,
+        "prediction": 99.0,
+        "lower": 96.0,
+        "upper": 104.0,
+        "revision": "1d952420fba87f3c6dee4f240de0f1a0fbc790e3",
+        "input_hash": "0ce2f6ea1fea6fe713d0e6b27253dcff877960d2a317884c815df0079e7a2903",
+        "artifact_id": null,
+        "parent_id": null,
+        "path": [
+          {
+            "t": 1789812000,
+            "p": 99
+          },
+          {
+            "t": 1789815600,
+            "p": 99
+          },
+          {
+            "t": 1789819200,
+            "p": 99
+          },
+          {
+            "t": 1789822800,
+            "p": 99
+          },
+          {
+            "t": 1789826400,
+            "p": 99
+          },
+          {
+            "t": 1789830000,
+            "p": 99
+          },
+          {
+            "t": 1789833600,
+            "p": 99
+          },
+          {
+            "t": 1789837200,
+            "p": 99
+          },
+          {
+            "t": 1789840800,
+            "p": 99
+          },
+          {
+            "t": 1789844400,
+            "p": 99
+          },
+          {
+            "t": 1789848000,
+            "p": 99
+          },
+          {
+            "t": 1789851600,
+            "p": 99
+          },
+          {
+            "t": 1789855200,
+            "p": 99
+          },
+          {
+            "t": 1789858800,
+            "p": 99
+          },
+          {
+            "t": 1789862400,
+            "p": 99
+          },
+          {
+            "t": 1789866000,
+            "p": 99
+          },
+          {
+            "t": 1789869600,
+            "p": 99
+          },
+          {
+            "t": 1789873200,
+            "p": 99
+          },
+          {
+            "t": 1789876800,
+            "p": 99
+          },
+          {
+            "t": 1789880400,
+            "p": 99
+          },
+          {
+            "t": 1789884000,
+            "p": 99
+          },
+          {
+            "t": 1789887600,
+            "p": 99
+          },
+          {
+            "t": 1789891200,
+            "p": 99
+          },
+          {
+            "t": 1789894800,
+            "p": 99
+          }
+        ]
+      },
+      "outcome": null,
+      "quality": null,
+      "actual_path": [],
+      "baselines": [
+        {
+          "model": "momentum",
+          "prediction": 101.0,
+          "error": null
+        },
+        {
+          "model": "persistence",
+          "prediction": 100.0,
+          "error": null
+        },
+        {
+          "model": "timesfm",
+          "prediction": 99.0,
+          "error": null
+        }
+      ]
+    }
+  ]
+}

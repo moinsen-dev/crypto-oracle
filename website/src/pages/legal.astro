@@ -1,0 +1,15 @@
+---
+import Layout from '../layouts/Layout.astro';
+import operator from '../data/operator.json';
+---
+<Layout title="Legal notice / Impressum" description="Operator and editorial contact information for the CryptoOracle technology proof of concept, a project by Ulrich Diedrichsen in Hamburg, Germany.">
+  <div class="wrap legal-wrap">
+    <header class="page-hero"><p class="eyebrow">OPERATOR INFORMATION</p><h1>Legal notice.</h1><p>Impressum · Information under Section 5 of the German Digital Services Act (DDG).</p></header>
+    <div class="reading-content legal-content">
+      <section><h2>Website operator</h2><address>{operator.name}<br /> {operator.street}<br /> {operator.postalCode} {operator.city}<br /> {operator.country}</address><p>Email: <a href={`mailto:${operator.email}`}>{operator.email || 'Contact address pending verification'}</a><br /> Website: <a href={operator.website} rel="external noreferrer">www.moinsen.dev</a></p><p>VAT identification number under Section 27a UStG: <strong>{operator.vatId}</strong></p></section>
+      <section><h2>Editorial responsibility</h2><p>{operator.name}, at the address above, is responsible for the editorial content of this site.</p></section>
+      <section><h2>About this project</h2><p>CryptoOracle is a technology and research proof of concept. The public site documents engineering decisions and dated experimental findings. It does not provide personalised investment advice, execute transactions or accept funds. Historical forecast results do not establish future investment performance.</p><p>Model and service names belong to their respective owners. Their mention describes the technology used and does not imply endorsement.</p></section>
+      <section><h2>Contact and privacy</h2><p>For questions about the site or a correction to a published result, contact the operator at the email address above. The <a href="/privacy/">privacy notice</a> explains how website access and contact enquiries are handled.</p><p class="fine-print">Name, address and VAT ID from <a href={operator.source} rel="external noreferrer">Moinsen’s legal notice</a>, checked on 18 September 2026. The contact email was provided by the operator on the same date.</p></section>
+    </div>
+  </div>
+</Layout>

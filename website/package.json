@@ -1,0 +1,26 @@
+{
+  "name": "crypto-oracle-public",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev --host 127.0.0.1",
+    "check": "astro check && node --test scripts/*.test.mjs",
+    "build": "astro build && node scripts/verify-public-build.mjs",
+    "preview": "wrangler dev --local --ip 127.0.0.1 --port 4321",
+    "deploy:dry-run": "npm run check && npm run build && wrangler deploy --dry-run",
+    "deploy": "npm run check && npm run build && wrangler deploy"
+  },
+  "dependencies": {
+    "astro": "7.3.3"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.10",
+    "@types/node": "24.13.5",
+    "typescript": "5.9.3",
+    "wrangler": "4.134.0"
+  }
+}

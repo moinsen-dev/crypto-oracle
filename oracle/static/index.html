@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#edf1e9"><title>CryptoOracle · Research desk</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='12' fill='%23263e32'/%3E%3Ccircle cx='20' cy='20' r='10' fill='none' stroke='%23d7efba' stroke-width='3'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/static/style.css"><script src="/static/app.js" defer></script>
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="/" aria-label="CryptoOracle Startseite"><span class="brand-mark">◉</span> CryptoOracle <span class="tag">LAB</span></a>
+  <nav aria-label="Hauptnavigation"><a href="#overview">Übersicht</a><a href="#research">Modellvergleich</a><a href="#journal">Prognosejournal</a></nav>
+  <span class="connection" id="connection">Verbindung wird geprüft</span>
+</header>
+<main id="overview">
+  <div class="page-heading"><div><div class="eyebrow">DEIN MARKT. EIN ÜBERPRÜFBARER AUSBLICK.</div><h1>Ein Blick nach vorn.</h1><p>Kurse, Nachrichten und Prognosen. Mit jedem Tag besser überprüfbar.</p></div><button id="refresh" class="button secondary">↻ Aktualisieren</button></div>
+  <div id="error-banner" role="alert" hidden></div>
+  <section class="summary-strip" aria-label="Experimentstatus">
+    <div><span>MEIN PORTFOLIO</span><strong id="portfolio-value">—</strong><small id="portfolio-pnl">Bestände manuell hinzufügen</small></div>
+    <div><span>EXPERIMENT</span><strong>TimesFM 2.5 <i class="live-dot"></i></strong><small>Stündliche Prognosen · 3 Coins</small></div>
+    <div><span>PROGNOSEN GEPRÜFT</span><strong id="evaluated-count">—</strong><small id="evaluation-note">Live und Rücktest getrennt</small></div>
+    <div><span>NACHRICHTENARCHIV</span><strong id="news-count">—</strong><small>Titel mit Quelle und Erfassungszeit</small></div>
+  </section>
+  <div class="workspace">
+    <aside class="watchlist panel"><div class="section-heading"><h2>Meine Coins</h2><span class="muted">03</span></div><div id="asset-list"></div><div class="holding-box"><span class="eyebrow">DEIN BESTAND</span><strong id="holding-value">Noch kein Bestand</strong><small id="holding-quantity">Menge und Einstandskurs hinterlegen.</small><button id="edit-holding" class="button secondary full">Bestand verwalten</button></div><div class="research-note"><span class="note-icon">↗</span><strong>Eine Prognose ist eine Hypothese.</strong><p>Im Journal bleibt jeder Ausblick erhalten. Später vergleichen wir ihn mit dem tatsächlichen Verlauf.</p></div></aside>
+    <section class="chart-panel panel" aria-label="Kurs und Prognose">
+      <div class="chart-heading"><div><div class="asset-title"><span id="selected-icon" class="coin-icon btc">₿</span><h2 id="selected-name">Bitcoin</h2><span id="selected-symbol" class="muted">BTC / USDT</span></div><div class="current-price"><span id="current-price">—</span><span id="daily-change" class="change">—</span></div></div><div class="segmented" id="horizon-control" aria-label="Prognosehorizont"><button data-horizon="24" class="active" aria-pressed="true">24 Std.</button><button data-horizon="72" aria-pressed="false">72 Std.</button></div></div>
+      <div class="chart-toolbar"><div class="legend"><span><i class="key history"></i>Kurs</span><span><i class="key forecast"></i><span id="legend-model">TimesFM</span></span><span id="legend-band"><i class="key band"></i>Modellband Q10–Q90</span></div><select id="forecast-model" aria-label="Angezeigtes Prognosemodell"><option value="timesfm">Nur Kursmodell</option><option value="fusion_market">Kursmodell + Marktmerkmale</option><option value="fusion_news">Kursmodell + Nachrichten</option><option value="persistence">Vergleich: unveränderter Kurs</option><option value="momentum">Vergleich: Momentum</option></select></div>
+      <div id="forecast-notice" class="inline-note" hidden></div><div id="chart" class="chart" aria-live="polite"><div class="empty">Kursdaten werden geladen …</div></div>
+      <div class="forecast-summary"><div><span>PROGNOSE AM ZIELZEITPUNKT</span><strong id="forecast-price">—</strong><small id="forecast-target">Noch keine Prognose</small></div><div><span>VERÄNDERUNG ZUM STARTKURS</span><strong id="forecast-change">—</strong><small id="forecast-origin">—</small></div><div><span>MODELLBAND AM ZIEL</span><strong id="forecast-range">—</strong><small>Abdeckung wird empirisch geprüft</small></div></div>
+      <div class="chart-foot"><span id="price-status">Binance Spot · USDT</span><span>Modellausgabe · keine kalibrierte Zusage</span></div>
+    </section>
+    <aside class="news-panel panel"><div class="section-heading"><div><span class="eyebrow">WAS DEN MARKT BEWEGT</span><h2>Nachrichtenradar</h2></div><span class="radar-icon">◌</span></div><p class="panel-description">Relevante Meldungen zum gewählten Coin. FinBERT und JEV ordnen die Titel getrennt ein.</p><p id="jev-status" class="panel-description" aria-live="polite">JEV-Status wird geladen …</p><div id="news-list" class="news-list"></div><div class="news-footer">Modellwahrscheinlichkeiten betreffen die Texteinordnung, nicht künftige Kurse. JEV verändert die Kursprognose noch nicht.</div></aside>
+  </div>
+  <section class="fusion-banner"><span class="fusion-icon">⌘</span><div><h2>Was bringen die Nachrichten zusätzlich?</h2><p id="fusion-status">Der Vergleich startet, sobald genügend zeitlich korrekt erfasste Daten vorliegen.</p></div><span class="pill" id="fusion-badge">Sammelphase</span></section>
+  <section id="research" class="panel research-panel"><div class="section-heading"><div><span class="eyebrow">MESSEN STATT VERMUTEN</span><h2>Wie gut sind die Prognosen?</h2></div><div class="segmented" id="scope-control" aria-label="Auswertungszeitraum"><button data-scope="live" class="active" aria-pressed="true">Live-Experiment</button><button data-scope="backtest" aria-pressed="false">Historischer Rücktest</button></div></div><p id="metrics-description" class="panel-description">Nur abgeschlossene Prognosen. Jedes Modell wird auf denselben Startzeitpunkten mit dem unveränderten Kurs verglichen.</p><div id="metrics" class="table-scroll"></div><p class="footnote">Fehler: mittlere absolute Abweichung der logarithmischen Rendite in Prozentpunkten. Positiver Vorteil = kleinerer Fehler als die Basisprognose. Überlappende Zeitfenster sind keine unabhängigen Beobachtungen.</p></section>
+  <section id="journal" class="panel journal-panel"><div class="section-heading"><div><span class="eyebrow">NICHT NACHTRÄGLICH VERÄNDERT</span><h2>Das Prognosejournal</h2></div><a id="export" class="button secondary" href="/api/export.csv">↓ CSV exportieren</a></div><div id="journal-table" class="table-scroll"></div></section>
+  <details class="operations panel"><summary>Betriebsstatus & Datenherkunft</summary><div id="jobs"></div><p class="footnote">Preise: Binance Spot, stündlich abgeschlossene Kerzen, Quote-Währung USDT. Nachrichten: CoinDesk und Ethereum Blog. Modellgewichte und Experimentversion sind festgehalten. Zeitangaben in deiner Browser-Zeitzone.</p></details>
+  <footer><span>◉ CryptoOracle <span class="muted">/ Research desk</span></span><span id="last-updated">Noch nicht aktualisiert</span></footer>
+</main>
+<dialog id="holding-dialog"><form id="holding-form"><div class="section-heading"><h2 id="dialog-title">Bestand verwalten</h2><button type="button" id="close-dialog" class="icon-button" aria-label="Schließen">×</button></div><p>Manueller Bestand. Alle Werte in USDT.</p><label for="quantity">Menge</label><input id="quantity" type="number" min="0" max="1000000000000" step="any" required placeholder="z. B. 0,25"><label for="average-cost">Durchschnittlicher Einstandskurs (optional)</label><input id="average-cost" type="number" min="0" max="1000000000000" step="any" placeholder="USDT je Coin"><p id="form-error" role="alert"></p><div class="dialog-actions"><button type="button" id="delete-holding" class="button danger">Bestand entfernen</button><button type="submit" class="button primary">Speichern</button></div></form></dialog>
+<div id="toast" role="status" hidden></div>
+</body>
+</html>

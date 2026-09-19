@@ -1,0 +1,68 @@
+---
+import '../styles/global.css';
+import operator from '../data/operator.json';
+interface Props { title: string; description: string; }
+const { title, description } = Astro.props;
+const path = Astro.url.pathname;
+const navigation = [
+  { href: '/', label: 'Overview' },
+  { href: '/method/', label: 'The method' },
+  { href: '/build-notes/', label: 'Build journal' },
+  { href: '/paper-portfolio/', label: 'Paper portfolio' },
+  { href: '/forecasts/', label: 'Forecast journal' },
+];
+const canonical = Astro.site ? new URL(path, Astro.site).href : undefined;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#f5f4ee" />
+    <meta name="referrer" content="no-referrer" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={`${title} · CryptoOracle`} />
+    <meta property="og:description" content={description} />
+    {canonical && <><link rel="canonical" href={canonical} /><meta property="og:url" content={canonical} /></>}
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title} · CryptoOracle</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header wrap">
+      <a class="brand" href="/" aria-label="CryptoOracle home">
+        <img src="/favicon.svg" width="36" height="36" alt="" />
+        <span>Crypto<span class="brand-light">Oracle</span><small>A MOINSEN EXPERIMENT</small></span>
+      </a>
+      <nav class="desktop-nav" aria-label="Main navigation">
+        {navigation.map(item => <a href={item.href} aria-current={path === item.href ? 'page' : undefined}>{item.label}</a>)}
+      </nav>
+      <details class="mobile-nav">
+        <summary>Menu <span aria-hidden="true">＋</span></summary>
+        <nav aria-label="Mobile navigation">
+          {navigation.map(item => <a href={item.href} aria-current={path === item.href ? 'page' : undefined}>{item.label}</a>)}
+          <a href="https://github.com/moinsen-dev/crypto-oracle" rel="external noreferrer">Source on GitHub ↗</a>
+          <a href="/privacy/">Privacy</a>
+        </nav>
+      </details>
+    </header>
+    <main id="main"><slot /></main>
+    <footer class="site-footer wrap">
+      <div class="footer-intro">
+        <a class="footer-brand" href="/">CryptoOracle <span aria-hidden="true">↗</span></a>
+        <p>An experiment in forecasting, evidence and honest engineering.</p>
+        <p class="fine-print">Research information. No investment advice or live trading service.</p>
+      </div>
+      <nav aria-label="Footer navigation">
+        <a href="/method/">Method & limitations</a>
+        <a href="/build-notes/">Development journal</a>
+        <a href="/privacy/">Privacy notice</a>
+        <a href="/legal/">Legal notice / Impressum</a>
+        <a href="https://github.com/moinsen-dev/crypto-oracle" rel="external noreferrer">Source on GitHub ↗</a>
+        <a href={operator.website} rel="external noreferrer">Made by Moinsen ↗</a>
+      </nav>
+      <div class="footer-bottom"><span>© 2026 {operator.name}</span><span>Public research. No analytics. No advertising.</span></div>
+    </footer>
+  </body>
+</html>

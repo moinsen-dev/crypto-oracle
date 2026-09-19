@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "publishedOn": "2026-09-18",
+  "measuredOn": "2026-09-17",
+  "scope": "exploratory-backtest",
+  "experiment": "v1-log512-h24-72-hourly",
+  "model": "TimesFM 2.5 · 200M",
+  "revision": "1d952420fba87f3c6dee4f240de0f1a0fbc790e3",
+  "contextHours": 512,
+  "originsPerAsset": 365,
+  "quote": "USDT",
+  "metric": "Mean absolute log-return error × 100; lower is better",
+  "results": [
+    { "asset": "BTC", "horizon": 24, "modelError": 1.712, "baselineError": 1.627, "coverage": 77.3 },
+    { "asset": "ETH", "horizon": 24, "modelError": 2.440, "baselineError": 2.300, "coverage": 77.0 },
+    { "asset": "SOL", "horizon": 24, "modelError": 2.841, "baselineError": 2.600, "coverage": 74.8 },
+    { "asset": "BTC", "horizon": 72, "modelError": 3.205, "baselineError": 2.983, "coverage": 72.3 },
+    { "asset": "ETH", "horizon": 72, "modelError": 4.525, "baselineError": 4.227, "coverage": 73.7 },
+    { "asset": "SOL", "horizon": 72, "modelError": 4.968, "baselineError": 4.627, "coverage": 74.5 }
+  ],
+  "conclusion": "No forecasting advantage demonstrated in this historical experiment.",
+  "paperPortfolio": { "status": "proposed", "startingUsd": 10000 }
+}

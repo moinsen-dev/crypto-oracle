@@ -1,0 +1,54 @@
+---
+import research from '../data/research.json';
+const initial = research.results[0];
+---
+<section class="benchmark" aria-labelledby="benchmark-title" data-benchmark data-results={JSON.stringify(research.results)}>
+  <div class="benchmark-header">
+    <div><p class="eyebrow">THE EVIDENCE / 001</p><h2 id="benchmark-title">A baseline worth beating.</h2></div>
+    <span class="pill">Historical · exploratory</span>
+  </div>
+  <p class="section-intro">The first question is deliberately simple: can the model forecast better than keeping the last observed price?</p>
+  <div class="benchmark-controls">
+    <label>Asset<select id="benchmark-asset"><option value="BTC">Bitcoin / BTC</option><option value="ETH">Ethereum / ETH</option><option value="SOL">Solana / SOL</option></select></label>
+    <label>Forecast horizon<select id="benchmark-horizon"><option value="24">24 hours</option><option value="72">72 hours</option></select></label>
+    <span class="fine-print">365 paired daily origins per asset</span>
+  </div>
+  <div class="benchmark-result" aria-live="polite" aria-atomic="true">
+    <div class="chart-panel">
+      <div class="chart-label"><span data-chart-title>Bitcoin · 24 hours</span><span>Lower error is better ↓</span></div>
+      <svg class="error-chart" viewBox="0 0 620 170" role="img" aria-labelledby="error-chart-title error-chart-desc">
+        <title id="error-chart-title">Bitcoin, 24-hour forecast error</title>
+        <desc id="error-chart-desc">TimesFM error 1.712. Last-price baseline error 1.627. Lower is better.</desc>
+        <g class="chart-grid" aria-hidden="true"><path d="M142 15v130 M224 15v130 M306 15v130 M388 15v130 M470 15v130 M552 15v130"/></g>
+        <text x="0" y="49" class="chart-text">TimesFM</text>
+        <rect data-model-bar x="142" y="27" width="140.38" height="30" rx="4" class="bar-model" />
+        <text data-model-value x="294.38" y="49" class="chart-value">1.712</text>
+        <text x="0" y="111" class="chart-text">Last price</text>
+        <rect data-baseline-bar x="142" y="89" width="133.41" height="30" rx="4" class="bar-baseline" />
+        <text data-baseline-value x="287.41" y="111" class="chart-value">1.627</text>
+        <g class="chart-axis" aria-hidden="true"><text x="142" y="162">0</text><text x="224" y="162">1</text><text x="306" y="162">2</text><text x="388" y="162">3</text><text x="470" y="162">4</text><text x="552" y="162">5</text></g>
+      </svg>
+      <p class="fine-print">Mean absolute log-return error × 100. This measures forecast error, not investment returns. A common scale is used across all assets and horizons.</p>
+    </div>
+    <div class="result-note">
+      <span class="eyebrow">MODEL VS BASELINE</span>
+      <strong data-relative-error>+5.2%</strong>
+      <p>higher forecast error</p>
+      <div class="result-divider"></div>
+      <span class="fine-print">Observed coverage of the nominal 80% interval</span>
+      <b data-coverage>{initial.coverage.toFixed(1)}%</b>
+      <span class="fine-print">Raw model quantiles; calibration is not assumed.</span>
+    </div>
+  </div>
+  <details class="data-table">
+    <summary>Inspect all six results <span aria-hidden="true">＋</span></summary>
+    <div class="table-scroll" role="region" aria-label="All benchmark results" tabindex="0">
+      <table><caption>Exploratory backtest recorded on 17 September 2026. Error is mean absolute log-return error × 100.</caption><thead><tr><th scope="col">Asset</th><th scope="col">Horizon</th><th scope="col">TimesFM</th><th scope="col">Last price</th><th scope="col">Band coverage</th></tr></thead><tbody>
+        {research.results.map(row => <tr><th scope="row">{row.asset}</th><td>{row.horizon}h</td><td>{row.modelError.toFixed(3)}</td><td>{row.baselineError.toFixed(3)}</td><td>{row.coverage.toFixed(1)}%</td></tr>)}
+      </tbody></table>
+    </div>
+  </details>
+  <div class="benchmark-foot"><span>Frozen snapshot · measured 17 Sep 2026 · published 18 Sep 2026</span><a href="/data/research.json" download="crypto-oracle-research.json">Download the data ↓</a></div>
+  <noscript><p class="notice">Interactive filters need JavaScript. All six results remain available in the expandable table above.</p></noscript>
+</section>
+<script is:inline src="/scripts/benchmark.js" defer></script>

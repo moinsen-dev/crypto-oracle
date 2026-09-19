@@ -1,0 +1,44 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "crypto-oracle-public",
+  "main": "worker.ts",
+  "account_id": "331bab3c877a2ace8753d42d9aa33660",
+  "compatibility_date": "2026-09-18",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "secrets": {
+    "required": [
+      "PUBLISH_TOKEN"
+    ]
+  },
+  "workers_dev": true,
+  "preview_urls": false,
+  "assets": {
+    "binding": "ASSETS",
+    "run_worker_first": [
+      "/api/*"
+    ],
+    "directory": "./dist",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page"
+  },
+  "d1_databases": [
+    {
+      "binding": "PUBLIC_DB",
+      "database_name": "crypto-oracle-public",
+      "database_id": "27c98365-f69f-4a32-bde5-205073a955c5",
+      "remote": false
+    }
+  ],
+  "observability": {
+    "enabled": false
+  },
+  "send_metrics": false,
+  "routes": [
+    {
+      "pattern": "cryptooracle.moinsen.dev",
+      "custom_domain": true
+    }
+  ]
+}

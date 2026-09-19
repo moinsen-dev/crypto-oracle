@@ -1,0 +1,1190 @@
+{
+  "schema": 1,
+  "mode": "paper",
+  "run": "paper-v1-12b50e70aff6",
+  "started_at": 1789725367.5725663,
+  "generated_at": 1789725425.715712,
+  "policy": {
+    "version": "paper-v1",
+    "starting_usd": 10000,
+    "execution": "coinbase-usd",
+    "fee_rate": 0.001,
+    "slippage_rate": 0.0005,
+    "max_order_age": 120,
+    "entry_fraction": 0.05,
+    "asset_cap": 0.25,
+    "total_cap": 0.6,
+    "cooldown_hours": 6,
+    "drawdown_brake": 0.08,
+    "position_stop": 0.06,
+    "daily_vol_target": 0.03,
+    "min_margin": 0.0025,
+    "vol_margin": 0.2,
+    "band_margin": 0.05,
+    "news_probability": 0.7,
+    "news_hours": 6,
+    "max_forecast_age": 5400,
+    "max_book_age": 45,
+    "max_spread_bps": 30,
+    "max_divergence": 0.01,
+    "min_order_usd": 25,
+    "reference_weights": [
+      0.2,
+      0.2,
+      0.2
+    ]
+  },
+  "accounts": [
+    {
+      "id": "news-guarded",
+      "cash": 10000.0,
+      "equity": 10000.0,
+      "asof": 1789725369.4625542,
+      "fresh": true,
+      "fees": 0.0,
+      "turnover": 0.0,
+      "realized": 0.0,
+      "fills": 0,
+      "braked": false,
+      "max_drawdown": 0.0,
+      "positions": [
+        {
+          "asset": "BTC",
+          "quantity": 0.0,
+          "cost": 0.0,
+          "mark": 78107.0575
+        },
+        {
+          "asset": "ETH",
+          "quantity": 0.0,
+          "cost": 0.0,
+          "mark": 2504.7625
+        },
+        {
+          "asset": "SOL",
+          "quantity": 0.0,
+          "cost": 0.0,
+          "mark": 106.255
+        }
+      ]
+    },
+    {
+      "id": "price-only",
+      "cash": 10000.0,
+      "equity": 10000.0,
+      "asof": 1789725369.4625542,
+      "fresh": true,
+      "fees": 0.0,
+      "turnover": 0.0,
+      "realized": 0.0,
+      "fills": 0,
+      "braked": false,
+      "max_drawdown": 0.0,
+      "positions": [
+        {
+          "asset": "BTC",
+          "quantity": 0.0,
+          "cost": 0.0,
+          "mark": 78107.0575
+        },
+        {
+          "asset": "ETH",
+          "quantity": 0.0,
+          "cost": 0.0,
+          "mark": 2504.7625
+        },
+        {
+          "asset": "SOL",
+          "quantity": 0.0,
+          "cost": 0.0,
+          "mark": 106.255
+        }
+      ]
+    },
+    {
+      "id": "reference",
+      "cash": 4017.487137270725,
+      "equity": 9990.807208553368,
+      "asof": 1789725369.4625542,
+      "fresh": true,
+      "fees": 5.976536326402873,
+      "turnover": 5976.536326402873,
+      "realized": 0.0,
+      "fills": 3,
+      "braked": false,
+      "max_drawdown": 0.0009192791446632764,
+      "positions": [
+        {
+          "asset": "BTC",
+          "quantity": 0.02549120067034293,
+          "cost": 1994.0627665941722,
+          "mark": 78107.0575
+        },
+        {
+          "asset": "ETH",
+          "quantity": 0.7949803928371169,
+          "cost": 1994.1592431525116,
+          "mark": 2504.7625
+        },
+        {
+          "asset": "SOL",
+          "quantity": 18.738321194922136,
+          "cost": 1994.2908529825916,
+          "mark": 106.255
+        }
+      ]
+    }
+  ],
+  "history": [
+    {
+      "account": "news-guarded",
+      "points": [
+        {
+          "at": 1789725367.5725663,
+          "equity": 10000,
+          "fresh": true
+        },
+        {
+          "at": 1789725369.4625542,
+          "equity": 10000.0,
+          "fresh": true
+        }
+      ]
+    },
+    {
+      "account": "price-only",
+      "points": [
+        {
+          "at": 1789725367.5725663,
+          "equity": 10000,
+          "fresh": true
+        },
+        {
+          "at": 1789725369.4625542,
+          "equity": 10000.0,
+          "fresh": true
+        }
+      ]
+    },
+    {
+      "account": "reference",
+      "points": [
+        {
+          "at": 1789725367.5725663,
+          "equity": 10000,
+          "fresh": true
+        },
+        {
+          "at": 1789725369.4625542,
+          "equity": 9990.807208553368,
+          "fresh": true
+        }
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "seq": 16,
+      "at": 1789725369.0803509,
+      "account": "reference",
+      "asset": "SOL",
+      "action": "buy",
+      "reason": "reference_entry",
+      "hash": "9407abac292ecb4153c3f2f40550b45663ec282defaabebfec65a4bf8cd1c804",
+      "quality": {
+        "ask_depth_usd": 1080059.1284930692,
+        "bid_depth_usd": 1635875.0783686014,
+        "buy_ok": true,
+        "checks": [
+          {
+            "code": "coinbase_fresh",
+            "passed": true
+          },
+          {
+            "code": "kraken_fresh",
+            "passed": true
+          },
+          {
+            "code": "binance_fresh",
+            "passed": true
+          },
+          {
+            "code": "usd_pair_agreement",
+            "passed": true
+          },
+          {
+            "code": "usdt_conversion",
+            "passed": true
+          },
+          {
+            "code": "three_venue_agreement",
+            "passed": true
+          },
+          {
+            "code": "spread",
+            "passed": true
+          }
+        ],
+        "divergence": 2.3718505239189724e-05,
+        "execution_ok": true,
+        "fx": 0.9991300000000001,
+        "mark": 106.255,
+        "observation_id": "99569dde7fb875bbb3caad3c28c13fc4f53b622672423ffba81648465c288925",
+        "observed_at": 1789725369.0680902,
+        "prices": {
+          "binance": 106.25247985,
+          "coinbase": 106.255,
+          "kraken": 106.255
+        },
+        "spread_bps": 0.941176470588001
+      },
+      "signal": {
+        "daily_volatility": 0.025064363764609826,
+        "entry_threshold": 0.008106990399980765,
+        "expected_return": -0.005423592739994598,
+        "forecast_id": "1ca8cfa877f728216760967000d222926b4512856dfd3689c2ff3f33cb911db2",
+        "input_hash": "1bdf47284a1822caaf7bde55cc81ee1573310a9b4ecb076dabb51a1a70dd4c5f",
+        "issued_at": 1789722348,
+        "lower_usdt": 102.25347137451172,
+        "margin": 0.005012872752921966,
+        "origin": 1789722000,
+        "prediction_usdt": 105.77073669433594,
+        "target": 1789808400,
+        "upper_usdt": 109.23853302001953
+      },
+      "news": {
+        "items": [
+          {
+            "evaluated_at": 1789715657,
+            "evaluation_id": "2c595374ed542f982ff44474c5d0ee79ff20a3033ad5973331e4767250bd88f4",
+            "event": "network",
+            "first_seen": 1789713030,
+            "id": "8bf983630adbe7de396280ef7ceb18dc44bbff923c7867c64116dc01f6cf41f9",
+            "material": 0.85,
+            "published_at": 1789712217,
+            "relevance": 0.97,
+            "source": "CoinDesk",
+            "tone": "unclear"
+          }
+        ],
+        "state": "available",
+        "version": "jev-headlines-v1-8fed3bf7390c",
+        "veto": false
+      },
+      "outcome": "fill",
+      "execution": {
+        "decision_key": "decision:497145:reference:SOL",
+        "fee": 1.9922985544281635,
+        "gross": 1992.2985544281635,
+        "observation_id": "05d2d025eb83a856f07a5b920ab65126a4e63e6318245e16e099df6f9da56689",
+        "observed_at": 1789725369.450684,
+        "order_key": "order:decision:497145:reference:SOL",
+        "price": 106.32214773690895,
+        "quantity": 18.738321194922136,
+        "side": "buy"
+      }
+    },
+    {
+      "seq": 13,
+      "at": 1789725368.700342,
+      "account": "reference",
+      "asset": "ETH",
+      "action": "buy",
+      "reason": "reference_entry",
+      "hash": "b098d5970363bc9d14fb705bab49a55b9a4a350c6eacb7f50f902a919451b5e2",
+      "quality": {
+        "ask_depth_usd": 194358.8165489537,
+        "bid_depth_usd": 203729.0082519953,
+        "buy_ok": true,
+        "checks": [
+          {
+            "code": "coinbase_fresh",
+            "passed": true
+          },
+          {
+            "code": "kraken_fresh",
+            "passed": true
+          },
+          {
+            "code": "binance_fresh",
+            "passed": true
+          },
+          {
+            "code": "usd_pair_agreement",
+            "passed": true
+          },
+          {
+            "code": "usdt_conversion",
+            "passed": true
+          },
+          {
+            "code": "three_venue_agreement",
+            "passed": true
+          },
+          {
+            "code": "spread",
+            "passed": true
+          }
+        ],
+        "divergence": 0.00012333950884713119,
+        "execution_ok": true,
+        "fx": 0.9991300000000001,
+        "mark": 2504.5699999999997,
+        "observation_id": "3649b66779eaf2ea6deaf260140842a2ef032bc87a349499d286b344843e2e03",
+        "observed_at": 1789725368.68709,
+        "prices": {
+          "binance": 2504.82390565,
+          "coinbase": 2504.515,
+          "kraken": 2504.625
+        },
+        "spread_bps": 0.5190760446405207
+      },
+      "signal": {
+        "daily_volatility": 0.014575751408992615,
+        "entry_threshold": 0.005967057886262575,
+        "expected_return": -0.005521744218223046,
+        "forecast_id": "bfd9fab18bce81aee707016dec12c9652b55e449b9d4c93c628c0366f84e25f5",
+        "input_hash": "526c0f6ffd094230c7ddad7cb1b570c70ef0d818557b3bd5e41378bc4de77ea8",
+        "issued_at": 1789722348,
+        "lower_usdt": 2436.1318359375,
+        "margin": 0.0029151502817985234,
+        "origin": 1789722000,
+        "prediction_usdt": 2492.8544921875,
+        "target": 1789808400,
+        "upper_usdt": 2546.36328125
+      },
+      "news": {
+        "items": [
+          {
+            "evaluated_at": 1789716924,
+            "evaluation_id": "f6a88705e57255cb5a69577f298ff82d7aaf8ed754a7d96c682338b7dbf720a6",
+            "event": "market",
+            "first_seen": 1789716911,
+            "id": "b26f4106a3a13fab1c37212386c60e3336ce1ef3504f5af17f482f48285ecada",
+            "material": 0.87,
+            "published_at": 1789706957,
+            "relevance": 0.82,
+            "source": "CoinDesk",
+            "tone": "unclear"
+          },
+          {
+            "evaluated_at": 1789715658,
+            "evaluation_id": "64bda5714dd00b34ddc7245238c6c6a9cd7642efedd010371b647004e59cddd7",
+            "event": "network",
+            "first_seen": 1789709421,
+            "id": "cd9ba1c5837913a44b0422e5b840b5bc3bcf0109729551283bc44cbbde36c018",
+            "material": 0.75,
+            "published_at": 1789709009,
+            "relevance": 0.88,
+            "source": "CoinDesk",
+            "tone": "unclear"
+          }
+        ],
+        "state": "available",
+        "version": "jev-headlines-v1-8fed3bf7390c",
+        "veto": false
+      },
+      "outcome": "fill",
+      "execution": {
+        "decision_key": "decision:497145:reference:ETH",
+        "fee": 1.9921670760764354,
+        "gross": 1992.1670760764353,
+        "observation_id": "99569dde7fb875bbb3caad3c28c13fc4f53b622672423ffba81648465c288925",
+        "observed_at": 1789725369.0680902,
+        "order_key": "order:decision:497145:reference:ETH",
+        "price": 2505.93234,
+        "quantity": 0.7949803928371169,
+        "side": "buy"
+      }
+    },
+    {
+      "seq": 10,
+      "at": 1789725368.0433605,
+      "account": "reference",
+      "asset": "BTC",
+      "action": "buy",
+      "reason": "reference_entry",
+      "hash": "f48b0384c15824869c1fea6ec0e48770dd7cc34c7307f12fba9743a71f4f6abd",
+      "quality": {
+        "ask_depth_usd": 413107.1865513556,
+        "bid_depth_usd": 458434.9343548386,
+        "buy_ok": true,
+        "checks": [
+          {
+            "code": "coinbase_fresh",
+            "passed": true
+          },
+          {
+            "code": "kraken_fresh",
+            "passed": true
+          },
+          {
+            "code": "binance_fresh",
+            "passed": true
+          },
+          {
+            "code": "usd_pair_agreement",
+            "passed": true
+          },
+          {
+            "code": "usdt_conversion",
+            "passed": true
+          },
+          {
+            "code": "three_venue_agreement",
+            "passed": true
+          },
+          {
+            "code": "spread",
+            "passed": true
+          }
+        ],
+        "divergence": 3.5404804808347734e-05,
+        "execution_ok": true,
+        "fx": 0.9991300000000001,
+        "mark": 78107.0575,
+        "observation_id": "b32bb3c07f1839422e251011bfd8850e759089c8d5d6f9f541d56120b0c61fd8",
+        "observed_at": 1789725367.971858,
+        "prices": {
+          "binance": 78109.73036185,
+          "coinbase": 78106.965,
+          "kraken": 78107.15
+        },
+        "spread_bps": 0.0012802956339541538
+      },
+      "signal": {
+        "daily_volatility": 0.010902710826067225,
+        "entry_threshold": 0.005500128029563395,
+        "expected_return": 0.005413928117478095,
+        "forecast_id": "d6ff41ebf59cd54b22d6ccca1ba9ac646bdd5b355d33bd7b1f4a7ebeb65575a9",
+        "input_hash": "1beb0f59a1fbb4dfe6d5420a26f7f8e360728365f5b6f8c2bd5c612c63275636",
+        "issued_at": 1789722347,
+        "lower_usdt": 77144.3984375,
+        "margin": 0.0025,
+        "origin": 1789722000,
+        "prediction_usdt": 78598.2109375,
+        "target": 1789808400,
+        "upper_usdt": 80236.9140625
+      },
+      "news": {
+        "items": [
+          {
+            "evaluated_at": 1789725058,
+            "evaluation_id": "1d88a3a7593e4085fc9eb0f5e50ba4345fff6aca1127374402203898e5a56c7c",
+            "event": "market",
+            "first_seen": 1789725055,
+            "id": "c67abb3167459be68ae09c63b6204c11c4464c1acba13d0eea1d72cb3e915192",
+            "material": 0.77,
+            "published_at": 1789724991,
+            "relevance": 0.92,
+            "source": "CoinDesk",
+            "tone": "positive"
+          },
+          {
+            "evaluated_at": 1789715656,
+            "evaluation_id": "a8a5599589000342232812c76d14e669e39ca2ebbb7b63afdc361444a13b06c4",
+            "event": "other",
+            "first_seen": 1789714834,
+            "id": "dd4acee0ab3f50a99b760e33312b206d7dedb84f91f0f0a5c81fde73a79536b7",
+            "material": 0.84,
+            "published_at": 1789714343,
+            "relevance": 0.89,
+            "source": "CoinDesk",
+            "tone": "negative"
+          },
+          {
+            "evaluated_at": 1789715658,
+            "evaluation_id": "e5c223776a5238129bbf3d34c38185e7ee4ad59d97646347ce181f11889ce7c8",
+            "event": "market",
+            "first_seen": 1789710323,
+            "id": "0266798b7784bf88b19b53c0756cc8dd497890e2c7dfe2c4b0b8faac3431ea94",
+            "material": 0.86,
+            "published_at": 1789710201,
+            "relevance": 0.96,
+            "source": "CoinDesk",
+            "tone": "negative"
+          }
+        ],
+        "state": "available",
+        "version": "jev-headlines-v1-8fed3bf7390c",
+        "veto": false
+      },
+      "outcome": "fill",
+      "execution": {
+        "decision_key": "decision:497145:reference:BTC",
+        "fee": 1.992070695898274,
+        "gross": 1992.070695898274,
+        "observation_id": "3649b66779eaf2ea6deaf260140842a2ef032bc87a349499d286b344843e2e03",
+        "observed_at": 1789725368.68709,
+        "order_key": "order:decision:497145:reference:BTC",
+        "price": 78147.38590230065,
+        "quantity": 0.02549120067034293,
+        "side": "buy"
+      }
+    },
+    {
+      "seq": 9,
+      "at": 1789725368.0335832,
+      "account": "price-only",
+      "asset": "SOL",
+      "action": "hold",
+      "reason": "below_entry",
+      "hash": "ce401c56d60ccba4abe7ad14032cdcf0fa317c1daa4fbfbd5ffeb955ff5ffadb",
+      "quality": {
+        "ask_depth_usd": 1080059.1284930692,
+        "bid_depth_usd": 1635875.0783686014,
+        "buy_ok": true,
+        "checks": [
+          {
+            "code": "coinbase_fresh",
+            "passed": true
+          },
+          {
+            "code": "kraken_fresh",
+            "passed": true
+          },
+          {
+            "code": "binance_fresh",
+            "passed": true
+          },
+          {
+            "code": "usd_pair_agreement",
+            "passed": true
+          },
+          {
+            "code": "usdt_conversion",
+            "passed": true
+          },
+          {
+            "code": "three_venue_agreement",
+            "passed": true
+          },
+          {
+            "code": "spread",
+            "passed": true
+          }
+        ],
+        "divergence": 2.3718505239189724e-05,
+        "execution_ok": true,
+        "fx": 0.9991300000000001,
+        "mark": 106.255,
+        "observation_id": "b32bb3c07f1839422e251011bfd8850e759089c8d5d6f9f541d56120b0c61fd8",
+        "observed_at": 1789725367.971858,
+        "prices": {
+          "binance": 106.25247985,
+          "coinbase": 106.255,
+          "kraken": 106.255
+        },
+        "spread_bps": 0.941176470588001
+      },
+      "signal": {
+        "daily_volatility": 0.025064363764609826,
+        "entry_threshold": 0.008106990399980765,
+        "expected_return": -0.005423592739994598,
+        "forecast_id": "1ca8cfa877f728216760967000d222926b4512856dfd3689c2ff3f33cb911db2",
+        "input_hash": "1bdf47284a1822caaf7bde55cc81ee1573310a9b4ecb076dabb51a1a70dd4c5f",
+        "issued_at": 1789722348,
+        "lower_usdt": 102.25347137451172,
+        "margin": 0.005012872752921966,
+        "origin": 1789722000,
+        "prediction_usdt": 105.77073669433594,
+        "target": 1789808400,
+        "upper_usdt": 109.23853302001953
+      },
+      "news": {
+        "items": [
+          {
+            "evaluated_at": 1789715657,
+            "evaluation_id": "2c595374ed542f982ff44474c5d0ee79ff20a3033ad5973331e4767250bd88f4",
+            "event": "network",
+            "first_seen": 1789713030,
+            "id": "8bf983630adbe7de396280ef7ceb18dc44bbff923c7867c64116dc01f6cf41f9",
+            "material": 0.85,
+            "published_at": 1789712217,
+            "relevance": 0.97,
+            "source": "CoinDesk",
+            "tone": "unclear"
+          }
+        ],
+        "state": "available",
+        "version": "jev-headlines-v1-8fed3bf7390c",
+        "veto": false
+      },
+      "outcome": "none",
+      "execution": null
+    },
+    {
+      "seq": 8,
+      "at": 1789725368.0241,
+      "account": "price-only",
+      "asset": "ETH",
+      "action": "hold",
+      "reason": "below_entry",
+      "hash": "f0c8c7ad29e0d2563f4ef6c0bdbbded6f37d86d41c0f01c2bf870fc0b23439fe",
+      "quality": {
+        "ask_depth_usd": 194358.8165489537,
+        "bid_depth_usd": 203729.0082519953,
+        "buy_ok": true,
+        "checks": [
+          {
+            "code": "coinbase_fresh",
+            "passed": true
+          },
+          {
+            "code": "kraken_fresh",
+            "passed": true
+          },
+          {
+            "code": "binance_fresh",
+            "passed": true
+          },
+          {
+            "code": "usd_pair_agreement",
+            "passed": true
+          },
+          {
+            "code": "usdt_conversion",
+            "passed": true
+          },
+          {
+            "code": "three_venue_agreement",
+            "passed": true
+          },
+          {
+            "code": "spread",
+            "passed": true
+          }
+        ],
+        "divergence": 0.00012333950884713119,
+        "execution_ok": true,
+        "fx": 0.9991300000000001,
+        "mark": 2504.5699999999997,
+        "observation_id": "b32bb3c07f1839422e251011bfd8850e759089c8d5d6f9f541d56120b0c61fd8",
+        "observed_at": 1789725367.971858,
+        "prices": {
+          "binance": 2504.82390565,
+          "coinbase": 2504.515,
+          "kraken": 2504.625
+        },
+        "spread_bps": 0.5190760446405207
+      },
+      "signal": {
+        "daily_volatility": 0.014575751408992615,
+        "entry_threshold": 0.005967057886262575,
+        "expected_return": -0.005521744218223046,
+        "forecast_id": "bfd9fab18bce81aee707016dec12c9652b55e449b9d4c93c628c0366f84e25f5",
+        "input_hash": "526c0f6ffd094230c7ddad7cb1b570c70ef0d818557b3bd5e41378bc4de77ea8",
+        "issued_at": 1789722348,
+        "lower_usdt": 2436.1318359375,
+        "margin": 0.0029151502817985234,
+        "origin": 1789722000,
+        "prediction_usdt": 2492.8544921875,
+        "target": 1789808400,
+        "upper_usdt": 2546.36328125
+      },
+      "news": {
+        "items": [
+          {
+            "evaluated_at": 1789716924,
+            "evaluation_id": "f6a88705e57255cb5a69577f298ff82d7aaf8ed754a7d96c682338b7dbf720a6",
+            "event": "market",
+            "first_seen": 1789716911,
+            "id": "b26f4106a3a13fab1c37212386c60e3336ce1ef3504f5af17f482f48285ecada",
+            "material": 0.87,
+            "published_at": 1789706957,
+            "relevance": 0.82,
+            "source": "CoinDesk",
+            "tone": "unclear"
+          },
+          {
+            "evaluated_at": 1789715658,
+            "evaluation_id": "64bda5714dd00b34ddc7245238c6c6a9cd7642efedd010371b647004e59cddd7",
+            "event": "network",
+            "first_seen": 1789709421,
+            "id": "cd9ba1c5837913a44b0422e5b840b5bc3bcf0109729551283bc44cbbde36c018",
+            "material": 0.75,
+            "published_at": 1789709009,
+            "relevance": 0.88,
+            "source": "CoinDesk",
+            "tone": "unclear"
+          }
+        ],
+        "state": "available",
+        "version": "jev-headlines-v1-8fed3bf7390c",
+        "veto": false
+      },
+      "outcome": "none",
+      "execution": null
+    },
+    {
+      "seq": 7,
+      "at": 1789725368.0155487,
+      "account": "price-only",
+      "asset": "BTC",
+      "action": "hold",
+      "reason": "below_entry",
+      "hash": "ffa4c7b88c6237d87a32bb7eaf2bf9b6d760b7e13dfafec3cb330ae43d9457ca",
+      "quality": {
+        "ask_depth_usd": 413107.1865513556,
+        "bid_depth_usd": 458434.9343548386,
+        "buy_ok": true,
+        "checks": [
+          {
+            "code": "coinbase_fresh",
+            "passed": true
+          },
+          {
+            "code": "kraken_fresh",
+            "passed": true
+          },
+          {
+            "code": "binance_fresh",
+            "passed": true
+          },
+          {
+            "code": "usd_pair_agreement",
+            "passed": true
+          },
+          {
+            "code": "usdt_conversion",
+            "passed": true
+          },
+          {
+            "code": "three_venue_agreement",
+            "passed": true
+          },
+          {
+            "code": "spread",
+            "passed": true
+          }
+        ],
+        "divergence": 3.5404804808347734e-05,
+        "execution_ok": true,
+        "fx": 0.9991300000000001,
+        "mark": 78107.0575,
+        "observation_id": "b32bb3c07f1839422e251011bfd8850e759089c8d5d6f9f541d56120b0c61fd8",
+        "observed_at": 1789725367.971858,
+        "prices": {
+          "binance": 78109.73036185,
+          "coinbase": 78106.965,
+          "kraken": 78107.15
+        },
+        "spread_bps": 0.0012802956339541538
+      },
+      "signal": {
+        "daily_volatility": 0.010902710826067225,
+        "entry_threshold": 0.005500128029563395,
+        "expected_return": 0.005413928117478095,
+        "forecast_id": "d6ff41ebf59cd54b22d6ccca1ba9ac646bdd5b355d33bd7b1f4a7ebeb65575a9",
+        "input_hash": "1beb0f59a1fbb4dfe6d5420a26f7f8e360728365f5b6f8c2bd5c612c63275636",
+        "issued_at": 1789722347,
+        "lower_usdt": 77144.3984375,
+        "margin": 0.0025,
+        "origin": 1789722000,
+        "prediction_usdt": 78598.2109375,
+        "target": 1789808400,
+        "upper_usdt": 80236.9140625
+      },
+      "news": {
+        "items": [
+          {
+            "evaluated_at": 1789725058,
+            "evaluation_id": "1d88a3a7593e4085fc9eb0f5e50ba4345fff6aca1127374402203898e5a56c7c",
+            "event": "market",
+            "first_seen": 1789725055,
+            "id": "c67abb3167459be68ae09c63b6204c11c4464c1acba13d0eea1d72cb3e915192",
+            "material": 0.77,
+            "published_at": 1789724991,
+            "relevance": 0.92,
+            "source": "CoinDesk",
+            "tone": "positive"
+          },
+          {
+            "evaluated_at": 1789715656,
+            "evaluation_id": "a8a5599589000342232812c76d14e669e39ca2ebbb7b63afdc361444a13b06c4",
+            "event": "other",
+            "first_seen": 1789714834,
+            "id": "dd4acee0ab3f50a99b760e33312b206d7dedb84f91f0f0a5c81fde73a79536b7",
+            "material": 0.84,
+            "published_at": 1789714343,
+            "relevance": 0.89,
+            "source": "CoinDesk",
+            "tone": "negative"
+          },
+          {
+            "evaluated_at": 1789715658,
+            "evaluation_id": "e5c223776a5238129bbf3d34c38185e7ee4ad59d97646347ce181f11889ce7c8",
+            "event": "market",
+            "first_seen": 1789710323,
+            "id": "0266798b7784bf88b19b53c0756cc8dd497890e2c7dfe2c4b0b8faac3431ea94",
+            "material": 0.86,
+            "published_at": 1789710201,
+            "relevance": 0.96,
+            "source": "CoinDesk",
+            "tone": "negative"
+          }
+        ],
+        "state": "available",
+        "version": "jev-headlines-v1-8fed3bf7390c",
+        "veto": false
+      },
+      "outcome": "none",
+      "execution": null
+    },
+    {
+      "seq": 6,
+      "at": 1789725368.0059109,
+      "account": "news-guarded",
+      "asset": "SOL",
+      "action": "hold",
+      "reason": "below_entry",
+      "hash": "7b16cac804306f95a6168b340ab253f4164f26f7255034062b9f1b595fea79a7",
+      "quality": {
+        "ask_depth_usd": 1080059.1284930692,
+        "bid_depth_usd": 1635875.0783686014,
+        "buy_ok": true,
+        "checks": [
+          {
+            "code": "coinbase_fresh",
+            "passed": true
+          },
+          {
+            "code": "kraken_fresh",
+            "passed": true
+          },
+          {
+            "code": "binance_fresh",
+            "passed": true
+          },
+          {
+            "code": "usd_pair_agreement",
+            "passed": true
+          },
+          {
+            "code": "usdt_conversion",
+            "passed": true
+          },
+          {
+            "code": "three_venue_agreement",
+            "passed": true
+          },
+          {
+            "code": "spread",
+            "passed": true
+          }
+        ],
+        "divergence": 2.3718505239189724e-05,
+        "execution_ok": true,
+        "fx": 0.9991300000000001,
+        "mark": 106.255,
+        "observation_id": "b32bb3c07f1839422e251011bfd8850e759089c8d5d6f9f541d56120b0c61fd8",
+        "observed_at": 1789725367.971858,
+        "prices": {
+          "binance": 106.25247985,
+          "coinbase": 106.255,
+          "kraken": 106.255
+        },
+        "spread_bps": 0.941176470588001
+      },
+      "signal": {
+        "daily_volatility": 0.025064363764609826,
+        "entry_threshold": 0.008106990399980765,
+        "expected_return": -0.005423592739994598,
+        "forecast_id": "1ca8cfa877f728216760967000d222926b4512856dfd3689c2ff3f33cb911db2",
+        "input_hash": "1bdf47284a1822caaf7bde55cc81ee1573310a9b4ecb076dabb51a1a70dd4c5f",
+        "issued_at": 1789722348,
+        "lower_usdt": 102.25347137451172,
+        "margin": 0.005012872752921966,
+        "origin": 1789722000,
+        "prediction_usdt": 105.77073669433594,
+        "target": 1789808400,
+        "upper_usdt": 109.23853302001953
+      },
+      "news": {
+        "items": [
+          {
+            "evaluated_at": 1789715657,
+            "evaluation_id": "2c595374ed542f982ff44474c5d0ee79ff20a3033ad5973331e4767250bd88f4",
+            "event": "network",
+            "first_seen": 1789713030,
+            "id": "8bf983630adbe7de396280ef7ceb18dc44bbff923c7867c64116dc01f6cf41f9",
+            "material": 0.85,
+            "published_at": 1789712217,
+            "relevance": 0.97,
+            "source": "CoinDesk",
+            "tone": "unclear"
+          }
+        ],
+        "state": "available",
+        "version": "jev-headlines-v1-8fed3bf7390c",
+        "veto": false
+      },
+      "outcome": "none",
+      "execution": null
+    },
+    {
+      "seq": 5,
+      "at": 1789725367.9950469,
+      "account": "news-guarded",
+      "asset": "ETH",
+      "action": "hold",
+      "reason": "below_entry",
+      "hash": "c0d42f9aac6b9611a9e586abc498f59a8430f4e44865edd23da0a62bdbedbe4f",
+      "quality": {
+        "ask_depth_usd": 194358.8165489537,
+        "bid_depth_usd": 203729.0082519953,
+        "buy_ok": true,
+        "checks": [
+          {
+            "code": "coinbase_fresh",
+            "passed": true
+          },
+          {
+            "code": "kraken_fresh",
+            "passed": true
+          },
+          {
+            "code": "binance_fresh",
+            "passed": true
+          },
+          {
+            "code": "usd_pair_agreement",
+            "passed": true
+          },
+          {
+            "code": "usdt_conversion",
+            "passed": true
+          },
+          {
+            "code": "three_venue_agreement",
+            "passed": true
+          },
+          {
+            "code": "spread",
+            "passed": true
+          }
+        ],
+        "divergence": 0.00012333950884713119,
+        "execution_ok": true,
+        "fx": 0.9991300000000001,
+        "mark": 2504.5699999999997,
+        "observation_id": "b32bb3c07f1839422e251011bfd8850e759089c8d5d6f9f541d56120b0c61fd8",
+        "observed_at": 1789725367.971858,
+        "prices": {
+          "binance": 2504.82390565,
+          "coinbase": 2504.515,
+          "kraken": 2504.625
+        },
+        "spread_bps": 0.5190760446405207
+      },
+      "signal": {
+        "daily_volatility": 0.014575751408992615,
+        "entry_threshold": 0.005967057886262575,
+        "expected_return": -0.005521744218223046,
+        "forecast_id": "bfd9fab18bce81aee707016dec12c9652b55e449b9d4c93c628c0366f84e25f5",
+        "input_hash": "526c0f6ffd094230c7ddad7cb1b570c70ef0d818557b3bd5e41378bc4de77ea8",
+        "issued_at": 1789722348,
+        "lower_usdt": 2436.1318359375,
+        "margin": 0.0029151502817985234,
+        "origin": 1789722000,
+        "prediction_usdt": 2492.8544921875,
+        "target": 1789808400,
+        "upper_usdt": 2546.36328125
+      },
+      "news": {
+        "items": [
+          {
+            "evaluated_at": 1789716924,
+            "evaluation_id": "f6a88705e57255cb5a69577f298ff82d7aaf8ed754a7d96c682338b7dbf720a6",
+            "event": "market",
+            "first_seen": 1789716911,
+            "id": "b26f4106a3a13fab1c37212386c60e3336ce1ef3504f5af17f482f48285ecada",
+            "material": 0.87,
+            "published_at": 1789706957,
+            "relevance": 0.82,
+            "source": "CoinDesk",
+            "tone": "unclear"
+          },
+          {
+            "evaluated_at": 1789715658,
+            "evaluation_id": "64bda5714dd00b34ddc7245238c6c6a9cd7642efedd010371b647004e59cddd7",
+            "event": "network",
+            "first_seen": 1789709421,
+            "id": "cd9ba1c5837913a44b0422e5b840b5bc3bcf0109729551283bc44cbbde36c018",
+            "material": 0.75,
+            "published_at": 1789709009,
+            "relevance": 0.88,
+            "source": "CoinDesk",
+            "tone": "unclear"
+          }
+        ],
+        "state": "available",
+        "version": "jev-headlines-v1-8fed3bf7390c",
+        "veto": false
+      },
+      "outcome": "none",
+      "execution": null
+    },
+    {
+      "seq": 4,
+      "at": 1789725367.9828267,
+      "account": "news-guarded",
+      "asset": "BTC",
+      "action": "hold",
+      "reason": "below_entry",
+      "hash": "6f9ab21be89b76d1d4c576c4ddcb26c07586e944994e183fa7414de0a8ed5df8",
+      "quality": {
+        "ask_depth_usd": 413107.1865513556,
+        "bid_depth_usd": 458434.9343548386,
+        "buy_ok": true,
+        "checks": [
+          {
+            "code": "coinbase_fresh",
+            "passed": true
+          },
+          {
+            "code": "kraken_fresh",
+            "passed": true
+          },
+          {
+            "code": "binance_fresh",
+            "passed": true
+          },
+          {
+            "code": "usd_pair_agreement",
+            "passed": true
+          },
+          {
+            "code": "usdt_conversion",
+            "passed": true
+          },
+          {
+            "code": "three_venue_agreement",
+            "passed": true
+          },
+          {
+            "code": "spread",
+            "passed": true
+          }
+        ],
+        "divergence": 3.5404804808347734e-05,
+        "execution_ok": true,
+        "fx": 0.9991300000000001,
+        "mark": 78107.0575,
+        "observation_id": "b32bb3c07f1839422e251011bfd8850e759089c8d5d6f9f541d56120b0c61fd8",
+        "observed_at": 1789725367.971858,
+        "prices": {
+          "binance": 78109.73036185,
+          "coinbase": 78106.965,
+          "kraken": 78107.15
+        },
+        "spread_bps": 0.0012802956339541538
+      },
+      "signal": {
+        "daily_volatility": 0.010902710826067225,
+        "entry_threshold": 0.005500128029563395,
+        "expected_return": 0.005413928117478095,
+        "forecast_id": "d6ff41ebf59cd54b22d6ccca1ba9ac646bdd5b355d33bd7b1f4a7ebeb65575a9",
+        "input_hash": "1beb0f59a1fbb4dfe6d5420a26f7f8e360728365f5b6f8c2bd5c612c63275636",
+        "issued_at": 1789722347,
+        "lower_usdt": 77144.3984375,
+        "margin": 0.0025,
+        "origin": 1789722000,
+        "prediction_usdt": 78598.2109375,
+        "target": 1789808400,
+        "upper_usdt": 80236.9140625
+      },
+      "news": {
+        "items": [
+          {
+            "evaluated_at": 1789725058,
+            "evaluation_id": "1d88a3a7593e4085fc9eb0f5e50ba4345fff6aca1127374402203898e5a56c7c",
+            "event": "market",
+            "first_seen": 1789725055,
+            "id": "c67abb3167459be68ae09c63b6204c11c4464c1acba13d0eea1d72cb3e915192",
+            "material": 0.77,
+            "published_at": 1789724991,
+            "relevance": 0.92,
+            "source": "CoinDesk",
+            "tone": "positive"
+          },
+          {
+            "evaluated_at": 1789715656,
+            "evaluation_id": "a8a5599589000342232812c76d14e669e39ca2ebbb7b63afdc361444a13b06c4",
+            "event": "other",
+            "first_seen": 1789714834,
+            "id": "dd4acee0ab3f50a99b760e33312b206d7dedb84f91f0f0a5c81fde73a79536b7",
+            "material": 0.84,
+            "published_at": 1789714343,
+            "relevance": 0.89,
+            "source": "CoinDesk",
+            "tone": "negative"
+          },
+          {
+            "evaluated_at": 1789715658,
+            "evaluation_id": "e5c223776a5238129bbf3d34c38185e7ee4ad59d97646347ce181f11889ce7c8",
+            "event": "market",
+            "first_seen": 1789710323,
+            "id": "0266798b7784bf88b19b53c0756cc8dd497890e2c7dfe2c4b0b8faac3431ea94",
+            "material": 0.86,
+            "published_at": 1789710201,
+            "relevance": 0.96,
+            "source": "CoinDesk",
+            "tone": "negative"
+          }
+        ],
+        "state": "available",
+        "version": "jev-headlines-v1-8fed3bf7390c",
+        "veto": false
+      },
+      "outcome": "none",
+      "execution": null
+    }
+  ],
+  "trades": [
+    {
+      "seq": 18,
+      "at": 1789725369.451828,
+      "account": "reference",
+      "asset": "SOL",
+      "side": "buy",
+      "quantity": 18.738321194922136,
+      "price": 106.32214773690895,
+      "gross": 1992.2985544281635,
+      "fee": 1.9922985544281635,
+      "hash": "fda0684d4909c998d587cb75d84193d29fe554d43608d2615035eda72d26b6b7"
+    },
+    {
+      "seq": 15,
+      "at": 1789725369.0688028,
+      "account": "reference",
+      "asset": "ETH",
+      "side": "buy",
+      "quantity": 0.7949803928371169,
+      "price": 2505.93234,
+      "gross": 1992.1670760764353,
+      "fee": 1.9921670760764354,
+      "hash": "a7b1a461c8a038641524f47b936da7e44397c695af4392dd7bfee7c17ccf1ad7"
+    },
+    {
+      "seq": 12,
+      "at": 1789725368.6877968,
+      "account": "reference",
+      "asset": "BTC",
+      "side": "buy",
+      "quantity": 0.02549120067034293,
+      "price": 78147.38590230065,
+      "gross": 1992.070695898274,
+      "fee": 1.992070695898274,
+      "hash": "701702e65abd974d3db2e96ede6c32661a91343a89d630e801231b7e0735cad1"
+    }
+  ],
+  "reasons": {
+    "below_entry": 3
+  },
+  "journal": {
+    "events": 21,
+    "head": "a3f88ca7fbdcf8c6555efa495b35fefd41caa38f4b6fdbe4f0f2efe3af3afc62",
+    "verified": true
+  }
+}

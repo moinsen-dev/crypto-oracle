@@ -1,0 +1,63 @@
+name: crypto-oracle
+x-common: &common
+  image: crypto-oracle:local
+  build: .
+  restart: unless-stopped
+  init: true
+  user: "10001:10001"
+  read_only: true
+  tmpfs:
+    - /tmp:size=256m,mode=1777
+  cap_drop: [ALL]
+  security_opt: [no-new-privileges:true]
+  volumes:
+    - oracle-data:/data
+  environment: &environment
+    ORACLE_DATA_DIR: /data
+    HF_HOME: /data/models
+    ORACLE_TORCH_THREADS: ${ORACLE_TORCH_THREADS:-4}
+  logging:
+    driver: json-file
+    options:
+      max-size: "10m"
+      max-file: "3"
+services:
+  web:
+    <<: *common
+    environment:
+      <<: *environment
+      ORACLE_AUTH_USER: ${ORACLE_AUTH_USER:-oracle}
+      ORACLE_AUTH_PASSWORD: ${ORACLE_AUTH_PASSWORD:?Set a strong password in .env}
+    ports:
+      - "127.0.0.1:${ORACLE_PORT:-8787}:8787"
+    mem_limit: 768m
+    cpus: 1
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8787/healthz',timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+  worker:
+    <<: *common
+    environment:
+      <<: *environment
+      AI_GATEWAY_API_KEY: ${AI_GATEWAY_API_KEY:-}
+      ORACLE_JEV_ENABLED: ${ORACLE_JEV_ENABLED:-0}
+      ORACLE_JEV_DAILY_REQUESTS: ${ORACLE_JEV_DAILY_REQUESTS:-200}
+      ORACLE_PAPER_ENABLED: ${ORACLE_PAPER_ENABLED:-0}
+      ORACLE_PAPER_V2_ENABLED: ${ORACLE_PAPER_V2_ENABLED:-0}
+      ORACLE_LEARNING_ENABLED: ${ORACLE_LEARNING_ENABLED:-0}
+      ORACLE_PUBLIC_TOKEN: ${ORACLE_PUBLIC_TOKEN:-}
+    command: ["crypto-oracle", "worker"]
+    mem_limit: 6g
+    cpus: 4
+    stop_grace_period: 90s
+    healthcheck:
+      test: ["CMD", "python", "-c", "import os,sqlite3,time; d=sqlite3.connect('file:/data/oracle.sqlite3?mode=ro',uri=True); names=['worker']+(['learning'] if os.getenv('ORACLE_LEARNING_ENABLED')=='1' else [])+(['forecast-publication'] if os.getenv('ORACLE_LEARNING_ENABLED')=='1' and os.getenv('ORACLE_PUBLIC_TOKEN') else [])+(['paper-trading'] if os.getenv('ORACLE_PAPER_ENABLED')=='1' else [])+(['paper-publication'] if os.getenv('ORACLE_PAPER_ENABLED')=='1' and os.getenv('ORACLE_PUBLIC_TOKEN') else []); rows=[d.execute('SELECT last_success,last_error FROM jobs WHERE name=?',(n,)).fetchone() for n in names]; assert all(r and r[0] and not r[1] and time.time()-r[0]<2100 for r in rows)"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 10m
+volumes:
+  oracle-data:
