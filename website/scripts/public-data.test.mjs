@@ -1,8 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { validateResearch, assertPublicText } from './public-data.mjs';
+import { validateResearch, validateStudy, assertPublicText } from './public-data.mjs';
 const snapshot = JSON.parse(await readFile(new URL('../src/data/research.json', import.meta.url), 'utf8'));
+const study = JSON.parse(await readFile(new URL('../src/data/study.json', import.meta.url), 'utf8'));
 
 test('the reviewed snapshot is publishable; extra private fields are rejected', () => {
   validateResearch(snapshot);
@@ -31,4 +32,19 @@ test('private paths, embedded third-party scripts and forms fail the public boun
     assert.throws(() => assertPublicText(html, 'index.html'));
   }
   assertPublicText('<script src="/scripts/benchmark.js" defer></script><a href="https://www.moinsen.dev">Moinsen</a>', 'index.html');
+});
+test('the study snapshot stays a labelled backtest with every variant reported', () => {
+  validateStudy(study);
+  const relabelled = structuredClone(study);
+  relabelled.kind = 'live result';
+  assert.throws(() => validateStudy(relabelled), /relabelled/);
+  const selective = structuredClone(study);
+  delete selective.trend.universes.project.scenarios['delay-and-double-costs'];
+  assert.throws(() => validateStudy(selective), /Every variant/);
+  const tuned = structuredClone(study);
+  tuned.trend.lookbacks_days = [28];
+  assert.throws(() => validateStudy(tuned), /frozen rule/);
+  const extra = structuredClone(study);
+  extra.bands[0].holdings = 1;
+  assert.throws(() => validateStudy(extra), /Unapproved/);
 });

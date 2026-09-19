@@ -77,6 +77,8 @@ uv run crypto-oracle paper-report
 uv run crypto-oracle forecast-report
 ```
 
+`uv run crypto-oracle study` reproduces the exploratory field notes behind the public [evidence page](https://cryptooracle.moinsen.dev/evidence/): forecast skill at every stored path step, the raw model band against a volatility band, and a fixed-rule trend filter on public Binance daily closes since 2020, with delayed-execution, doubled-cost and ten-coin variants. It makes no model calls, writes `data/study-report.json` and caches the daily closes in `data/study-daily.json` (`--refresh` fetches them again). These are backtests, reported in full; none is a forward claim.
+
 ## Docker operation
 
 After configuring `.env`:

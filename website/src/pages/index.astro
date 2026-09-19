@@ -1,28 +1,34 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Benchmark from '../components/Benchmark.astro';
+import study from '../data/study.json';
+import '../styles/evidence.css';
+
+const signed = (v: number) => `${v > 0 ? '+' : '−'}${Math.abs(v * 100).toFixed(1)}%`;
+const pct = (v: number) => `${(v * 100).toFixed(0)}%`;
+const farthest = study.horizon_skill.at(-1)!, longBand = study.bands.at(-1)!, trend = study.trend.universes.project.scenarios.base;
 ---
-<Layout title="Forecasts meet reality" description="A public technology experiment combining TimesFM forecasting and JEV news evaluation. Explore the architecture, measured results and development of CryptoOracle.">
+<Layout title="Forecasts meet reality" description="A public scoreboard for AI crypto forecasts. Every Bitcoin, Ethereum and Solana prediction is locked, then scored against reality — misses included.">
   <div class="wrap">
     <section class="hero">
       <div class="hero-copy">
         <p class="eyebrow"><span class="status-dot" aria-hidden="true"></span> A PUBLIC RESEARCH NOTEBOOK</p>
         <h1>Forecasts<br /> meet <em>reality.</em></h1>
-        <p class="hero-intro">What happens when a time-series model meets the news — and both have to show their work?</p>
-        <p class="hero-body">CryptoOracle combines crypto market data, TimesFM forecasts and JEV news evaluation in a small, measurable technology experiment.</p>
-        <div class="actions"><a class="button" href="#evidence">Explore the evidence <span aria-hidden="true">↘</span></a><a class="text-link" href="/method/">Go behind the scenes <span aria-hidden="true">↗</span></a></div>
+        <p class="hero-intro">Every hour an AI model predicts where Bitcoin, Ethereum and Solana will trade 24 and 72 hours later. We lock each prediction, wait for the outcome and publish the score — the misses too.</p>
+        <p class="hero-body">A research experiment built on TimesFM, Google’s forecasting model, with news evaluation alongside. Not investment advice.</p>
+        <div class="actions"><a class="button" href="/forecasts/">See the latest forecasts <span aria-hidden="true">→</span></a><a class="text-link" href="#evidence">Explore the evidence <span aria-hidden="true">↘</span></a></div>
         <p class="hero-caption"><a href="https://github.com/moinsen-dev/crypto-oracle" rel="external noreferrer">Explore the source on GitHub ↗</a> · Code, tests and the research method.</p>
       </div>
       <aside class="hero-notebook" aria-labelledby="first-result">
         <div class="notebook-top"><span>FIELD NOTE / 001</span><span>17 SEP 2026</span></div>
         <div class="notebook-title"><span class="outlined-arrow" aria-hidden="true">↘</span><h2 id="first-result">The simple<br /> baseline won.</h2></div>
-        <p>In the first historical experiment, keeping the last price produced less error than TimesFM.</p>
+        <p>In the first historical experiment, guessing “the price stays the same” produced less error than the model.</p>
         <div class="finding-rows">
-          <div><span class="coin-mark">B</span><span>Bitcoin <small>BTC</small></span><strong>+5.2%<small>model error</small></strong></div>
-          <div><span class="coin-mark">E</span><span>Ethereum <small>ETH</small></span><strong>+6.1%<small>model error</small></strong></div>
-          <div><span class="coin-mark">S</span><span>Solana <small>SOL</small></span><strong>+9.3%<small>model error</small></strong></div>
+          <div><span class="coin-mark">B</span><span>Bitcoin <small>BTC</small></span><strong>+5.2%<small>more error than last price</small></strong></div>
+          <div><span class="coin-mark">E</span><span>Ethereum <small>ETH</small></span><strong>+6.1%<small>more error than last price</small></strong></div>
+          <div><span class="coin-mark">S</span><span>Solana <small>SOL</small></span><strong>+9.3%<small>more error than last price</small></strong></div>
         </div>
-        <div class="notebook-bottom"><span class="mini-square" aria-hidden="true"></span><p>24-hour horizon · exploratory backtest<br /> <b>No forecasting advantage demonstrated.</b></p></div>
+        <div class="notebook-bottom"><span class="mini-square" aria-hidden="true"></span><p>24 hours ahead · 365 daily forecasts per coin · backtest<br /> <b>No forecasting advantage demonstrated.</b></p></div>
       </aside>
     </section>
     <div class="facts-strip" aria-label="Experiment facts">
@@ -39,6 +45,14 @@ import Benchmark from '../components/Benchmark.astro';
       </div>
     </section>
     <div id="evidence" class="anchor-section"><Benchmark /></div>
+    <section class="section" aria-labelledby="follow-ups">
+      <div class="section-heading"><p class="eyebrow">THE EVIDENCE / 002–004</p><h2 id="follow-ups">Then we asked<br /> the follow-up questions.</h2><p>Shorter horizons, the uncertainty bands, slower signals. Fixed rules, every variant reported — including the ones that went nowhere.</p></div>
+      <div class="evidence-teaser">
+        <a href="/evidence/#horizons"><span class="index">002 / HORIZONS</span><strong>{signed(farthest.skill)}</strong><p>No horizon rescues the model. From one hour to three days, the last price stays the better forecast.</p><span class="text-link">Read the note <span aria-hidden="true">↗</span></span></a>
+        <a href="/evidence/#bands"><span class="index">003 / UNCERTAINTY</span><strong>{signed(1 - longBand.volatility_band.interval_score / longBand.timesfm_raw.interval_score)}</strong><p>How far a price may move is forecastable. Four volatility numbers beat the model’s own band.</p><span class="text-link">Read the note <span aria-hidden="true">↗</span></span></a>
+        <a href="/evidence/#trend"><span class="index">004 / TREND</span><strong>{pct(trend.rebalanced.max_drawdown)} → {pct(trend.trend_filter.max_drawdown)}</strong><p>One idea survived its costs: a slow trend filter halved the deepest loss. It did not earn more.</p><span class="text-link">Read the note <span aria-hidden="true">↗</span></span></a>
+      </div>
+    </section>
     <section class="section architecture-preview" aria-labelledby="behind-scenes">
       <div><p class="eyebrow">BEHIND THE SCENES</p><h2 id="behind-scenes">A small system.<br /> <em>A visible paper trail.</em></h2><p>Models run on a dedicated research server. The public site delivers a curated, dated snapshot. Browsing this page does not contact the models or the private dashboard.</p><a class="text-link" href="/method/">Walk through the architecture <span aria-hidden="true">↗</span></a></div>
       <div class="pipeline-preview" aria-label="Research data flow">

@@ -1,0 +1,28 @@
+---
+// Bars around a zero line, drawn at build time. A narrow drawing replaces the wide one on phones so labels stay legible.
+interface Props { id: string; title: string; rows: { label: string; value: number }[]; low: number; high: number; }
+const { id, title, rows, low, high } = Astro.props;
+const signed = (v: number, digits = 1) => `${v > 0 ? '+' : v < 0 ? '−' : ''}${Math.abs(v * 100).toFixed(digits)}%`;
+const description = rows.map(r => `${r.label}: ${signed(r.value)}`).join('; ') + '.';
+
+function geometry(width: number) {
+  const left = width > 500 ? 58 : 40, right = width - 14, top = 26, bottom = 196, step = (right - left) / rows.length;
+  const y = (v: number) => top + (high - v) / (high - low) * (bottom - top);
+  const ticks = [];
+  for (let v = Math.ceil(low * 50) / 50; v <= high + 1e-9; v += 0.02) ticks.push({ y: y(v), text: signed(v, 0) });
+  return {
+    width, left, right, ticks, zero: y(0),
+    bars: rows.map((r, i) => ({ ...r, x: left + step * (i + 0.2), width: step * 0.6, center: left + step * (i + 0.5), y: Math.min(y(0), y(r.value)), height: Math.max(Math.abs(y(r.value) - y(0)), 1), labelY: r.value >= 0 ? y(r.value) - 7 : y(r.value) + 15 })),
+  };
+}
+const drawings = [{ kind: 'wide', ...geometry(640) }, { kind: 'narrow', ...geometry(360) }];
+---
+{drawings.map(g => (
+  <svg class={`chart-${g.kind}`} viewBox={`0 0 ${g.width} 232`} role="img" aria-labelledby={`${id}-${g.kind}-title ${id}-${g.kind}-desc`}>
+    <title id={`${id}-${g.kind}-title`}>{title}</title>
+    <desc id={`${id}-${g.kind}-desc`}>{description}</desc>
+    {g.ticks.map(t => <><line class="chart-grid" x1={g.left} x2={g.right} y1={t.y} y2={t.y} /><text class="chart-axis" x={g.left - 7} y={t.y + 4} text-anchor="end">{t.text}</text></>)}
+    {g.bars.map(b => <><rect class={b.value >= 0 ? 'bar-model' : 'bar-worse'} x={b.x} y={b.y} width={b.width} height={b.height} rx="2" /><text class="chart-value evidence-value" x={b.center} y={b.labelY} text-anchor="middle">{signed(b.value)}</text><text class="chart-axis" x={b.center} y="222" text-anchor="middle">{b.label}</text></>)}
+    <line class="evidence-zero" x1={g.left} x2={g.right} y1={g.zero} y2={g.zero} />
+  </svg>
+))}

@@ -31,6 +31,8 @@ def main():
     jev_parser.add_argument("--limit", type=int, default=1)
     report_parser = subs.add_parser("report")
     report_parser.add_argument("--scope", choices=("live", "backtest"), default="backtest")
+    study_parser = subs.add_parser("study", help="Exploratory historical studies; no model calls")
+    study_parser.add_argument("--refresh", action="store_true", help="Fetch the public daily closes again")
     backup = subs.add_parser("backup")
     backup.add_argument("destination", type=Path)
     args = parser.parse_args()
@@ -111,6 +113,15 @@ def main():
         result = build_report(args.scope)
         path = config.DATA / (args.scope + "-report.json")
         path.write_text(json.dumps(result, indent=2))
+        print(json.dumps(result, indent=2))
+    elif args.command == "study":
+        from .study import build
+
+        result = build(args.refresh)
+        path = config.DATA / "study-report.json"
+        path.write_text(json.dumps(result, indent=2))
+        for universe in result["trend"]["universes"].values():
+            universe.pop("weekly_curves")
         print(json.dumps(result, indent=2))
     elif args.command == "backup":
         if args.destination.exists():

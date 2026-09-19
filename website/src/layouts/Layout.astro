@@ -6,10 +6,11 @@ const { title, description } = Astro.props;
 const path = Astro.url.pathname;
 const navigation = [
   { href: '/', label: 'Overview' },
+  { href: '/forecasts/', label: 'Forecast journal' },
+  { href: '/paper-portfolio/', label: 'Paper portfolio' },
+  { href: '/evidence/', label: 'Evidence' },
   { href: '/method/', label: 'The method' },
   { href: '/build-notes/', label: 'Build journal' },
-  { href: '/paper-portfolio/', label: 'Paper portfolio' },
-  { href: '/forecasts/', label: 'Forecast journal' },
 ];
 const canonical = Astro.site ? new URL(path, Astro.site).href : undefined;
 ---
@@ -20,18 +21,21 @@ const canonical = Astro.site ? new URL(path, Astro.site).href : undefined;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <meta name="theme-color" content="#f5f4ee" />
+    <meta name="color-scheme" content="light" />
     <meta name="referrer" content="no-referrer" />
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="CryptoOracle" />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta property="og:title" content={`${title} · CryptoOracle`} />
     <meta property="og:description" content={description} />
-    {canonical && <><link rel="canonical" href={canonical} /><meta property="og:url" content={canonical} /></>}
+    {canonical && <><link rel="canonical" href={canonical} /><meta property="og:url" content={canonical} /><meta property="og:image" content={new URL('/og.png', Astro.site).href} /><meta property="og:image:width" content="1200" /><meta property="og:image:height" content="630" /><meta property="og:image:alt" content="CryptoOracle: forecasts meet reality. Every prediction is locked, then scored in public." /></>}
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title} · CryptoOracle</title>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
     <header class="site-header wrap">
-      <a class="brand" href="/" aria-label="CryptoOracle home">
+      <a class="brand" href="/">
         <img src="/favicon.svg" width="36" height="36" alt="" />
         <span>Crypto<span class="brand-light">Oracle</span><small>A MOINSEN EXPERIMENT</small></span>
       </a>
@@ -55,8 +59,11 @@ const canonical = Astro.site ? new URL(path, Astro.site).href : undefined;
         <p class="fine-print">Research information. No investment advice or live trading service.</p>
       </div>
       <nav aria-label="Footer navigation">
-        <a href="/method/">Method & limitations</a>
-        <a href="/build-notes/">Development journal</a>
+        <a href="/forecasts/">Forecast journal</a>
+        <a href="/paper-portfolio/">Paper portfolio</a>
+        <a href="/evidence/">Evidence</a>
+        <a href="/method/">The method</a>
+        <a href="/build-notes/">Build journal</a>
         <a href="/privacy/">Privacy notice</a>
         <a href="/legal/">Legal notice / Impressum</a>
         <a href="https://github.com/moinsen-dev/crypto-oracle" rel="external noreferrer">Source on GitHub ↗</a>

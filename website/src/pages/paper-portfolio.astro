@@ -25,7 +25,7 @@ const portfolios = [
       <section id="compare" aria-labelledby="compare-title">
         <div class="paper-section-head"><div><h2 id="compare-title">Meet the portfolios.</h2><p class="section-caption">All three run automatically. Select a portfolio to inspect its decisions and holdings.</p></div><span class="fine-print" data-started></span></div>
         <div class="strategy-cards" role="group" aria-label="Choose a portfolio">
-          {portfolios.map(p => <button type="button" class={`strategy-card ${p.id}`} data-portfolio={p.id} aria-pressed={p.id === 'news-guarded' ? 'true' : 'false'} aria-controls="portfolio-detail" aria-label={`Inspect ${p.name}`}>
+          {portfolios.map(p => <button type="button" class={`strategy-card ${p.id}`} data-portfolio={p.id} aria-pressed={p.id === 'news-guarded' ? 'true' : 'false'} aria-controls="portfolio-detail">
             <span class="strategy-top"><span class="strategy-number">{p.number}</span><span class="strategy-title">{p.name}</span><span class="series-sample" aria-hidden="true"></span></span>
             <span class="strategy-model">{p.model}</span><span class="strategy-description">{p.description}</span>
             <span class="strategy-value" data-card-value>—</span><span class="strategy-return" data-card-return></span>

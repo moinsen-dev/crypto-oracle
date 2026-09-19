@@ -1,0 +1,110 @@
+---
+import Layout from '../layouts/Layout.astro';
+import study from '../data/study.json';
+import EvidenceBars from '../components/EvidenceBars.astro';
+import '../styles/evidence.css';
+
+const signed = (v: number, digits = 1) => `${v > 0 ? '+' : v < 0 ? '−' : ''}${Math.abs(v * 100).toFixed(digits)}%`;
+const pct = (v: number, digits = 0) => `${(v * 100).toFixed(digits)}%`;
+const day = (t: number) => new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' }).format(t * 1000);
+
+const skillRows = study.horizon_skill.map(r => ({ label: `${r.horizon}h`, value: r.skill }));
+const bandRows = study.bands.map(r => ({ label: `${r.horizon}h`, value: 1 - r.volatility_band.interval_score / r.timesfm_raw.interval_score }));
+
+const first = study.horizon_skill[0], last = study.horizon_skill.at(-1)!, dayAhead = study.horizon_skill.find(r => r.horizon === 24)!;
+const unseen = study.bands[0];
+
+// Growth of one unit on a logarithmic scale.
+const project = study.trend.universes.project, largeCaps = study.trend.universes['october-2020-large-caps'];
+const curves = project.weekly_curves;
+const peak = Math.max(...curves.map(c => Math.max(c.rebalanced, c.trend_filter)));
+const levels = [1, 2, 5, 10, 20, 50].filter(v => v <= peak * 1.4);
+const end = curves.at(-1)!;
+function growth(width: number) {
+  const wide = width > 500, box = { left: wide ? 46 : 34, right: wide ? 540 : width - 10, top: 22, bottom: 250 };
+  const x = (t: number) => box.left + (t - curves[0].t) / (end.t - curves[0].t) * (box.right - box.left);
+  const y = (v: number) => box.bottom - Math.log(v / 0.8) / Math.log(levels.at(-1)! * 1.25 / 0.8) * (box.bottom - box.top);
+  const path = (key: 'rebalanced' | 'trend_filter') => curves.map((c, i) => `${i ? 'L' : 'M'}${x(c.t).toFixed(1)},${y(c[key]).toFixed(1)}`).join(' ');
+  const years = [];
+  for (let yr = 2021; Date.UTC(yr, 0, 1) / 1000 < end.t; yr += wide ? 1 : 2) years.push({ x: x(Date.UTC(yr, 0, 1) / 1000), text: String(yr) });
+  // Keep the two end labels apart when the lines finish close together.
+  const middle = (y(end.trend_filter) + y(end.rebalanced)) / 2, above = end.trend_filter >= end.rebalanced ? -1 : 1;
+  return { kind: wide ? 'wide' : 'narrow', width, wide, box, years, grid: levels.map(v => ({ y: y(v), text: `×${v}` })), reference: path('rebalanced'), trend: path('trend_filter'), trendLabelY: middle + above * 9 + 4, referenceLabelY: middle - above * 9 + 4 };
+}
+const drawings = [growth(640), growth(360)];
+
+const base = project.scenarios.base, harsh = project.scenarios['delay-and-double-costs'];
+const scenarioNames: Record<string, string> = { base: 'As specified', 'one-day-delay': 'Trades one day late', 'double-costs': 'Doubled costs', 'delay-and-double-costs': 'Late and doubled costs' };
+const variants = [['BTC · ETH · SOL', project], ['Ten large caps of Oct 2020', largeCaps]] as const;
+const month = study.trend.universes.project.next_week_mean_log_return['28'];
+---
+<Layout title="The evidence" description="Four fixed-rule studies behind CryptoOracle: forecast skill at every horizon, the quality of uncertainty bands, and the one price pattern that held up against costs.">
+  <div class="wrap">
+    <header class="page-hero"><p class="eyebrow">THE EVIDENCE / FIELD NOTES 002–004</p><h1>Where we looked.<br /> <em>What survived.</em></h1><p>The first benchmark showed a model losing to the last price. So we asked the obvious follow-up questions. The rules were fixed before the results; every variant we ran is on this page.</p></header>
+    <div class="evidence-strip" aria-label="Summary of three findings">
+      <a href="#horizons"><span class="index">002 / HORIZONS</span><strong>{signed(last.skill)}</strong><span>forecast error against the last price, {last.horizon} hours ahead</span></a>
+      <a href="#bands"><span class="index">003 / UNCERTAINTY</span><strong>{signed(bandRows.at(-1)!.value, 0)}</strong><span>better band score from four volatility numbers than from the model</span></a>
+      <a href="#trend"><span class="index">004 / TREND</span><strong>{pct(base.rebalanced.max_drawdown)} → {pct(base.trend_filter.max_drawdown)}</strong><span>deepest loss with a slow trend filter, at similar growth</span></a>
+    </div>
+    <div class="reading-layout">
+      <aside class="contents"><p class="eyebrow">ON THIS PAGE</p><a href="#horizons">002 · No horizon rescues the model</a><a href="#bands">003 · Uncertainty is forecastable</a><a href="#trend">004 · A slow trend filter</a><a href="#limits">What this does not show</a></aside>
+      <div class="reading-content">
+        <section id="horizons"><p class="eyebrow">FIELD NOTE 002 / HORIZONS</p><h2>No horizon rescues the model.</h2>
+          <p>Perhaps a day is simply too far. Every stored backtest forecast contains a full hourly path, so we scored all {first.n.toLocaleString('en-GB')} paths at eight distances without running the model again.</p>
+          <figure class="evidence-figure">
+            <div class="chart-label"><span>TimesFM error relative to “the price stays the same”</span><span>Above zero is better ↑</span></div>
+            <EvidenceBars id="skill" title="Forecast skill by horizon" rows={skillRows} low={-0.09} high={0.03} />
+            <figcaption class="fine-print">Relative difference in mean absolute log-return error. {first.n.toLocaleString('en-GB')} paired forecasts per bar: 365 daily origins × BTC, ETH, SOL.</figcaption>
+          </figure>
+          <p>One hour ahead the model is level with the last price ({signed(first.skill)}) and calls the direction {pct(first.direction!)} of the time. Then it falls behind with every additional hour. A day ahead it is {signed(dayAhead.skill)} and right about direction {pct(dayAhead.direction!)} of the time — slightly worse than a coin.</p>
+          <p>The one-hour edge did not last either. On the final 40% of the year, which no rule on this page was fitted to, it was {signed(unseen.point_skill)}.</p>
+          <div class="callout"><b>What we take from it</b><p>The horizon is not the problem. Hourly prices alone do not tell this model where the price goes next. A different model reading the same prices is unlikely to change that.</p></div>
+        </section>
+        <section id="bands"><p class="eyebrow">FIELD NOTE 003 / UNCERTAINTY</p><h2>Uncertainty is forecastable. Direction, so far, is not.</h2>
+          <p>A forecast band is useful when it is narrow <em>and</em> right about as often as it claims. TimesFM’s band claims 80%. We compared it with the plainest alternative we could write down: a band centred on the last price whose width follows recent volatility. Four fitted numbers, no opinion about direction.</p>
+          <figure class="evidence-figure">
+            <div class="chart-label"><span>Band score of the volatility band relative to TimesFM</span><span>Above zero: the simple band is better ↑</span></div>
+            <EvidenceBars id="band" title="Interval score improvement by horizon" rows={bandRows} low={-0.01} high={0.11} />
+            <figcaption class="fine-print">Interval score: band width plus a penalty for every miss; lower is better. Fitted on the first 60% of the year, scored on the remaining {unseen.n} forecasts.</figcaption>
+          </figure>
+          <div class="table-scroll" role="region" aria-label="Band coverage and score by horizon" tabindex="0"><table><caption>How often the outcome landed inside a nominal 80% band, and the interval score × 100.</caption><thead><tr><th scope="col">Horizon</th><th scope="col">TimesFM inside</th><th scope="col">Volatility band inside</th><th scope="col">TimesFM score</th><th scope="col">Volatility band score</th></tr></thead><tbody>
+            {study.bands.map(r => <tr><th scope="row">{r.horizon}h</th><td>{pct(r.timesfm_raw.coverage, 1)}</td><td>{pct(r.volatility_band.coverage, 1)}</td><td>{(r.timesfm_raw.interval_score * 100).toFixed(2)}</td><td>{(r.volatility_band.interval_score * 100).toFixed(2)}</td></tr>)}
+          </tbody></table></div>
+          <p>The model’s band is too wide one hour ahead and too narrow three days ahead. The simple band scores the same or better at every distance. It is not finished: beyond twelve hours it errs on the cautious side, so it can still be tightened.</p>
+          <div class="callout"><b>What we take from it</b><p>How far a price may move is far easier to forecast than which way. An honest band with measured coverage is a result this project can actually deliver. At horizons of a few hours it could be checked within days rather than months.</p></div>
+        </section>
+        <section id="trend"><p class="eyebrow">FIELD NOTE 004 / TREND</p><h2>What survived: a slow trend filter.</h2>
+          <p>If hours carry no signal, do weeks? We took one rule from the trend-following literature and froze it before looking: hold each coin in proportion to how many of its 7-, 14-, 28- and 56-day returns are positive; keep the rest in cash. Same 60% crypto limit as the paper portfolio, {pct(base.cost, 2)} cost per trade, daily closes from {day(project.first_day)} to {day(project.last_day)}. The comparison holds 20% in each coin and rebalances.</p>
+          <figure class="evidence-figure">
+            <div class="chart-label"><span>Growth of 1.00 · BTC, ETH, SOL · logarithmic scale</span><span>Backtest · not a forecast</span></div>
+            {drawings.map(g => (
+              <svg class={`chart-${g.kind}`} viewBox={`0 0 ${g.width} 278`} role="img" aria-labelledby={`trend-${g.kind}-title trend-${g.kind}-desc`}>
+                <title id={`trend-${g.kind}-title`}>Trend filter against a rebalanced portfolio</title>
+                <desc id={`trend-${g.kind}-desc`}>Both end near the same value: rebalanced ×{end.rebalanced.toFixed(1)}, trend filter ×{end.trend_filter.toFixed(1)}. The rebalanced portfolio fell {pct(base.rebalanced.max_drawdown)} from its peak; the trend filter {pct(base.trend_filter.max_drawdown)}.</desc>
+                {g.grid.map(v => <><line class="chart-grid" x1={g.box.left} x2={g.box.right} y1={v.y} y2={v.y} /><text class="chart-axis" x={g.box.left - 7} y={v.y + 4} text-anchor="end">{v.text}</text></>)}
+                {g.years.map(v => <text class="chart-axis" x={v.x} y="272" text-anchor="middle">{v.text}</text>)}
+                <path class="evidence-line-reference" d={g.reference} />
+                <path class="evidence-line-trend" d={g.trend} />
+                {g.wide && <><text class="chart-axis evidence-end" x={g.box.right + 8} y={g.trendLabelY}>Trend ×{end.trend_filter.toFixed(1)}</text><text class="chart-axis" x={g.box.right + 8} y={g.referenceLabelY}>Rebal. ×{end.rebalanced.toFixed(1)}</text></>}
+              </svg>
+            ))}
+            <div class="evidence-legend"><span class="legend-trend">Trend filter · ends ×{end.trend_filter.toFixed(1)}</span><span class="legend-reference">Rebalanced 20 / 20 / 20 / 40 · ends ×{end.rebalanced.toFixed(1)}</span></div>
+          </figure>
+          <div class="evidence-pair"><div><span class="eyebrow">DEEPEST LOSS · REBALANCED</span><strong>−{pct(base.rebalanced.max_drawdown)}</strong></div><div><span class="eyebrow">DEEPEST LOSS · TREND FILTER</span><strong>−{pct(base.trend_filter.max_drawdown)}</strong></div></div>
+          <p>The filter did not earn more. Both lines end close together. What changed is the ride: the deepest loss roughly halved, because the rule was mostly in cash during the long declines. After a positive 28-day return the following week averaged {signed(month.up, 2)}; after a negative one, {signed(month.down, 2)}.</p>
+          <p>Then we tried to break it: trade a full day late, double the costs, and replace our three coins with ten large caps fixed in October 2020, so that later winners are not picked with hindsight.</p>
+          <div class="table-scroll" role="region" aria-label="All trend filter variants" tabindex="0"><table><caption>All eight variants. Return per unit of risk is the annualised Sharpe ratio; the interval is a 95% block bootstrap of the difference.</caption><thead><tr><th scope="col">Coins</th><th scope="col">Variant</th><th scope="col">Deepest loss</th><th scope="col">Return per risk</th><th scope="col">Difference, 95%</th></tr></thead><tbody>
+            {variants.flatMap(([label, universe]) => Object.entries(universe.scenarios).map(([name, s]) => <tr><th scope="row">{label}</th><td>{scenarioNames[name]}</td><td>{pct(s.rebalanced.max_drawdown)} → {pct(s.trend_filter.max_drawdown)}</td><td>{s.rebalanced.sharpe.toFixed(2)} → {s.trend_filter.sharpe.toFixed(2)}</td><td>{s.sharpe_gap_ci95[0] > 0 ? '+' : '−'}{Math.abs(s.sharpe_gap_ci95[0]).toFixed(2)} to +{s.sharpe_gap_ci95[1].toFixed(2)}</td></tr>))}
+          </tbody></table></div>
+          <p>The smaller loss held in all eight. The better return per unit of risk is only suggestive: as specified the interval stays above zero, but traded late at doubled costs it runs from {harsh.sharpe_gap_ci95[0] > 0 ? '+' : '−'}{Math.abs(harsh.sharpe_gap_ci95[0]).toFixed(2)} to +{harsh.sharpe_gap_ci95[1].toFixed(2)}, and with ten coins it includes zero throughout.</p>
+          <div class="callout"><b>What we take from it</b><p>This is a rule about when to be exposed, not a prediction that a coin will rise. It is the first idea here that survives its costs, so it earns a prospective test: frozen, in its own virtual portfolio, against a rebalanced benchmark.</p></div>
+        </section>
+        <section id="limits"><p class="eyebrow">LIMITATIONS</p><h2>What this does not show.</h2>
+          <ul class="plain-list"><li>These are backtests. The trend rule came from published research, so part of this period is not new to it.</li><li>Six years of crypto contain two long declines. Two is a small number of independent tests for a rule whose whole benefit is avoiding declines.</li><li>Coins that still trade today are survivors. The ten-coin list was fixed in 2020, yet delisted coins are still missing from it.</li><li>Daily closes, a flat cost and no order book. The paper portfolio’s execution checks are stricter than this study.</li><li>The band comparison covers one year and one split. Different periods can rank the two bands differently.</li><li>Nothing here is investment advice or a statement about future prices.</li></ul>
+          <p>Measured on {day(study.created_at)} from the stored backtest and public Binance daily closes. The study is one command in the <a href="https://github.com/moinsen-dev/crypto-oracle" rel="external noreferrer">public source</a>: <code>crypto-oracle study</code>.</p>
+          <div class="benchmark-foot"><span>Frozen snapshot · measured {day(study.created_at)}</span><a href="/data/study.json" download="crypto-oracle-study.json">Download the data ↓</a></div>
+        </section>
+      </div>
+    </div>
+  </div>
+</Layout>

@@ -29,13 +29,15 @@
   function renderScores() {
     const f = committed;
     const g = summary.groups.find(g => g.asset === f.asset && g.horizon === +f.horizon && g.model === f.model);
+    const n = g?.paired || 0, days = g?.calendar_days || 0;
+    const count = share => share == null || !n ? '—' : `${Math.round(share*n)} of ${n}`;
     $('forecast-scores').replaceChildren(
-      score('Settled forecasts', String(g?.scored || 0), `${g?.issued || 0} issued · ${g?.calendar_days || 0} calendar days of scored origins`),
-      score('Direction matched', g?.direction == null ? '—' : number(g.direction*100, 1) + '%', 'Direction does not measure the size of the move'),
-      score('Target inside the band', g?.coverage == null ? '—' : number(g.coverage*100, 1) + '%', 'Observed coverage · nominal Q10–Q90 band: 80%'),
-      score('Forecast error', g?.mae == null ? '—' : number(g.mae*100, 3), g?.baseline_mae == null ? 'No paired outcomes yet' : `Persistence: ${number(g.baseline_mae*100, 3)} · lower is better`)
+      score('Settled forecasts', String(g?.scored || 0), `${g?.issued || 0} issued · about ${days} ${days === 1 ? 'day' : 'days'} of market`),
+      score('Direction matched', count(g?.direction), 'Hourly forecasts overlap: one market move is counted many times'),
+      score('Inside its own 80% range', count(g?.coverage), 'A well-calibrated range would hold about 8 in 10'),
+      score('Average miss', g?.mae == null ? '—' : number(g.mae*100, 2) + ' pts', g?.baseline_mae == null ? 'No paired outcomes yet' : `“The price stays the same” missed by ${number(g.baseline_mae*100, 2)} pts · lower is better`)
     );
-    $('forecast-cohort').textContent = `${f.asset} · ${f.horizon}h · ${names[f.model]}. ${g?.paired || 0} matched outcomes. Error is mean absolute log-return error × 100, not portfolio return. Hourly targets overlap; a high direction score can describe the same market move many times.`;
+    $('forecast-cohort').textContent = `${f.asset} · ${f.horizon}h · ${names[f.model]}. ${n} matched outcomes from about ${days} calendar ${days === 1 ? 'day' : 'days'}${days < 28 ? ' — a first look, not a result' : ''}. A miss is the absolute log-return error × 100, in percentage points. It is not a portfolio return.`;
   }
   function svgNode(tag, attrs, text) { const el = document.createElementNS('http://www.w3.org/2000/svg', tag); Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, String(v))); if (text !== undefined) el.textContent = text; return el; }
   function chart(r) {
@@ -66,7 +68,7 @@
   function renderDetail(r) {
     const keepOpen = selected?.id === r.id && $('forecast-detail').querySelector('details')?.open;
     selected = r; const c = r.claim, e = r.outcome, q = r.quality, box = $('forecast-detail'); box.hidden = false;
-    box.replaceChildren(node('span', state(r), 'forecast-badge' + (e ? '' : ' pending')), node('h2', `${c.asset}: ${percent(c.prediction/c.base-1)} was the forecast.`), node('p', `${names[c.model]} · issued ${date(c.issued_at)} · target ${date(c.target)}`, 'record-subtitle'));
+    box.replaceChildren(node('span', state(r), 'forecast-badge' + (e ? '' : ' pending')), node('h2', e ? `${c.asset}: ${percent(c.prediction/c.base-1)} was the forecast. It moved ${percent(e.actual/c.base-1)}.` : c.target > Date.now()/1000 ? `${c.asset}: the model expects ${percent(c.prediction/c.base-1)} by ${date(c.target)}.` : `${c.asset}: ${percent(c.prediction/c.base-1)} was the forecast. The outcome is not in yet.`), node('p', `${names[c.model]} · issued ${date(c.issued_at)} · target ${date(c.target)}`, 'record-subtitle'));
     const comparison = node('div', undefined, 'forecast-comparison');
     for (const [title, primary, secondary, cls] of [
       ['Predicted at target', `${number(c.prediction)} USDT`, `${percent(c.prediction/c.base-1)} from the original close`, 'prediction'],
