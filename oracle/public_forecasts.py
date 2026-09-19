@@ -6,10 +6,11 @@ import time
 
 import httpx
 
-from . import config, fusion, learning, outcomes
+from . import config, fusion, learning, outcomes, volband
 from .db import connect, digest, packed
 
-MODELS = ("timesfm", "calibrated", "fusion_market", "fusion_news")
+MODELS = ("timesfm", "calibrated", "fusion_market", "fusion_news", "volband", "timesfm_path")
+PAIRED_MODEL = {"volband": "timesfm_path", "timesfm_path": "volband"}
 
 
 def record(db, r, now):
@@ -87,6 +88,23 @@ def record(db, r, now):
             (config.EXPERIMENT, r["asset"], r["horizon"], r["origin"]),
         )
     ]
+    if r["model"] in PAIRED_MODEL:
+        paired = db.execute(
+            "SELECT f.model,f.prediction,e.absolute_log_error,e.actual_hash FROM forecasts f LEFT JOIN evaluations e "
+            "ON e.forecast_id=f.id WHERE f.experiment=? AND f.scope='live' AND f.asset=? "
+            "AND f.horizon=? AND f.origin=? AND f.model=?",
+            (volband.EXPERIMENT, r["asset"], r["horizon"], r["origin"], PAIRED_MODEL[r["model"]]),
+        ).fetchone()
+        if paired:
+            baselines.append(
+                {
+                    "model": paired["model"],
+                    "prediction": paired["prediction"],
+                    "error": paired["absolute_log_error"]
+                    if paired["actual_hash"] == r["actual_hash"]
+                    else None,
+                }
+            )
     return {
         "id": r["id"],
         "claim": claim,
@@ -107,8 +125,8 @@ def snapshot():
             for r in db.execute(
                 "SELECT f.*,e.actual,e.evaluated_at,e.actual_hash,e.absolute_log_error,e.direction_correct,e.covered,e.pinball "
                 "FROM forecasts f LEFT JOIN evaluations e ON e.forecast_id=f.id WHERE f.scope='live' "
-                "AND f.experiment IN (?,?) ORDER BY f.origin,f.model",
-                (config.EXPERIMENT, learning.EXPERIMENT),
+                "AND f.experiment IN (?,?,?) ORDER BY f.origin,f.model",
+                (config.EXPERIMENT, learning.EXPERIMENT, volband.EXPERIMENT),
             )
         ]
         published = {r[0] for r in db.execute("SELECT id FROM forecast_publications")}
@@ -118,8 +136,9 @@ def snapshot():
             if r["model"] in MODELS and (r["target"] >= now - 7 * 86400 or r["id"] not in published)
         ]
         groups = []
+        horizons = sorted(set(config.HORIZONS) | set(volband.POLICY["horizons"]))
         for asset in config.ASSETS:
-            for horizon in config.HORIZONS:
+            for horizon in horizons:
                 for model in MODELS:
                     group = [
                         r
@@ -128,12 +147,14 @@ def snapshot():
                     ]
                     if not group:
                         continue
+                    # The volband pair references each other; every other model references persistence.
+                    reference_name = PAIRED_MODEL.get(model, "persistence")
                     references = {
                         r["origin"]: r
                         for r in rows
                         if r["asset"] == asset
                         and r["horizon"] == horizon
-                        and r["model"] == "persistence"
+                        and r["model"] == reference_name
                         and r["actual"] is not None
                     }
                     paired = [
@@ -159,8 +180,9 @@ def snapshot():
                             / len(paired)
                             if paired
                             else None,
+                            # Band-only models make no directional claim; never fabricate a 0% score for it.
                             "direction": sum(r["direction_correct"] for r in paired) / len(paired)
-                            if paired
+                            if paired and model not in PAIRED_MODEL
                             else None,
                             "coverage": sum(covered) / len(covered) if covered else None,
                             "calendar_days": len({r["origin"] // 86400 for r in paired}),
@@ -231,7 +253,7 @@ def snapshot():
         experiment = db.execute(
             "SELECT started_at FROM learning_experiments WHERE id=?", (learning.EXPERIMENT,)
         ).fetchone()
-    return {
+    result = {
         "schema": 1,
         "generated_at": now,
         "experiment": learning.EXPERIMENT,
@@ -242,6 +264,10 @@ def snapshot():
         "news": news,
         "records": records,
     }
+    # Additive only: the shape above stays byte-for-byte identical while the flag is off.
+    if os.getenv("ORACLE_VOLBAND_ENABLED") == "1":
+        result["volband"] = volband.summary()
+    return result
 
 
 def publish():

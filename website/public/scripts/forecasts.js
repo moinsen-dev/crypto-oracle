@@ -1,7 +1,9 @@
 (() => {
   const $ = id => document.getElementById(id);
   const node = (tag, text, cls) => { const n = document.createElement(tag); if (text !== undefined) n.textContent = text; if (cls) n.className = cls; return n; };
-  const names = { timesfm: 'TimesFM · original', calibrated: 'Learned calibration · shadow', fusion_market: 'Market correction · shadow', fusion_news: 'FinBERT news correction · shadow' };
+  const names = { timesfm: 'TimesFM · original', calibrated: 'Learned calibration · shadow', fusion_market: 'Market correction · shadow', fusion_news: 'FinBERT news correction · shadow', volband: 'Volatility band · shadow', timesfm_path: 'TimesFM band at this horizon · shadow' };
+  const bandModels = new Set(['volband', 'timesfm_path']);
+  const pairedModel = { volband: 'timesfm_path', timesfm_path: 'volband' };
   const number = (n, digits = 2) => n === null || n === undefined ? '—' : Number(n).toLocaleString('en-GB', { maximumFractionDigits: digits, minimumFractionDigits: digits });
   const percent = n => n === null || n === undefined ? '—' : `${n > 0 ? '+' : ''}${number(n * 100)}%`;
   const date = t => t === null ? 'Not available' : new Intl.DateTimeFormat('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Berlin', timeZoneName: 'short' }).format(t * 1000);
@@ -31,11 +33,18 @@
     const g = summary.groups.find(g => g.asset === f.asset && g.horizon === +f.horizon && g.model === f.model);
     const n = g?.paired || 0, days = g?.calendar_days || 0;
     const count = share => share == null || !n ? '—' : `${Math.round(share*n)} of ${n}`;
+    const isBand = bandModels.has(f.model);
+    const entry = isBand && summary.volband?.entries.find(x => x.asset === f.asset && x.horizon === +f.horizon);
+    const bandScore = m => entry?.interval_score?.[m] == null ? '—' : `${number(entry.interval_score[m] * 100, 2)} pts`;
     $('forecast-scores').replaceChildren(
       score('Settled forecasts', String(g?.scored || 0), `${g?.issued || 0} issued · about ${days} ${days === 1 ? 'day' : 'days'} of market`),
-      score('Direction matched', count(g?.direction), 'Hourly forecasts overlap: one market move is counted many times'),
+      isBand
+        ? score('Direction matched', '—', 'This model has no opinion on direction')
+        : score('Direction matched', count(g?.direction), 'Hourly forecasts overlap: one market move is counted many times'),
       score('Inside its own 80% range', count(g?.coverage), 'A well-calibrated range would hold about 8 in 10'),
-      score('Average miss', g?.mae == null ? '—' : number(g.mae*100, 2) + ' pts', g?.baseline_mae == null ? 'No paired outcomes yet' : `“The price stays the same” missed by ${number(g.baseline_mae*100, 2)} pts · lower is better`)
+      isBand
+        ? score('Band score', bandScore(f.model), entry?.interval_score?.[pairedModel[f.model]] == null ? 'No paired outcomes yet' : `${names[pairedModel[f.model]]}: ${bandScore(pairedModel[f.model])} · lower is better`)
+        : score('Average miss', g?.mae == null ? '—' : number(g.mae*100, 2) + ' pts', g?.baseline_mae == null ? 'No paired outcomes yet' : `“The price stays the same” missed by ${number(g.baseline_mae*100, 2)} pts · lower is better`)
     );
     $('forecast-cohort').textContent = `${f.asset} · ${f.horizon}h · ${names[f.model]}. ${n} matched outcomes from about ${days} calendar ${days === 1 ? 'day' : 'days'}${days < 28 ? ' — a first look, not a result' : ''}. A miss is the absolute log-return error × 100, in percentage points. It is not a portfolio return.`;
   }
@@ -68,7 +77,7 @@
   function renderDetail(r) {
     const keepOpen = selected?.id === r.id && $('forecast-detail').querySelector('details')?.open;
     selected = r; const c = r.claim, e = r.outcome, q = r.quality, box = $('forecast-detail'); box.hidden = false;
-    box.replaceChildren(node('span', state(r), 'forecast-badge' + (e ? '' : ' pending')), node('h2', e ? `${c.asset}: ${percent(c.prediction/c.base-1)} was the forecast. It moved ${percent(e.actual/c.base-1)}.` : c.target > Date.now()/1000 ? `${c.asset}: the model expects ${percent(c.prediction/c.base-1)} by ${date(c.target)}.` : `${c.asset}: ${percent(c.prediction/c.base-1)} was the forecast. The outcome is not in yet.`), node('p', `${names[c.model]} · issued ${date(c.issued_at)} · target ${date(c.target)}`, 'record-subtitle'));
+    box.replaceChildren(node('span', state(r), 'forecast-badge' + (e ? '' : ' pending')), node('h2', bandModels.has(c.model) && c.lower !== null ? (e ? `${c.asset}: the range was ${number(c.lower)}–${number(c.upper)} USDT. It closed at ${number(e.actual)}, ${e.covered ? 'inside' : 'outside'}.` : `${c.asset}: the range is ${number(c.lower)}–${number(c.upper)} USDT by ${date(c.target)}.`) : e ? `${c.asset}: ${percent(c.prediction/c.base-1)} was the forecast. It moved ${percent(e.actual/c.base-1)}.` : c.target > Date.now()/1000 ? `${c.asset}: the model expects ${percent(c.prediction/c.base-1)} by ${date(c.target)}.` : `${c.asset}: ${percent(c.prediction/c.base-1)} was the forecast. The outcome is not in yet.`), node('p', `${names[c.model]} · issued ${date(c.issued_at)} · target ${date(c.target)}`, 'record-subtitle'));
     const comparison = node('div', undefined, 'forecast-comparison');
     for (const [title, primary, secondary, cls] of [
       ['Predicted at target', `${number(c.prediction)} USDT`, `${percent(c.prediction/c.base-1)} from the original close`, 'prediction'],
@@ -89,7 +98,7 @@
     addPair(dl, 'Original reference', `${number(c.base)} USDT · ${date(c.origin)}`);
     addPair(dl, 'Market', 'Binance spot · completed hourly close · USDT');
     addPair(dl, 'Interval at target', c.lower === null ? 'None' : `${number(c.lower)} – ${number(c.upper)} USDT · nominal Q10–Q90`);
-    for (const b of r.baselines) addPair(dl, b.model === 'persistence' ? 'Price unchanged' : b.model === 'momentum' ? 'Momentum baseline' : 'Original TimesFM', `${number(b.prediction)} USDT${b.error !== null ? ` · error × 100: ${number(b.error*100, 3)}` : ''}`);
+    for (const b of r.baselines) addPair(dl, b.model === 'persistence' ? 'Price unchanged' : b.model === 'momentum' ? 'Momentum baseline' : b.model === 'timesfm' ? 'Original TimesFM' : names[b.model], `${number(b.prediction)} USDT${b.error !== null ? ` · error × 100: ${number(b.error*100, 3)}` : ''}`);
     if (e) { addPair(dl, 'Evaluated', date(e.evaluated_at)); addPair(dl, 'Outcome hash', e.actual_hash); }
     if (q) { addPair(dl, 'Outcome review', `${date(q.at)} · ${q.status}`); addPair(dl, 'Original outcome seen', date(q.actual_observed_at)); for (const v of q.references) addPair(dl, `${v.source} · ${v.asset}/USD`, `${number(v.close, v.asset === 'USDT' ? 6 : 2)} · hour ending ${date(v.ts)} · observed ${date(v.observed_at)}`); }
     addPair(dl, 'Forecast ID', r.id); addPair(dl, 'Experiment', c.experiment); addPair(dl, 'Model revision', c.revision); addPair(dl, 'Input hash', c.input_hash);
@@ -153,12 +162,18 @@
     } catch (error) {
       if (committed) setValues(committed);
       status(error.message === 'forecast_not_found' ? 'This forecast has not been published or the link is invalid. Change a filter to browse the available journal.' : `The public record could not be refreshed.${summary ? ' Last successfully loaded values remain visible.' : ' No results are assumed.'} Please retry.`, true);
-    } finally { busy = false; $('refresh-forecasts').disabled = false; for (const id of Object.values(controls)) $(id).disabled = false; }
+    } finally { busy = false; $('refresh-forecasts').disabled = false; for (const id of Object.values(controls)) $(id).disabled = false; syncHorizons(); }
   }
-  for (const id of Object.values(controls)) $(id).addEventListener('change', () => load({ clearSelection: true, page: 0 }));
+  function syncHorizons() {
+    const band = bandModels.has($(controls.model).value), horizon = $(controls.horizon);
+    for (const option of horizon.options) option.disabled = !band && !['24', '72'].includes(option.value);
+    if (horizon.selectedOptions[0]?.disabled) horizon.value = '24';
+  }
+  for (const id of Object.values(controls)) $(id).addEventListener('change', () => { syncHorizons(); load({ clearSelection: true, page: 0 }); });
   $('forecast-prev').addEventListener('click', () => load({ clearSelection: true, page: Math.max(0, page-1) }));
   $('forecast-next').addEventListener('click', () => load({ clearSelection: true, page: page+1 }));
   $('refresh-forecasts').addEventListener('click', () => load());
+  syncHorizons();
   load();
   let resizeTimer;
   addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => { if (selected) $('forecast-detail').querySelector('.forecast-plot')?.replaceWith(chart(selected)); }, 100); });

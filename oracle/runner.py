@@ -69,6 +69,9 @@ def cycle():
     from .public_forecasts import publish as publish_forecasts
 
     task("learning", learning_cycle)
+    from .volband import cycle as volband_cycle
+
+    task("volatility-band", volband_cycle)
     task("forecast-publication", publish_forecasts)
     return all(results)
 

@@ -50,7 +50,7 @@ export default {
         const model = url.searchParams.get('model') || 'timesfm';
         const status = url.searchParams.get('status') || 'all';
         const page = Number(url.searchParams.get('page') || 0);
-        if (!assets.includes(asset) || ![24, 72].includes(horizon) || !models.includes(model) || !['all', 'pending', 'scored', 'awaiting'].includes(status) || !Number.isInteger(page) || page < 0 || page > 10000) return json({ error: 'invalid_filter' }, 400);
+        if (!assets.includes(asset) || ![1, 4, 12, 24, 72].includes(horizon) || !models.includes(model) || !['all', 'pending', 'scored', 'awaiting'].includes(status) || !Number.isInteger(page) || page < 0 || page > 10000) return json({ error: 'invalid_filter' }, 400);
         const now = Math.floor(Date.now()/1000);
         const clauses: Record<string, string> = { all: '', scored: " AND json_extract(payload,'$.outcome') IS NOT NULL", pending: ` AND json_extract(payload,'$.outcome') IS NULL AND target>${now}`, awaiting: ` AND json_extract(payload,'$.outcome') IS NULL AND target<=${now}` };
         const where = 'WHERE asset=? AND horizon=? AND model=?' + clauses[status];
@@ -67,7 +67,7 @@ export default {
       }
       if (path === '/api/paper' && request.method === 'GET') {
         const run = url.searchParams.get('run');
-        if (run && !/^paper-v[12]-[a-f0-9]{12}$/.test(run)) return json({ error: 'invalid_run' }, 400);
+        if (run && !/^paper-v[123]-[a-f0-9]{12}$/.test(run)) return json({ error: 'invalid_run' }, 400);
         const query = run
           ? env.PUBLIC_DB.prepare('SELECT payload FROM experiment_snapshots WHERE run=?').bind(run)
           : env.PUBLIC_DB.prepare('SELECT payload FROM experiment_snapshots ORDER BY started_at DESC LIMIT 1');

@@ -9,8 +9,8 @@ import '../styles/forecasts.css';
     <noscript><p>The method below works without JavaScript. Reading the live journal requires JavaScript; the <a href="/api/forecasts">public JSON</a> is also available directly.</p></noscript>
     <section aria-label="Choose forecasts" class="forecast-filters">
       <label>Asset<select id="forecast-asset" aria-label="Asset"><option value="BTC">Bitcoin</option><option value="ETH">Ethereum</option><option value="SOL">Solana</option></select></label>
-      <label>Horizon<select id="forecast-horizon" aria-label="Horizon"><option value="24">24 hours</option><option value="72">72 hours</option></select></label>
-      <label>Model<select id="forecast-model" aria-label="Model"><option value="timesfm">TimesFM · original</option><option value="calibrated">Learned calibration · shadow</option><option value="fusion_market">Market correction · shadow</option><option value="fusion_news">FinBERT news correction · shadow</option></select></label>
+      <label>Horizon<select id="forecast-horizon" aria-label="Horizon"><option value="1">1 hour</option><option value="4">4 hours</option><option value="12">12 hours</option><option value="24" selected>24 hours</option><option value="72">72 hours</option></select></label>
+      <label>Model<select id="forecast-model" aria-label="Model"><option value="timesfm">TimesFM · original</option><option value="calibrated">Learned calibration · shadow</option><option value="fusion_market">Market correction · shadow</option><option value="fusion_news">FinBERT news correction · shadow</option><option value="volband">Volatility band · shadow</option><option value="timesfm_path">TimesFM band at this horizon · shadow</option></select></label>
       <label>Show<select id="forecast-filter" aria-label="Show"><option value="scored">Settled forecasts</option><option value="pending">Waiting for target</option><option value="awaiting">Waiting for outcome data</option><option value="all">All forecasts</option></select></label>
     </section>
     <section class="forecast-scores" id="forecast-scores" aria-label="Observed model quality"></section>
