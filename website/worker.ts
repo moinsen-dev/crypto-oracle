@@ -98,6 +98,16 @@ export default {
           const row = await env.PUBLIC_DB.prepare('SELECT payload,generated_at FROM forecast_journal WHERE id=?').bind(id).first<{ payload: string; generated_at: number }>();
           return row ? json({ record: JSON.parse(row.payload), generated_at: row.generated_at }) : json({ error: 'forecast_not_found' }, 404);
         }
+        if (url.searchParams.get('latest') === '1') {
+          // For the front page: per coin the newest claim that is still open and the newest one already scored. Numbers only.
+          const at = Math.floor(Date.now()/1000), pick = "SELECT payload FROM forecast_journal WHERE asset=? AND horizon=24 AND model='timesfm'";
+          const results = await env.PUBLIC_DB.batch<{ payload: string; generated_at: number }>([
+            ...assets.flatMap(a => [env.PUBLIC_DB.prepare(`${pick} AND json_extract(payload,'$.outcome') IS NULL AND target>? ORDER BY origin DESC,id DESC LIMIT 1`).bind(a, at), env.PUBLIC_DB.prepare(`${pick} AND json_extract(payload,'$.outcome') IS NOT NULL ORDER BY origin DESC,id DESC LIMIT 1`).bind(a)]),
+            env.PUBLIC_DB.prepare('SELECT generated_at FROM learning_snapshot WHERE id=1'),
+          ]);
+          const slim = (row?: { payload: string }) => { if (!row) return null; const r = JSON.parse(row.payload), c = r.claim; return { id: r.id, origin: c.origin, target: c.target, base: c.base, prediction: c.prediction, lower: c.lower, upper: c.upper, actual: r.outcome?.actual ?? null }; };
+          return json({ latest: assets.map((asset, i) => ({ asset, open: slim(results[i*2].results[0]), scored: slim(results[i*2+1].results[0]) })), generated_at: results[assets.length*2].results[0]?.generated_at ?? null });
+        }
         const asset = url.searchParams.get('asset') || 'BTC';
         const horizon = Number(url.searchParams.get('horizon') || 24);
         const model = url.searchParams.get('model') || 'timesfm';

@@ -31,6 +31,10 @@ const farthest = study.horizon_skill.at(-1)!, longBand = study.bands.at(-1)!, tr
         <div class="notebook-bottom"><span class="mini-square" aria-hidden="true"></span><p>24 hours ahead · 365 daily forecasts per coin · backtest<br /> <b>No forecasting advantage demonstrated.</b></p></div>
       </aside>
     </section>
+    <section class="live-now" aria-labelledby="live-title" data-live-now>
+      <div class="live-head"><p class="eyebrow"><span class="status-dot" aria-hidden="true"></span>LOCKED RIGHT NOW</p><h2 id="live-title">What the model has committed to.</h2><p class="section-caption" data-live-note>The newest 24-hour forecasts, frozen in the public journal before their deadline. Each one is scored when that deadline passes, whatever happens.</p></div>
+      <div class="live-cards" data-live-cards><p class="live-fallback">The newest locked forecasts are listed in the <a href="/forecasts/">forecast journal</a>.</p></div>
+    </section>
     <div class="facts-strip" aria-label="Experiment facts">
       <div><strong>3</strong><span>assets under observation<br /> <b>BTC · ETH · SOL</b></span></div>
       <div><strong>24 / 72<span>h</span></strong><span>forecast horizons<br /> <b>Issued before evaluation</b></span></div>
@@ -69,3 +73,4 @@ const farthest = study.horizon_skill.at(-1)!, longBand = study.bands.at(-1)!, tr
     <section class="closing-note"><p class="eyebrow">BUILT TO BE QUESTIONED</p><h2>The useful part is what we learn.</h2><p>Follow the decisions, the checks and the things that did not work as hoped.</p><a class="text-link" href="/build-notes/">Read the development journal <span aria-hidden="true">↗</span></a></section>
   </div>
 </Layout>
+<script is:inline src="/scripts/home.js" defer></script>

@@ -12,7 +12,7 @@ assert.match(operator.email, /^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'A verified public co
 for (const field of ['name', 'street', 'postalCode', 'city', 'country', 'vatId', 'source']) assert.ok(operator[field]?.trim(), `Missing operator field: ${field}`);
 
 const directory = new URL('../dist/', import.meta.url);
-const allowed = new Set(['index.html', 'method/index.html', 'build-notes/index.html', 'paper-portfolio/index.html', 'forecasts/index.html', 'evidence/index.html', 'newsletter/index.html', 'legal/index.html', 'privacy/index.html', '404.html', 'data/research.json', 'data/study.json', 'scripts/benchmark.js', 'scripts/paper.js', 'scripts/forecasts.js', 'scripts/newsletter.js', 'favicon.svg', 'og.png', 'sitemap.xml', 'robots.txt', '_headers', '.assetsignore']);
+const allowed = new Set(['index.html', 'method/index.html', 'build-notes/index.html', 'paper-portfolio/index.html', 'forecasts/index.html', 'evidence/index.html', 'newsletter/index.html', 'legal/index.html', 'privacy/index.html', '404.html', 'data/research.json', 'data/study.json', 'scripts/benchmark.js', 'scripts/home.js', 'scripts/paper.js', 'scripts/forecasts.js', 'scripts/newsletter.js', 'favicon.svg', 'og.png', 'sitemap.xml', 'robots.txt', '_headers', '.assetsignore']);
 let count = 0;
 async function inspect(relative = '') {
   for (const entry of await readdir(new URL(relative, directory), { withFileTypes: true })) {

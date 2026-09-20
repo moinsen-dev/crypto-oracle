@@ -52,5 +52,11 @@
     "title": "A wrong trade label, corrected in the open",
     "summary": "Two Bitcoin sales of 18 September were full exits on a negative forecast but were recorded as a trim to an allocation limit. Quantities and prices were right; the reason was not. Old entries stay as written, new ones carry the corrected reason.",
     "url": "https://github.com/moinsen-dev/crypto-oracle/blob/main/PAPER.md#explained-trades"
+  },
+  {
+    "date": "2026-09-20",
+    "title": "The front page shows the open claims",
+    "summary": "The newest locked 24-hour forecast for each coin now sits on the front page with its range, its deadline and a link to the frozen record. The pages also stopped jumping while they load, and no text is smaller than 12px.",
+    "url": "https://cryptooracle.moinsen.dev/"
   }
 ]

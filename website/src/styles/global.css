@@ -16,3 +16,8 @@
   .error-chart .chart-value{font-size:22px}
   .error-chart .chart-axis{font-size:17px}
 }
+/* The front page's live section: the newest locked forecasts. Its room is kept while they load, so nothing below jumps. */
+.live-now{padding:0 0 55px}.live-head{max-width:760px;margin-bottom:26px}.live-head h2{font-size:2.3rem;margin:10px 0 12px}.live-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.live-card{background:var(--surface);border:1px solid var(--line);border-radius:5px;padding:24px 26px;display:flex;flex-direction:column;align-items:flex-start;gap:8px}.live-card-head{display:flex;align-items:center;gap:11px}.live-card-head h3{margin:0;font-size:1.05rem}.live-claim{margin:6px 0 0;font-size:.92rem}.live-claim strong{font:1.7rem var(--mono);margin-right:4px;letter-spacing:-.03em}.live-claim .down{color:#87452e}.live-claim .up{color:#2f6a45}.live-detail{margin:0;font-size:.82rem;color:var(--muted);line-height:1.6}.live-card .text-link{margin-top:auto}.live-fallback{grid-column:1/-1;margin:0;color:var(--muted);font-size:.9rem}
+@media(scripting:enabled){.live-cards:not([data-loaded]){min-height:255px}}
+@media(max-width:900px){.live-cards{grid-template-columns:1fr}.live-head h2{font-size:1.9rem}}
+@media(scripting:enabled) and (max-width:900px){.live-cards:not([data-loaded]){min-height:800px}}

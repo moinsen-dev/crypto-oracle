@@ -49,7 +49,7 @@ Only `dist/` is uploaded as static assets. The Worker and schema validators are 
 ## Data and routes
 
 - `/api/paper/runs` lists independent paper experiments; `/api/paper?run=RUN_ID` selects one.
-- `/api/forecasts` provides bounded pagination with asset, horizon, model and status filters; `?id=HASH` retrieves one forecast.
+- `/api/forecasts` provides bounded pagination with asset, horizon, model and status filters; `?id=HASH` retrieves one forecast; `?latest=1` returns, per coin, the numbers of the newest open 24-hour claim and of the newest scored one for the front page.
 - `/api/learning` contains readiness counts and the frozen learning policy.
 - `/api/publish` and `/api/publish-forecasts` require the private publication credential. Bodies are size-bounded and validated. Frozen claims and first outcomes cannot be replaced by a later publication.
 
