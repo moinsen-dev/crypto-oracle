@@ -260,6 +260,36 @@ def test_drawdown_brake_persists_and_export_contains_no_manual_holdings():
     assert "123456" not in json.dumps(paper.public_snapshot())
 
 
+def held(price, cash):
+    """An account holding 25 units of each coin bought at 100, with the given cash, marked at `price`."""
+    state = paper.balance([], "price-only")
+    state["cash"] = cash
+    for position in state["positions"].values():
+        position.update(quantity=25.0, cost=2500.0, last_trade=NOW - 86400)
+    q = market.quality(snapshot(NOW, price), "BTC", NOW)
+    return state, paper.valued(state, {a: q for a in config.ASSETS}), q
+
+
+def test_the_sell_reason_names_what_set_the_quantity():
+    negative = {"expected_return": -0.05, "margin": 0.004, "entry_threshold": 0.01, "daily_volatility": 0.02}
+    calm = {**negative, "expected_return": 0.0}
+    # 61% invested against a 60% cap: a few dollars over. The forecast is negative, so everything goes,
+    # and the forecast is the reason. Before 20 Sept 2026 this case was recorded as "allocation_limit".
+    state, valuation, q = held(100, 4800)
+    result = paper.plan(state, valuation, q, negative, None, {"veto": False}, "price-only", "BTC", NOW, False)
+    assert (result["action"], result["reason"], result["quantity"]) == ("sell", "negative_forecast", 25.0)
+    # The same overshoot without a negative forecast is a trim, and only then is the cap the reason.
+    state, valuation, q = held(100, 3000)
+    result = paper.plan(state, valuation, q, calm, None, {"veto": False}, "price-only", "BTC", NOW, False)
+    assert (result["action"], result["reason"]) == ("sell", "allocation_limit") and 0 < result[
+        "quantity"
+    ] < 25
+    # A stop still outranks both.
+    state, valuation, q = held(90, 4800)
+    result = paper.plan(state, valuation, q, negative, None, {"veto": False}, "price-only", "BTC", NOW, False)
+    assert (result["reason"], result["quantity"]) == ("position_stop", 25.0)
+
+
 def test_chain_detects_altered_evidence():
     forecasts()
     run()

@@ -46,5 +46,11 @@
     "title": "Field notes by email, in a trial run",
     "summary": "A weekly mail with the forecasts against reality, the open claims for the next day, the portfolios, the headlines and what changed. It is being test-run before sign-up opens. Double opt-in and no tracking of opens or clicks are built in.",
     "url": "https://cryptooracle.moinsen.dev/newsletter/"
+  },
+  {
+    "date": "2026-09-20",
+    "title": "A wrong trade label, corrected in the open",
+    "summary": "Two Bitcoin sales of 18 September were full exits on a negative forecast but were recorded as a trim to an allocation limit. Quantities and prices were right; the reason was not. Old entries stay as written, new ones carry the corrected reason.",
+    "url": "https://github.com/moinsen-dev/crypto-oracle/blob/main/PAPER.md#explained-trades"
   }
 ]

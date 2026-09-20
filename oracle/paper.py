@@ -377,13 +377,10 @@ def plan(
         )
         if stop or excess >= policy["min_order_usd"] or normal_exit:
             sell_qty = qty if stop or normal_exit else min(qty, excess / mark)
-            return {
-                **base,
-                "action": "sell",
-                "side": "sell",
-                "quantity": sell_qty,
-                "reason": "position_stop" if stop else "allocation_limit" if excess else "negative_forecast",
-            }
+            # The reason names what set the quantity: a stop or a negative forecast sells everything,
+            # so a cap that is also exceeded by a few dollars must not take the credit.
+            reason = "position_stop" if stop else "negative_forecast" if normal_exit else "allocation_limit"
+            return {**base, "action": "sell", "side": "sell", "quantity": sell_qty, "reason": reason}
     if not quality["buy_ok"] or not valuation["fresh"]:
         return {**base, "action": "blocked", "reason": "data_quality"}
     if state["braked"] or valuation["drawdown"] >= policy["drawdown_brake"]:
