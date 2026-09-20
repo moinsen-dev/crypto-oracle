@@ -3,7 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import '../styles/forecasts.css';
 ---
 <Layout title="Forecast journal" description="Every CryptoOracle forecast kept on record: the original prediction, the observed outcome and the evidence for controlled learning.">
-  <div class="wrap forecast-page">
+  <div class="wrap forecast-page" data-loading>
     <header class="forecast-hero"><p class="eyebrow">THE FORECAST JOURNAL · LIVE RESEARCH</p><h1>We made a prediction.<br /><em>Did it hold up?</em></h1><p>Each forecast is saved before its target time. When that time arrives, we compare it with the observed price. The original prediction stays on the record.</p><a class="text-link" href="#learning">See how the system learns ↘</a></header>
     <div class="forecast-status" role="status" aria-live="polite"><p id="forecast-status">Loading the public research record…</p><button class="forecast-button" id="refresh-forecasts" type="button">Refresh</button></div>
     <noscript><p>The method below works without JavaScript. Reading the live journal requires JavaScript; the <a href="/api/forecasts">public JSON</a> is also available directly.</p></noscript>

@@ -22,7 +22,7 @@ typography:
   h3:         { fontFamily: Inter,   fontSize: 1.12rem, fontWeight: 600, lineHeight: 1.12, letterSpacing: -0.025em }
   body-md:    { fontFamily: Inter,   fontSize: 1rem,    fontWeight: 400, lineHeight: 1.65 }
   body-sm:    { fontFamily: Inter,   fontSize: 0.85rem, fontWeight: 400, lineHeight: 1.65 }
-  label-caps: { fontFamily: ui-monospace, fontSize: 0.67rem, fontWeight: 500, lineHeight: 1.6, letterSpacing: 0.13em }
+  label-caps: { fontFamily: ui-monospace, fontSize: 0.75rem, fontWeight: 500, lineHeight: 1.6, letterSpacing: 0.13em }
   data:       { fontFamily: ui-monospace, fontSize: 0.875rem, fontWeight: 400, lineHeight: 1.5 }
 rounded: { sm: 2px, md: 4px, lg: 5px, full: 30px }
 spacing: { xs: 8px, sm: 14px, md: 25px, lg: 38px, xl: 55px, 2xl: 82px }
@@ -44,6 +44,7 @@ A research notebook that happens to be a website. Warm paper, one deep green, ge
 ## Typography
 
 - System stack only: Inter or the platform sans, Georgia, the platform monospace. No web fonts, no external requests.
+- No HTML text below 12px (`.75rem`). Labels, pills, table heads and footers included; `scripts/type-floor.test.mjs` fails the check otherwise. Text inside SVG charts is sized in chart units and is the only exception.
 - Headlines: Georgia, weight 400, tight tracking, often broken by hand with `<br />`. An `<em>` inside turns green italic.
 - Eyebrows and field labels: monospace capitals at 0.13em tracking, e.g. `FIELD NOTE / 002`.
 - Numbers that are the result of a study are set large in the serif; identifiers and hashes in monospace.

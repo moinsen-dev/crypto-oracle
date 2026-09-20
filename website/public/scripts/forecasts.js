@@ -15,7 +15,11 @@
   const params = new URL(location.href).searchParams;
   for (const [key, id] of Object.entries(controls)) if ([...$(id).options].some(o => o.value === params.get(key))) $(id).value = params.get(key);
   function state(r) { return r.outcome ? 'Settled' : r.claim.target > Date.now()/1000 ? 'Waiting for target' : 'Waiting for outcome data'; }
-  function status(message, error = false) { $('forecast-status').textContent = message; $('forecast-status').parentElement.dataset.error = String(error); }
+  function status(message, error = false) { if ($('forecast-status').textContent !== message) $('forecast-status').textContent = message; $('forecast-status').parentElement.dataset.error = String(error); }
+  // The minute-by-minute refresh must not take the keyboard focus away: controls stay enabled, an unchanged
+  // publication changes nothing, and after a real update the focus returns to the same control or row.
+  const focusKey = () => { const a = document.activeElement; return !a || a === document.body ? null : a.id ? '#' + CSS.escape(a.id) : a.dataset.key ? `[data-key="${a.dataset.key}"]` : null; };
+  const refocus = key => { if (key && (!document.activeElement || document.activeElement === document.body)) document.querySelector(key)?.focus({ preventScroll: true }); };
   async function read(url) {
     const response = await fetch(url, { cache: 'no-store', credentials: 'omit', signal: AbortSignal.timeout(12000) });
     if (!response.ok) throw new Error(response.status === 404 ? 'forecast_not_found' : 'unavailable');
@@ -112,7 +116,7 @@
   function renderList() {
     const box = $('forecast-list'); box.replaceChildren();
     for (const r of listing.records) {
-      const c = r.claim, button = node('button', undefined, 'forecast-row'); button.type = 'button'; button.setAttribute('aria-pressed', String(selectedId === r.id));
+      const c = r.claim, button = node('button', undefined, 'forecast-row'); button.type = 'button'; button.dataset.key = r.id; button.setAttribute('aria-pressed', String(selectedId === r.id));
       const title = node('span'); title.append(node('small', `${state(r)} · target`), node('span', date(c.target), 'row-date'));
       const predicted = node('span'); predicted.append(node('small', 'Predicted move'), node('strong', percent(c.prediction/c.base-1)));
       const actual = node('span'); actual.append(node('small', 'Observed move'), node('strong', r.outcome ? percent(r.outcome.actual/c.base-1) : 'Pending'));
@@ -141,12 +145,13 @@
     box.append(node('p', `Experiment ${summary.experiment} · activated ${date(summary.started_at)}`, 'fine-print'));
   }
   async function load(options = {}) {
-    if (busy) return; busy = true; $('refresh-forecasts').disabled = true;
-    for (const id of Object.values(controls)) $(id).disabled = true;
+    if (busy) return; busy = true;
+    const quiet = Boolean(options.quiet && summary), held = focusKey();
+    if (!quiet) { $('refresh-forecasts').disabled = true; for (const id of Object.values(controls)) $(id).disabled = true; status('Refreshing the public record…'); }
     const requested = values(), requestedPage = options.page ?? page;
-    status('Refreshing the public record…');
     try {
       const s = await read('/api/learning');
+      if (quiet && s.generated_at === summary.generated_at) { published(s); return; }
       let detail = null;
       const id = options.clearSelection ? null : selectedId;
       if (id) { const d = await read('/api/forecasts?id=' + encodeURIComponent(id)); detail = d.record; requested.asset = detail.claim.asset; requested.horizon = String(detail.claim.horizon); requested.model = detail.claim.model; }
@@ -156,13 +161,15 @@
       selected = detail || l.records[0] || null;
       renderScores(); renderLearning(); renderList();
       if (selected) renderDetail(selected); else { $('forecast-detail').hidden = true; $('forecast-detail').replaceChildren(); }
-      updateUrl();
-      const stale = Date.now()/1000 - s.generated_at > 2100;
-      status(`${stale ? 'Publication is stale. Last known record: ' : 'Published '}${date(s.generated_at)} · updates about every 15 minutes · all times Europe/Berlin.`, stale);
+      updateUrl(); published(s); refocus(held);
     } catch (error) {
       if (committed) setValues(committed);
       status(error.message === 'forecast_not_found' ? 'This forecast has not been published or the link is invalid. Change a filter to browse the available journal.' : `The public record could not be refreshed.${summary ? ' Last successfully loaded values remain visible.' : ' No results are assumed.'} Please retry.`, true);
-    } finally { busy = false; $('refresh-forecasts').disabled = false; for (const id of Object.values(controls)) $(id).disabled = false; syncHorizons(); }
+    } finally { busy = false; document.querySelector('.forecast-page').removeAttribute('data-loading'); if (!quiet) { $('refresh-forecasts').disabled = false; for (const id of Object.values(controls)) $(id).disabled = false; syncHorizons(); refocus(held); } }
+  }
+  function published(s) {
+    const stale = Date.now()/1000 - s.generated_at > 2100;
+    status(`${stale ? 'Publication is stale. Last known record: ' : 'Published '}${date(s.generated_at)} · updates about every 15 minutes · all times Europe/Berlin.`, stale);
   }
   function syncHorizons() {
     const band = bandModels.has($(controls.model).value), horizon = $(controls.horizon);
@@ -177,5 +184,5 @@
   load();
   let resizeTimer;
   addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => { if (selected) $('forecast-detail').querySelector('.forecast-plot')?.replaceWith(chart(selected)); }, 100); });
-  setInterval(() => { if (!document.hidden) load(); }, 60000);
+  setInterval(() => { if (!document.hidden) load({ quiet: true }); }, 60000);
 })();

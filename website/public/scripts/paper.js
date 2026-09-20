@@ -285,11 +285,16 @@ if (root) {
     $('status').dataset.state = stale || !$('error').hidden ? 'warning' : 'fresh';
     text('freshness', `Values: ${shortDate(a.asof)} UTC · updates about every 15 min`);
     $('freshness').title = `Valuation: ${date(a.asof)}. Published: ${date(data.generated_at)}.`;
-    $('live').hidden = false; chart();
+    $('loading').hidden = true; $('live').hidden = false; chart();
   }
-  async function load() {
+  // The minute-by-minute refresh must not take the keyboard focus away: controls stay enabled, an unchanged
+  // snapshot changes nothing, and after a real update the focus returns to the same control or decision.
+  const focusKey = () => { const a = document.activeElement; if (!a || a === document.body) return null; if (a.id) return '#' + CSS.escape(a.id); const item = a.closest('[data-seq]'); return item ? `[data-seq="${item.dataset.seq}"] ${a.tagName.toLowerCase()}` : null; };
+  const refocus = key => { if (key && (!document.activeElement || document.activeElement === document.body)) root.querySelector(key)?.focus({ preventScroll: true }); };
+  async function load({ quiet = false } = {}) {
     if (loading) return;
-    loading = true; $('refresh').disabled = true; $('run').disabled = true;
+    quiet = quiet && Boolean(data); const held = focusKey();
+    loading = true; if (!quiet) { $('refresh').disabled = true; $('run').disabled = true; }
     const requestedRun = selectedRun;
     try {
       const response = await fetch('/api/paper' + (requestedRun ? '?run=' + encodeURIComponent(requestedRun) : ''), { cache: 'no-store', credentials: 'omit', signal: AbortSignal.timeout(12000) });
@@ -297,6 +302,7 @@ if (root) {
       const next = await response.json();
       if (next.mode !== 'paper' || !Array.isArray(next.accounts)) throw new Error('invalid');
       if (requestedRun && next.run !== requestedRun) throw new Error('wrong_run');
+      if (quiet && next.run === data.run && next.generated_at === data.generated_at) { if (!$('error').hidden) { $('error').hidden = true; render(); } return; }
       const changed = data?.run !== next.run;
       data = next; selectedRun = next.run;
       // Each experiment has its own accounts; keep the same visual slot when switching between them.
@@ -305,7 +311,7 @@ if (root) {
       if (![...$('run').options].some(o => o.value === next.run)) $('run').replaceChildren(new Option(runName(next.run), next.run));
       $('run').value = next.run;
       const pageUrl = new URL(window.location.href); pageUrl.searchParams.set('run', next.run); history.replaceState(null, '', pageUrl);
-      $('error').hidden = true; render();
+      $('error').hidden = true; render(); refocus(held);
       try {
         const listing = await fetch('/api/paper/runs', { cache: 'no-store', credentials: 'omit', signal: AbortSignal.timeout(6000) });
         if (listing.ok) {
@@ -318,11 +324,11 @@ if (root) {
       } catch { /* The loaded snapshot remains usable when the experiment listing is unavailable. */ }
     } catch {
       if (data) { selectedRun = data.run; $('run').value = data.run; }
-      $('error').hidden = false;
+      $('error').hidden = false; $('loading').hidden = true;
       text('error', data ? 'The requested update could not be loaded. The previous experiment and snapshot remain selected below; check their timestamps.' : 'The public snapshot is temporarily unavailable. No balance or trades have been invented. Please try again shortly.');
       text('status', 'UPDATE UNAVAILABLE');
       $('status').dataset.state = 'warning';
-    } finally { loading = false; $('refresh').disabled = false; $('run').disabled = !data; }
+    } finally { loading = false; if (!quiet) { $('refresh').disabled = false; $('run').disabled = !data; refocus(held); } }
   }
   root.querySelectorAll('[data-portfolio]').forEach(button => button.addEventListener('click', () => { selected = data.accounts.find(a => slot(a.id) === button.dataset.portfolio).id; historyLimit = 6; $('action').value = 'all'; render(); }));
   root.querySelectorAll('[data-chart-mode]').forEach(button => button.addEventListener('click', () => { chartMode = button.dataset.chartMode; chart(); }));
@@ -331,6 +337,6 @@ if (root) {
   $('history-more').addEventListener('click', () => { historyLimit += 6; renderHistory(); });
   new ResizeObserver(() => { if (data && !$('live').hidden) chart(); }).observe($('equity-chart').parentElement);
   $('refresh').addEventListener('click', load);
-  setInterval(() => { if (!document.hidden) load(); }, 60000);
+  setInterval(() => { if (!document.hidden) load({ quiet: true }); }, 60000);
   load();
 }
