@@ -28,6 +28,7 @@ def main():
     subs.add_parser("forecast-report", help="Read the public forecast and learning snapshot")
     subs.add_parser("forecast-publish", help="Publish the allowlisted forecast journal; no model calls")
     subs.add_parser("volband-report", help="Read the volatility-band shadow experiment snapshot")
+    subs.add_parser("newsletter-report", help="Build the latest weekly issue without publishing it")
     jev_parser = subs.add_parser("jev", help="Evaluate recent headlines with JEV once")
     jev_parser.add_argument("--limit", type=int, default=1)
     report_parser = subs.add_parser("report")
@@ -94,6 +95,10 @@ def main():
         from .public_forecasts import publish, snapshot
 
         print(json.dumps(snapshot() if args.command == "forecast-report" else publish(), indent=2))
+    elif args.command == "newsletter-report":
+        from .newsletter import build_issue
+
+        print(json.dumps(build_issue(), indent=2))
     elif args.command == "volband-report":
         from .volband import summary
 

@@ -1,0 +1,44 @@
+[
+  {
+    "date": "2026-09-17",
+    "title": "The first benchmark: the simple baseline won",
+    "summary": "In a one-year backtest, guessing that the price stays the same produced less error than the forecasting model for Bitcoin, Ethereum and Solana.",
+    "url": "https://cryptooracle.moinsen.dev/#evidence"
+  },
+  {
+    "date": "2026-09-18",
+    "title": "Three virtual portfolios start with $10,000 each",
+    "summary": "Every decision to buy, sell or wait is recorded with its market checks, costs and reason. A second run gives all three the same starting holdings.",
+    "url": "https://cryptooracle.moinsen.dev/paper-portfolio/"
+  },
+  {
+    "date": "2026-09-19",
+    "title": "The forecast journal scores every prediction in public",
+    "summary": "Each forecast is frozen before its deadline and compared with the observed price afterwards. Misses stay on the record.",
+    "url": "https://cryptooracle.moinsen.dev/forecasts/"
+  },
+  {
+    "date": "2026-09-19",
+    "title": "Field notes 002-004: where we looked, what survived",
+    "summary": "No horizon rescues the model, uncertainty is easier to forecast than direction, and a slow trend filter halved the deepest loss in a six-year backtest without earning more.",
+    "url": "https://cryptooracle.moinsen.dev/evidence/"
+  },
+  {
+    "date": "2026-09-20",
+    "title": "A trend experiment joins the paper portfolios",
+    "summary": "A fixed rule with no forecast and no news: hold each coin in proportion to its positive 7-, 14-, 28- and 56-day returns. It runs against a rebalanced portfolio and buy & hold, as the prospective test of our own backtest.",
+    "url": "https://cryptooracle.moinsen.dev/paper-portfolio/"
+  },
+  {
+    "date": "2026-09-20",
+    "title": "Every simulated trade now says why",
+    "summary": "Each trade carries the reason of the decision behind it, and decisions that led to a trade stay visible after hours of later holds.",
+    "url": "https://cryptooracle.moinsen.dev/paper-portfolio/"
+  },
+  {
+    "date": "2026-09-20",
+    "title": "A simple volatility band challenges the model's own range",
+    "summary": "Four fitted numbers against the forecasting model's uncertainty band, from one hour to three days ahead, scored on identical forecasts with a fixed 28-day review.",
+    "url": "https://cryptooracle.moinsen.dev/forecasts/?model=volband&horizon=4&status=all"
+  }
+]

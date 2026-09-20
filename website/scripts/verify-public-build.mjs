@@ -12,7 +12,7 @@ assert.match(operator.email, /^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'A verified public co
 for (const field of ['name', 'street', 'postalCode', 'city', 'country', 'vatId', 'source']) assert.ok(operator[field]?.trim(), `Missing operator field: ${field}`);
 
 const directory = new URL('../dist/', import.meta.url);
-const allowed = new Set(['index.html', 'method/index.html', 'build-notes/index.html', 'paper-portfolio/index.html', 'forecasts/index.html', 'evidence/index.html', 'legal/index.html', 'privacy/index.html', '404.html', 'data/research.json', 'data/study.json', 'scripts/benchmark.js', 'scripts/paper.js', 'scripts/forecasts.js', 'favicon.svg', 'og.png', 'sitemap.xml', 'robots.txt', '_headers', '.assetsignore']);
+const allowed = new Set(['index.html', 'method/index.html', 'build-notes/index.html', 'paper-portfolio/index.html', 'forecasts/index.html', 'evidence/index.html', 'newsletter/index.html', 'legal/index.html', 'privacy/index.html', '404.html', 'data/research.json', 'data/study.json', 'scripts/benchmark.js', 'scripts/paper.js', 'scripts/forecasts.js', 'scripts/newsletter.js', 'favicon.svg', 'og.png', 'sitemap.xml', 'robots.txt', '_headers', '.assetsignore']);
 let count = 0;
 async function inspect(relative = '') {
   for (const entry of await readdir(new URL(relative, directory), { withFileTypes: true })) {
@@ -28,7 +28,7 @@ await inspect();
 const output = JSON.parse(await readFile(new URL('data/research.json', directory), 'utf8'));
 assert.deepEqual(output, research, 'Public result export must match the reviewed snapshot exactly');
 assert.deepEqual(JSON.parse(await readFile(new URL('data/study.json', directory), 'utf8')), study, 'Public study export must match the reviewed snapshot exactly');
-for (const page of ['index.html', 'method/index.html', 'build-notes/index.html', 'paper-portfolio/index.html', 'forecasts/index.html', 'evidence/index.html', 'legal/index.html', 'privacy/index.html', '404.html']) {
+for (const page of ['index.html', 'method/index.html', 'build-notes/index.html', 'paper-portfolio/index.html', 'forecasts/index.html', 'evidence/index.html', 'newsletter/index.html', 'legal/index.html', 'privacy/index.html', '404.html']) {
   const html = await readFile(new URL(page, directory), 'utf8');
   assert.match(html, /<html lang="en"/);
   assert.match(html, /href="\/privacy\/"/);

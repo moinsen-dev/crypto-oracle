@@ -66,7 +66,7 @@ uv run crypto-oracle worker
 
 The first run downloads the pinned TimesFM and FinBERT weights. Missing model results remain missing; there is no substitute presented as TimesFM. The worker preserves gaps and does not invent historical predictions or missing news coverage.
 
-Optional features are explicit in `.env.example`: `ORACLE_PAPER_ENABLED`, `ORACLE_PAPER_V2_ENABLED`, `ORACLE_PAPER_V3_ENABLED` (the frozen trend rule, see [PAPER.md](PAPER.md)), `ORACLE_LEARNING_ENABLED`, `ORACLE_VOLBAND_ENABLED` (the volatility-band shadow experiment, see [LEARNING.md](LEARNING.md)) and `ORACLE_JEV_ENABLED`. For JEV, first run `npm ci --prefix jev` and privately configure `AI_GATEWAY_API_KEY`. Its request cap counts failed attempts too and is not a monetary spending limit.
+Optional features are explicit in `.env.example`: `ORACLE_PAPER_ENABLED`, `ORACLE_PAPER_V2_ENABLED`, `ORACLE_PAPER_V3_ENABLED` (the frozen trend rule, see [PAPER.md](PAPER.md)), `ORACLE_LEARNING_ENABLED`, `ORACLE_VOLBAND_ENABLED` (the volatility-band shadow experiment, see [LEARNING.md](LEARNING.md)), `ORACLE_NEWSLETTER_ENABLED` (the weekly digest handed to the website; subscriber data never reaches this server, see [website/README.md](website/README.md)) and `ORACLE_JEV_ENABLED`. For JEV, first run `npm ci --prefix jev` and privately configure `AI_GATEWAY_API_KEY`. Its request cap counts failed attempts too and is not a monetary spending limit.
 
 Useful read-only reports:
 

@@ -86,9 +86,11 @@ export function assertPublicText(text, filename) {
     assert.ok(!pattern.test(text), `Private or development material found in ${filename}`);
   }
   if (filename.endsWith('.html')) {
-    assert.ok(!/<(?:iframe|form)\b/i.test(text), `Unexpected data collection surface in ${filename}`);
+    // One reviewed form exists on the whole site: the newsletter sign-up. It posts nowhere by itself (form-action 'none').
+    const forms = text.match(/<form\b[^>]*>/gi) || [];
+    assert.ok(!/<iframe\b/i.test(text) && (filename === 'newsletter/index.html' ? forms.length === 1 && /data-newsletter-form/.test(forms[0]) && !/\baction=/i.test(forms[0]) : forms.length === 0), `Unexpected data collection surface in ${filename}`);
     for (const match of text.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)) {
-      assert.match(match[1], /\bsrc="\/scripts\/(?:benchmark|paper|forecasts)\.js"/, `Unapproved script in ${filename}`);
+      assert.match(match[1], /\bsrc="\/scripts\/(?:benchmark|paper|forecasts|newsletter)\.js"/, `Unapproved script in ${filename}`);
       assert.equal(match[2].trim(), '', `Inline script in ${filename}`);
     }
     assert.ok(!/\son[a-z]+\s*=/i.test(text), `Inline event handler in ${filename}`);

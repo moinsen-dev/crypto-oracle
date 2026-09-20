@@ -1,0 +1,278 @@
+{
+ "schema": 1,
+ "id": "2026-W38",
+ "start": 1789344000,
+ "end": 1789948800,
+ "market": [
+  {
+   "asset": "BTC",
+   "close": 104.71999999999998,
+   "change": 0.0685714285714285,
+   "low": 93.0,
+   "high": 106.67999999999999
+  },
+  {
+   "asset": "ETH",
+   "close": 146.60799999999998,
+   "change": 0.0685714285714285,
+   "low": 93.0,
+   "high": 149.352
+  },
+  {
+   "asset": "SOL",
+   "close": 188.49599999999998,
+   "change": 0.0685714285714285,
+   "low": 93.0,
+   "high": 192.024
+  }
+ ],
+ "forecasts": {
+  "issued": 12,
+  "assets": [
+   {
+    "asset": "BTC",
+    "scored": 4,
+    "miss": 0.013744670382258382,
+    "last_price_miss": 0.02483290746104098,
+    "inside_band": 1,
+    "days": 4,
+    "best": {
+     "id": "b5d8e9c803b994d6f907fc15fd204b5073084f554c5123aee2e2e54197c13e6f",
+     "predicted": 0.011500000000000066,
+     "actual": 0.01079999999999992
+    },
+    "worst": {
+     "id": "2c53190ea077f102688c1fc455adf97f3c004f1a83006a1300a749a2195aeae6",
+     "predicted": 0.011500000000000066,
+     "actual": 0.03960000000000008
+    }
+   },
+   {
+    "asset": "ETH",
+    "scored": 4,
+    "miss": 0.013744670382258382,
+    "last_price_miss": 0.02483290746104098,
+    "inside_band": 1,
+    "days": 4,
+    "best": {
+     "id": "6d2b521601574406da3a4981197f6aff2f8db6faf8cac76cbe936074bce50a17",
+     "predicted": 0.011500000000000066,
+     "actual": 0.01079999999999992
+    },
+    "worst": {
+     "id": "96fa2f5638b3aff00542f0081df3ef6a0ea235b22db14206f368fca346089984",
+     "predicted": 0.011500000000000066,
+     "actual": 0.03960000000000008
+    }
+   },
+   {
+    "asset": "SOL",
+    "scored": 4,
+    "miss": 0.013744670382258382,
+    "last_price_miss": 0.02483290746104098,
+    "inside_band": 1,
+    "days": 4,
+    "best": {
+     "id": "cd4c40778c9797f0e3210a8c06c947260cb1ff4f841c4b59880cd48579e6ee51",
+     "predicted": 0.011500000000000066,
+     "actual": 0.01079999999999992
+    },
+    "worst": {
+     "id": "68893cf6c4be07f4995434cacf93d840bb2402a8d106a4c2ce75dc406a888468",
+     "predicted": 0.011500000000000066,
+     "actual": 0.03960000000000008
+    }
+   }
+  ]
+ },
+ "portfolios": [
+  {
+   "run": "paper-v3-a30412605673",
+   "started_at": 1789432200.01,
+   "accounts": [
+    {
+     "id": "trend",
+     "equity": 9672.655452415236,
+     "change": -0.03273445475847636,
+     "since_start": -0.03273445475847636
+    },
+    {
+     "id": "rebalanced",
+     "equity": 9572.456941909306,
+     "change": -0.04275430580906936,
+     "since_start": -0.04275430580906936
+    },
+    {
+     "id": "reference",
+     "equity": 9572.456941909306,
+     "change": -0.04275430580906936,
+     "since_start": -0.04275430580906936
+    }
+   ],
+   "trades": [
+    {
+     "at": 1789432202.01,
+     "account": "trend",
+     "asset": "BTC",
+     "side": "buy",
+     "reason": "trend_up"
+    },
+    {
+     "at": 1789432203.01,
+     "account": "trend",
+     "asset": "ETH",
+     "side": "buy",
+     "reason": "trend_up"
+    },
+    {
+     "at": 1789432204.01,
+     "account": "trend",
+     "asset": "SOL",
+     "side": "buy",
+     "reason": "trend_up"
+    },
+    {
+     "at": 1789432205.01,
+     "account": "rebalanced",
+     "asset": "BTC",
+     "side": "buy",
+     "reason": "reference_entry"
+    },
+    {
+     "at": 1789432206.01,
+     "account": "rebalanced",
+     "asset": "ETH",
+     "side": "buy",
+     "reason": "reference_entry"
+    },
+    {
+     "at": 1789432207.01,
+     "account": "rebalanced",
+     "asset": "SOL",
+     "side": "buy",
+     "reason": "reference_entry"
+    },
+    {
+     "at": 1789432208.01,
+     "account": "reference",
+     "asset": "BTC",
+     "side": "buy",
+     "reason": "reference_entry"
+    },
+    {
+     "at": 1789432209.01,
+     "account": "reference",
+     "asset": "ETH",
+     "side": "buy",
+     "reason": "reference_entry"
+    },
+    {
+     "at": 1789432210.01,
+     "account": "reference",
+     "asset": "SOL",
+     "side": "buy",
+     "reason": "reference_entry"
+    },
+    {
+     "at": 1789604102.01,
+     "account": "trend",
+     "asset": "BTC",
+     "side": "sell",
+     "reason": "trend_down"
+    },
+    {
+     "at": 1789604103.01,
+     "account": "trend",
+     "asset": "ETH",
+     "side": "sell",
+     "reason": "trend_down"
+    },
+    {
+     "at": 1789604104.01,
+     "account": "trend",
+     "asset": "SOL",
+     "side": "sell",
+     "reason": "trend_down"
+    }
+   ]
+  }
+ ],
+ "news": {
+  "collected": 3,
+  "classified": 3,
+  "items": [
+   {
+    "title": "Solana validators report a brief outage & recovery <update>",
+    "source": "CoinDesk",
+    "url": "https://www.coindesk.com/70cc7ebf",
+    "published_at": 1789533940,
+    "assets": [
+     "SOL"
+    ],
+    "tone": "negative",
+    "event": "network"
+   },
+   {
+    "title": "Ethereum developers schedule the next network upgrade",
+    "source": "CoinDesk",
+    "url": "https://www.coindesk.com/a940ce06",
+    "published_at": 1789433940,
+    "assets": [
+     "ETH"
+    ],
+    "tone": "positive",
+    "event": "network"
+   },
+   {
+    "title": "Exchange hacked, Bitcoin stolen in overnight exploit",
+    "source": "CoinDesk",
+    "url": "https://www.coindesk.com/9242f697",
+    "published_at": 1789348940,
+    "assets": [
+     "BTC"
+    ],
+    "tone": "negative",
+    "event": "security"
+   }
+  ]
+ },
+ "changes": [
+  {
+   "date": "2026-09-18",
+   "title": "Three virtual portfolios start with $10,000 each",
+   "summary": "Every decision to buy, sell or wait is recorded with its market checks, costs and reason. A second run gives all three the same starting holdings.",
+   "url": "https://cryptooracle.moinsen.dev/paper-portfolio/"
+  },
+  {
+   "date": "2026-09-19",
+   "title": "The forecast journal scores every prediction in public",
+   "summary": "Each forecast is frozen before its deadline and compared with the observed price afterwards. Misses stay on the record.",
+   "url": "https://cryptooracle.moinsen.dev/forecasts/"
+  },
+  {
+   "date": "2026-09-19",
+   "title": "Field notes 002-004: where we looked, what survived",
+   "summary": "No horizon rescues the model, uncertainty is easier to forecast than direction, and a slow trend filter halved the deepest loss in a six-year backtest without earning more.",
+   "url": "https://cryptooracle.moinsen.dev/evidence/"
+  },
+  {
+   "date": "2026-09-20",
+   "title": "A trend experiment joins the paper portfolios",
+   "summary": "A fixed rule with no forecast and no news: hold each coin in proportion to its positive 7-, 14-, 28- and 56-day returns. It runs against a rebalanced portfolio and buy & hold, as the prospective test of our own backtest.",
+   "url": "https://cryptooracle.moinsen.dev/paper-portfolio/"
+  },
+  {
+   "date": "2026-09-20",
+   "title": "Every simulated trade now says why",
+   "summary": "Each trade carries the reason of the decision behind it, and decisions that led to a trade stay visible after hours of later holds.",
+   "url": "https://cryptooracle.moinsen.dev/paper-portfolio/"
+  },
+  {
+   "date": "2026-09-20",
+   "title": "A simple volatility band challenges the model's own range",
+   "summary": "Four fitted numbers against the forecasting model's uncertainty band, from one hour to three days ahead, scored on identical forecasts with a fixed 28-day review.",
+   "url": "https://cryptooracle.moinsen.dev/forecasts/?model=volband&horizon=4&status=all"
+  }
+ ],
+ "generated_at": 1789977600
+}

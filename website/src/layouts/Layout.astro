@@ -46,12 +46,14 @@ const canonical = Astro.site ? new URL(path, Astro.site).href : undefined;
         <summary>Menu <span aria-hidden="true">＋</span></summary>
         <nav aria-label="Mobile navigation">
           {navigation.map(item => <a href={item.href} aria-current={path === item.href ? 'page' : undefined}>{item.label}</a>)}
+          <a href="/newsletter/">Newsletter</a>
           <a href="https://github.com/moinsen-dev/crypto-oracle" rel="external noreferrer">Source on GitHub ↗</a>
           <a href="/privacy/">Privacy</a>
         </nav>
       </details>
     </header>
     <main id="main"><slot /></main>
+    {path !== '/newsletter/' && <aside class="newsletter-band wrap" aria-label="Newsletter"><p><b>The field notes by email.</b> Once a week: forecasts against reality, the portfolios, the headlines, what changed.</p><a class="text-link" href="/newsletter/">Get the field notes <span aria-hidden="true">→</span></a></aside>}
     <footer class="site-footer wrap">
       <div class="footer-intro">
         <a class="footer-brand" href="/">CryptoOracle <span aria-hidden="true">↗</span></a>
@@ -64,12 +66,13 @@ const canonical = Astro.site ? new URL(path, Astro.site).href : undefined;
         <a href="/evidence/">Evidence</a>
         <a href="/method/">The method</a>
         <a href="/build-notes/">Build journal</a>
+        <a href="/newsletter/">Newsletter</a>
         <a href="/privacy/">Privacy notice</a>
         <a href="/legal/">Legal notice / Impressum</a>
         <a href="https://github.com/moinsen-dev/crypto-oracle" rel="external noreferrer">Source on GitHub ↗</a>
         <a href={operator.website} rel="external noreferrer">Made by Moinsen ↗</a>
       </nav>
-      <div class="footer-bottom"><span>© 2026 {operator.name}</span><span>Public research. No analytics. No advertising.</span></div>
+      <div class="footer-bottom"><span>© 2026 {operator.name}</span><span>Public research. No analytics. No third-party ads.</span></div>
     </footer>
   </body>
 </html>

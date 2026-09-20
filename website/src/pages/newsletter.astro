@@ -1,0 +1,39 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { CONSENT_TEXT } from '../lib/newsletter.mjs';
+import '../styles/newsletter.css';
+---
+<Layout title="Field notes by email" description="One email a week from CryptoOracle: how the forecasts held up, what the paper portfolios did and why, the relevant headlines and what changed. Double opt-in, no tracking.">
+  <div class="wrap" data-newsletter>
+    <header class="page-hero"><p class="eyebrow">THE FIELD NOTES / BY EMAIL</p><h1>One email a week.<br /> <em>Misses included.</em></h1><p>Every Monday: what Bitcoin, Ethereum and Solana did, how the locked forecasts held up against reality, what the paper portfolios did and why, the week’s relevant headlines, and what changed in the system.</p></header>
+    <section class="newsletter-panel" data-action-panel hidden aria-labelledby="action-title"><p class="eyebrow" data-action-eyebrow></p><h2 id="action-title" data-action-title></h2><p data-action-text></p><button type="button" class="button" data-action-button></button><p class="newsletter-status" data-action-status role="status"></p></section>
+    <div class="newsletter-layout">
+      <section class="newsletter-signup" aria-labelledby="signup-title">
+        <h2 id="signup-title">Get the field notes.</h2>
+        <form data-newsletter-form novalidate>
+          <label for="newsletter-email">Email address</label>
+          <input id="newsletter-email" name="email" type="email" autocomplete="email" inputmode="email" required maxlength="254" placeholder="you@example.org" />
+          <p class="newsletter-trap" aria-hidden="true"><label for="newsletter-website">Leave this field empty</label><input id="newsletter-website" name="website" type="text" tabindex="-1" autocomplete="off" /></p>
+          <label class="newsletter-consent"><input type="checkbox" name="consent" required /><span>{CONSENT_TEXT}</span></label>
+          <button class="button" type="submit">Send me the confirmation mail <span aria-hidden="true">→</span></button>
+          <p class="newsletter-status" data-signup-status role="status"></p>
+        </form>
+        <p class="fine-print" data-signup-closed hidden>Sign-up is not open yet. The archive below fills once the first issue has gone out.</p>
+        <noscript><p class="notice">Signing up needs JavaScript. You can also ask by email; the address is in the <a href="/legal/">legal notice</a>.</p></noscript>
+      </section>
+      <aside class="newsletter-promise" aria-label="What happens with your address">
+        <p class="eyebrow">WHAT HAPPENS WITH YOUR ADDRESS</p>
+        <ul class="plain-list">
+          <li>You get one confirmation mail first. Nothing else arrives until you confirm; without confirmation the address is deleted after seven days.</li>
+          <li>The address is stored only for this newsletter, in our own database in the EU, and sent to our mail provider only to deliver it.</li>
+          <li>No tracking of opens or clicks. No remote images. Links go straight to their destination.</li>
+          <li>Every mail has an unsubscribe link. Unsubscribing deletes the address.</li>
+          <li>Each issue also mentions what else Moinsen builds. That is part of what you agree to.</li>
+        </ul>
+        <a class="text-link" href="/privacy/#newsletter">Read the privacy notice <span aria-hidden="true">→</span></a>
+      </aside>
+    </div>
+    <section class="newsletter-archive" aria-labelledby="archive-title"><p class="eyebrow">THE ARCHIVE</p><h2 id="archive-title">Every issue, on the record.</h2><p class="section-caption" data-archive-note>Loading the archive…</p><ol class="newsletter-issues" data-issues></ol><article class="newsletter-issue" data-issue hidden></article></section>
+  </div>
+</Layout>
+<script is:inline src="/scripts/newsletter.js" defer></script>

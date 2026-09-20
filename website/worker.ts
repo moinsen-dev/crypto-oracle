@@ -1,6 +1,9 @@
 import { validatePaper } from './src/lib/paper-schema.mjs';
 import { validateForecasts, assets, models } from './src/lib/forecast-schema.mjs';
 import { timingSafeEqual } from 'node:crypto';
+import { createNewsletter } from './src/lib/newsletter-service.mjs';
+import { issueView } from './src/lib/newsletter.mjs';
+import operator from './src/data/operator.json';
 
 const headers = {
   'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store',
@@ -28,12 +31,59 @@ async function boundedBody(request: Request) {
   return new TextDecoder().decode(bytes);
 }
 
+type NewsletterEnv = Env & { RESEND_API_KEY?: string; NEWSLETTER_SECRET?: string; NEWSLETTER_PREVIEW_TO?: string; RESEND_API_URL?: string };
+
+// Addresses exist only in this Worker's D1. The mail provider is the single outside party that ever sees one.
+async function newsletter(request: Request, env: NewsletterEnv, url: URL) {
+  const route = url.pathname.slice('/api/newsletter/'.length), post = request.method === 'POST';
+  const enabled = Boolean(env.RESEND_API_KEY && env.NEWSLETTER_SECRET && env.NEWSLETTER_PREVIEW_TO);
+  if (route === 'issues' && request.method === 'GET' && !enabled) return json({ enabled: false, issues: [] });
+  if (!enabled) return json({ error: 'newsletter_not_configured' }, 503);
+  const service = createNewsletter({
+    db: env.PUBLIC_DB, secret: env.NEWSLETTER_SECRET!, origin: 'https://cryptooracle.moinsen.dev', operator, previewTo: env.NEWSLETTER_PREVIEW_TO!,
+    sendBatch: async (mails: unknown[], key: string) => {
+      const single = mails.length === 1;
+      // The address is only ever overridden by the local end-to-end test, which must not send real mail.
+      const response = await fetch(`${env.RESEND_API_URL || 'https://api.resend.com'}/emails${single ? '' : '/batch'}`, { method: 'POST', headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json', 'Idempotency-Key': key }, body: JSON.stringify(single ? mails[0] : mails) });
+      if (!response.ok) throw new Error('mail_provider');
+    },
+  });
+  if (route === 'issues' && request.method === 'GET') {
+    const id = url.searchParams.get('id');
+    if (!id) return json({ enabled: true, issues: await service.issues() });
+    const issue = await service.issue(id);
+    return issue ? json({ issue: issueView(issue) }) : json({ error: 'issue_not_found' }, 404);
+  }
+  if (!post) return json({ error: 'not_found' }, 404);
+  if (route === 'issue') {
+    const supplied = new TextEncoder().encode(request.headers.get('Authorization') || ''), expected = new TextEncoder().encode(`Bearer ${env.PUBLISH_TOKEN}`);
+    if (!env.PUBLISH_TOKEN || supplied.length !== expected.length || !timingSafeEqual(supplied, expected)) return json({ error: 'unauthorized' }, 401);
+    let data;
+    try { data = JSON.parse(await boundedBody(request)); } catch { return json({ error: 'invalid_issue' }, 400); }
+    if (typeof data?.generated_at !== 'number' || Math.abs(data.generated_at - Date.now() / 1000) > 180) return json({ error: 'stale_publication' }, 409);
+    let result;
+    try { result = await service.storeIssue(data); } catch (error) { if (String(error).includes('Invalid newsletter issue')) return json({ error: 'invalid_issue' }, 400); throw error; }
+    return json(result, result.status === 'conflict' ? 409 : 200);
+  }
+  // Mail clients send the one-click removal as a form post to the address in the List-Unsubscribe header.
+  if (route === 'unsubscribe' && url.searchParams.get('token')) return json(await service.unsubscribe(url.searchParams.get('token')));
+  let body: Record<string, unknown>;
+  try { const text = await boundedBody(request); ensureSmall(text); body = JSON.parse(text); } catch { return json({ error: 'invalid_request' }, 400); }
+  if (route === 'subscribe') { const result = await service.subscribe({ email: body.email, consent: body.consent, website: typeof body.website === 'string' ? body.website : '' }); return json(result, result.status === 'invalid' ? 400 : result.status === 'busy' ? 429 : 200); }
+  if (route === 'confirm') return json(await service.confirm(body.token));
+  if (route === 'unsubscribe') return json(await service.unsubscribe(body.token));
+  if (route === 'approve') return json(await service.approve(body.issue, body.token));
+  return json({ error: 'not_found' }, 404);
+}
+function ensureSmall(text: string) { if (text.length > 2000) throw new Error('too large'); }
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     const path = url.pathname;
     if (!path.startsWith('/api/')) return env.ASSETS.fetch(request);
     try {
+      if (path.startsWith('/api/newsletter/')) return await newsletter(request, env, url);
       if (path === '/api/learning' && request.method === 'GET') {
         const row = await env.PUBLIC_DB.prepare('SELECT payload FROM learning_snapshot WHERE id=1').first<{ payload: string }>();
         return row ? new Response(row.payload, { headers }) : json({ error: 'waiting_for_first_publication' }, 503);

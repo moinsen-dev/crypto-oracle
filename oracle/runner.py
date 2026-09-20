@@ -73,6 +73,10 @@ def cycle():
 
     task("volatility-band", volband_cycle)
     task("forecast-publication", publish_forecasts)
+    # Weekly digest for the public site. This server never sees who receives it.
+    from .newsletter import publish as publish_newsletter
+
+    task("newsletter", publish_newsletter)
     return all(results)
 
 
