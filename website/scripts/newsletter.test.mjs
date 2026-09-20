@@ -29,7 +29,7 @@ test('free text, private fields, foreign links and a different week shape are re
     d => { d.market[0].calmer_weeks = 13; d.market[0].compared_weeks = 13; }, d => { d.market[0].largest_move.at = d.end + 3600; }, d => { d.market[0].comment = 'x'; },
     d => { d.news.mix.events.rumour = 1; }, d => { d.news.mix.tones.negative += 1; }, d => { d.news.mix.events.security = d.news.classified + 1; d.news.mix.tones = { negative: d.news.classified + 1 }; },
     d => { d.explainer.url = 'https://evil.example/'; }, d => { d.explainer.text = 'x'.repeat(601); }, d => { d.explainer.html = '<b>x</b>'; },
-    d => { d.id = 'preview-2026-09-23'; },
+    d => { d.id = 'preview-2026-09-23'; }, d => { d.portfolios[0].fills = d.portfolios[0].trades.length - 1; }, d => { d.portfolios[0].fills += 1; }, d => { delete d.portfolios[0].fills; },
   ]) { const d = structuredClone(issue); mutate(d); assert.throws(() => validateIssue(d)); }
 });
 test('addresses are normalised and doubtful input is refused', () => {
@@ -54,7 +54,7 @@ test('the issue says what happened, what is claimed next and what it means, in b
   const mail = renderIssue(issue, links), intro = lead(issue);
   assert.match(intro, /^Bitcoin (gained|lost) \d+\.\d% to \$[\d,.]+, Ethereum .* and Solana .*\. For Bitcoin the week was (busier|calmer) than (all|\d+) of the previous 12 weeks\. Across \d+ scored 24-hour forecasts the model missed by \d+\.\d\d points on average; assuming no change at all missed by \d+\.\d\d\. This week (the model|doing nothing) was closer\.$/);
   for (const body of [mail.html, mail.text]) {
-    for (const needle of [intro.replace(/&/g, '&amp;'), 'over 30 days', 'largest hourly move', 'trend portfolio aims for', 'Open the locked forecast', 'volatility band held', 'distinct stories by topic: network 67%, security 33%. By tone: negative 67%, positive 33%.', issue.explainer.title, 'not a recommendation']) assert.ok(body.includes(needle) || body.toLowerCase().includes(needle.toLowerCase()), needle);
+    for (const needle of [intro.replace(/&/g, '&amp;'), 'over 30 days', 'largest hourly move', 'trend portfolio aims for', 'Open the locked forecast', 'volatility band held', 'By topic: network 67%, security 33%. By tone: negative 67%, positive 33%.', issue.explainer.title, 'not a recommendation']) assert.ok(body.includes(needle) || body.toLowerCase().includes(needle.toLowerCase()), needle);
   }
   assert.ok(mail.text.includes('WHAT THE SYSTEM EXPECTS NEXT') && mail.text.includes('THE RANGE EXPERIMENT') && mail.text.includes('ONE IDEA FROM THE NOTEBOOK'));
   // Solana has no volatility band in this fixture: its row must say so by omission, not with a made-up range.
@@ -64,10 +64,20 @@ test('the issue says what happened, what is claimed next and what it means, in b
   assert.deepEqual(Object.keys(view), ['id', 'title', 'period', 'lead', 'blocks', 'news', 'changes', 'explainer']);
   assert.ok(view.blocks.every(b => b.rows.every(r => typeof r.label === 'string' && typeof r.main === 'string' && Array.isArray(r.subs))));
 });
+test('a busy week lists the latest decision rounds and says how many fills it left out', () => {
+  const busy = structuredClone(issue), p = busy.portfolios[0];
+  // Twelve fills, each its own round: different minutes, so nothing is grouped.
+  p.trades = p.trades.slice(0, 12).map((t, i) => ({ ...t, at: busy.start + 3600 + i * 1200 })); p.fills = 12;
+  const mail = renderIssue(validateIssue(busy), links);
+  assert.ok(mail.text.includes('The week had 12 fills; the latest are listed and the 2 before them are on the portfolio page.'));
+  const rows = issueView(busy).blocks.find(b => b.title.startsWith('Paper portfolios')).rows.filter(r => r.label.endsWith(' UTC'));
+  assert.equal(rows.length, 10);
+  assert.ok(!renderIssue(issue, links).text.includes('before them are on the portfolio page'));
+});
 test('a rolling operator preview is accepted only where it is asked for', () => {
   const rolling = structuredClone(issue);
   rolling.id = 'preview-2026-09-23'; rolling.start += 2 * 86400 + 10 * 3600; rolling.end = rolling.start + 604800; rolling.generated_at = rolling.end + 600;
-  rolling.outlook = []; rolling.portfolios.forEach(p => { p.trades = p.trades.filter(t => t.at >= rolling.start); });
+  rolling.outlook = []; rolling.portfolios.forEach(p => { p.trades = p.trades.filter(t => t.at >= rolling.start); p.fills = p.trades.length; });
   rolling.market.forEach(m => { m.largest_move = null; });
   assert.throws(() => validateIssue(rolling));
   assert.equal(validateIssue(rolling, { preview: true }), rolling);
@@ -86,11 +96,11 @@ test('headline text from the outside world cannot inject markup', () => {
 });
 test('an empty week still renders honestly', () => {
   const quiet = structuredClone(issue);
-  quiet.news.items = []; quiet.news.mix = { events: {}, tones: {} }; quiet.changes = []; quiet.portfolios[0].trades = []; quiet.forecasts.assets = []; quiet.outlook = []; quiet.bands = [];
+  quiet.news.items = []; quiet.news.mix = { events: {}, tones: {} }; quiet.changes = []; quiet.portfolios[0].trades = []; quiet.portfolios[0].fills = 0; quiet.forecasts.assets = []; quiet.outlook = []; quiet.bands = [];
   quiet.market.forEach(m => { m.change_30d = null; m.largest_move = null; m.calmer_weeks = 0; m.compared_weeks = 0; });
   const mail = renderIssue(validateIssue(quiet), links);
   assert.ok(mail.text.includes('None passed the relevance and materiality checks this week.') && mail.text.includes('every decision was to wait or hold') && mail.text.includes('None reached its deadline'));
-  assert.ok(!mail.text.includes('WHAT CHANGED IN THE SYSTEM') && !mail.text.includes('WHAT THE SYSTEM EXPECTS NEXT') && !mail.text.includes('THE RANGE EXPERIMENT') && !mail.text.includes('distinct stories'));
+  assert.ok(!mail.text.includes('WHAT CHANGED IN THE SYSTEM') && !mail.text.includes('WHAT THE SYSTEM EXPECTS NEXT') && !mail.text.includes('THE RANGE EXPERIMENT') && !mail.text.includes('By topic'));
   assert.ok(!/undefined|null|NaN/.test(mail.text) && !/undefined|null|NaN/.test(mail.html.replace(/<[^>]+>/g, ' ')));
 });
 test('the confirmation mail states the consent and is the only mail an unconfirmed address ever gets', () => {

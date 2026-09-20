@@ -69,12 +69,13 @@ export function validateIssue(data, { preview = false } = {}) {
   }
   list(data.portfolios, 3); ensure(new Set(data.portfolios.map(p => p.run)).size === data.portfolios.length);
   for (const p of data.portfolios) {
-    keys(p, ['run', 'started_at', 'accounts', 'trades']); ensure(/^paper-v[123]-[a-f0-9]{12}$/.test(p.run)); num(p.started_at, 1, data.end);
+    keys(p, ['run', 'started_at', 'accounts', 'fills', 'trades']); ensure(/^paper-v[123]-[a-f0-9]{12}$/.test(p.run)); num(p.started_at, 1, data.end);
     const ids = p.run.startsWith('paper-v3-') ? ['trend', 'rebalanced', 'reference'] : ['news-guarded', 'price-only', 'reference'];
     const allowed = p.run.startsWith('paper-v3-') ? trendReasons : reasons;
     list(p.accounts, 3); ensure(p.accounts.length > 0 && new Set(p.accounts.map(a => a.id)).size === p.accounts.length);
     for (const a of p.accounts) { keys(a, ['id', 'equity', 'change', 'since_start']); one(a.id, ids); num(a.equity); num(a.change, -1, 50); num(a.since_start, -1, 50); }
-    list(p.trades, 12);
+    // Every fill of the week is counted; at most the latest sixty travel with the issue.
+    whole(p.fills); list(p.trades, 60); ensure(p.trades.length === Math.min(p.fills, 60));
     for (const t of p.trades) { keys(t, ['at', 'account', 'asset', 'side', 'reason']); num(t.at, data.start, data.end); one(t.account, ids); one(t.asset, assets); one(t.side, ['buy', 'sell']); one(t.reason, allowed); }
   }
   keys(data.news, ['collected', 'classified', 'mix', 'items']); whole(data.news.collected); whole(data.news.classified); list(data.news.items, 5);
@@ -111,7 +112,8 @@ export function headline(issue) {
   return `${names[lead.asset]} ${lead.change >= 0 ? 'rose' : 'fell'} ${Math.abs(lead.change * 100).toFixed(1)}% this week`;
 }
 
-// One line per decision round: the same account, side and reason within ten minutes.
+// One line per decision round: the same account, side and reason within ten minutes. The mail lists the latest ten.
+const ROUNDS = 10;
 function rounds(trades) {
   const out = [];
   for (const t of trades) {
@@ -148,7 +150,7 @@ export function lead(issue) {
 function mix(news) {
   const share = (o, total) => Object.entries(o).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k} ${Math.round(v / total * 100)}%`).join(', ');
   const total = Object.values(news.mix.events).reduce((a, b) => a + b, 0);
-  return total ? `${total} distinct stories by topic: ${share(news.mix.events, total)}. By tone: ${share(news.mix.tones, total)}.` : '';
+  return total ? `${total === news.classified ? '' : `${total} distinct stories. `}By topic: ${share(news.mix.events, total)}. By tone: ${share(news.mix.tones, total)}.` : '';
 }
 const newsNote = news => `${news.items.length ? `${news.collected} headlines collected, ${news.classified} classified. ` : `${news.collected} headlines collected. None passed the relevance and materiality checks this week. `}${mix(news)} A classification describes the headline; it is not a price forecast.`.replace(/\s+/g, ' ');
 
@@ -176,9 +178,9 @@ function sections(issue) {
       `score ${points(b.volatility_band.score)} vs ${points(b.model_band.score)} · ${b.volatility_band.score < b.model_band.score ? 'volatility band ahead' : b.volatility_band.score > b.model_band.score ? 'model range ahead' : 'level'} · forecasts from ${b.days} day${b.days > 1 ? 's' : ''}`,
     ] })) });
   for (const p of issue.portfolios) {
-    const version = p.run.slice(0, 8);
-    out.push({ title: `Paper portfolios · ${runNames[version]}`, note: p.trades.length ? 'Virtual money. Simulated fills with fees and slippage.' : 'Virtual money. No trades this week: every decision was to wait or hold.',
-      rows: [...p.accounts.map(a => ({ label: accountNames[a.id], main: `${money(a.equity)} · ${signed(a.change, 2)} this week`, subs: [`${signed(a.since_start, 2)} since the start`] })), ...rounds(p.trades).map(t => ({ label: stamp(t.at) + ' UTC', main: `${accountNames[t.account]} ${t.side === 'buy' ? 'bought' : 'sold'} ${t.assets.join(', ')}`, subs: [why[t.reason] || t.reason.replace(/_/g, ' ')] }))] });
+    const version = p.run.slice(0, 8), shown = rounds(p.trades).slice(-ROUNDS), left = p.fills - shown.reduce((a, t) => a + t.assets.length, 0);
+    out.push({ title: `Paper portfolios · ${runNames[version]}`, note: !p.fills ? 'Virtual money. No trades this week: every decision was to wait or hold.' : `Virtual money. Simulated fills with fees and slippage.${left ? ` The week had ${p.fills} fills; the latest are listed and the ${left} before them are on the portfolio page.` : ''}`,
+      rows: [...p.accounts.map(a => ({ label: accountNames[a.id], main: `${money(a.equity)} · ${signed(a.change, 2)} this week`, subs: [`${signed(a.since_start, 2)} since the start`] })), ...shown.map(t => ({ label: stamp(t.at) + ' UTC', main: `${accountNames[t.account]} ${t.side === 'buy' ? 'bought' : 'sold'} ${t.assets.join(', ')}`, subs: [why[t.reason] || t.reason.replace(/_/g, ' ')] }))] });
   }
   return out;
 }

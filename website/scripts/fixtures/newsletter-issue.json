@@ -211,6 +211,7 @@
      "since_start": -0.04275430580906936
     }
    ],
+   "fills": 12,
    "trades": [
     {
      "at": 1789432202.01,
@@ -381,8 +382,8 @@
   },
   {
    "date": "2026-09-20",
-   "title": "The field notes are now also an email",
-   "summary": "One mail a week with the forecasts against reality, the portfolios, the headlines and what changed. Double opt-in, no tracking of opens or clicks, one issue archive on the site.",
+   "title": "Field notes by email, in a trial run",
+   "summary": "A weekly mail with the forecasts against reality, the open claims for the next day, the portfolios, the headlines and what changed. It is being test-run before sign-up opens. Double opt-in and no tracking of opens or clicks are built in.",
    "url": "https://cryptooracle.moinsen.dev/newsletter/"
   }
  ],

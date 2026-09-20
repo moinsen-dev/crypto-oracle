@@ -143,7 +143,7 @@ test('an operator preview reaches the operator only and leaves no trace', async 
   await member(s, 'reader@example.org');
   const rolling = structuredClone(issue);
   rolling.id = 'preview-2026-09-23'; rolling.start += 2 * 86400 + 10 * 3600; rolling.end = rolling.start + 604800; rolling.generated_at = rolling.end + 600;
-  rolling.outlook = []; rolling.market.forEach(m => { m.largest_move = null; }); rolling.portfolios.forEach(p => { p.trades = p.trades.filter(t => t.at >= rolling.start); });
+  rolling.outlook = []; rolling.market.forEach(m => { m.largest_move = null; }); rolling.portfolios.forEach(p => { p.trades = p.trades.filter(t => t.at >= rolling.start); p.fills = p.trades.length; });
   const before = s.sent.length;
   assert.deepEqual(await s.service.previewIssue(rolling), { status: 'previewed' });
   assert.equal(s.sent.length, before + 1);

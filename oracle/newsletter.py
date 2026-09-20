@@ -21,6 +21,7 @@ from .jev import VERSION as JEV_VERSION
 WEEK = 7 * 86400
 SEND_AFTER = 7 * 3600  # Monday 07:00 UTC, once the week's last forecasts have had time to settle
 HEADLINES = 5
+TRADES = 60
 CHANGES = Path(__file__).with_name("changes.json")
 EXPLAINERS = Path(__file__).with_name("explainers.json")
 
@@ -260,7 +261,14 @@ def portfolios(db, start, end):
         ]
         if accounts:
             result.append(
-                {"run": run_id, "started_at": run["started_at"], "accounts": accounts, "trades": trades[-12:]}
+                {
+                    "run": run_id,
+                    "started_at": run["started_at"],
+                    "accounts": accounts,
+                    # Every fill is counted; the mail lists the latest ones and says how many it left out.
+                    "fills": len(trades),
+                    "trades": trades[-TRADES:],
+                }
             )
     return result
 

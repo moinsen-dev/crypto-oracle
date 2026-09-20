@@ -327,3 +327,20 @@ def test_operator_preview_is_rolling_and_never_recorded(monkeypatch):
         candle(asset, START, 100)
         candle(asset, MONDAY, 105)
     assert newsletter.publish(now)["state"] == "published" and sent[-1][0].endswith("/api/newsletter/issue")
+
+
+def test_portfolios_count_every_fill_and_pass_on_only_the_latest(monkeypatch):
+    from tests.test_paper_trend import closes, run
+
+    monkeypatch.setenv("ORACLE_PAPER_ENABLED", "1")
+    monkeypatch.setenv("ORACLE_PAPER_V3_ENABLED", "1")
+    closes({0: 100, 7: 90, 14: 90, 28: 110, 56: 95}, day=START + 86400)
+    run(START + 86400 + 1800)
+    with connect() as db:
+        (v3,) = newsletter.portfolios(db, START, MONDAY)
+    assert v3["run"] == paper.RUN_V3 and v3["fills"] == 9 and len(v3["trades"]) == 9
+    monkeypatch.setattr(newsletter, "TRADES", 4)
+    with connect() as db:
+        (v3,) = newsletter.portfolios(db, START, MONDAY)
+    assert v3["fills"] == 9 and len(v3["trades"]) == 4
+    assert {t["reason"] for t in v3["trades"]} <= {"trend_up", "reference_entry"}
