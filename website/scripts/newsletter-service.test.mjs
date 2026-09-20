@@ -129,3 +129,12 @@ function createFlaky(s, shouldFail) {
   const db = { prepare, batch: async list => { for (const x of list) await x.run(); } };
   return createNewsletter({ db, secret: 'test-secret', origin: 'https://cryptooracle.moinsen.dev', operator, previewTo: 'operator@example.org', now: () => s.clock.now, sendBatch: async (mails, key) => { if (shouldFail()) throw new Error('provider down'); s.sent.push({ mails, key }); } });
 }
+test('a provider failure during sign-up leaves nothing behind, so the next attempt works', async () => {
+  const s = setup();
+  const flaky = createFlaky(s, (() => { let first = true; return () => { const fail = first; first = false; return fail; }; })());
+  await assert.rejects(flaky.subscribe({ email: 'retry@example.org', consent: true }), /provider down/);
+  assert.equal(s.sqlite.prepare('SELECT COUNT(*) AS n FROM newsletter_subscribers').get().n, 0);
+  assert.equal(s.sqlite.prepare('SELECT COUNT(*) AS n FROM newsletter_events').get().n, 0);
+  assert.deepEqual(await flaky.subscribe({ email: 'retry@example.org', consent: true }), { status: 'accepted' });
+  assert.equal(s.sent.length, 1); assert.equal(s.sqlite.prepare('SELECT status FROM newsletter_subscribers').get().status, 'pending');
+});

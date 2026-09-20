@@ -40,5 +40,11 @@
     "title": "A simple volatility band challenges the model's own range",
     "summary": "Four fitted numbers against the forecasting model's uncertainty band, from one hour to three days ahead, scored on identical forecasts with a fixed 28-day review.",
     "url": "https://cryptooracle.moinsen.dev/forecasts/?model=volband&horizon=4&status=all"
+  },
+  {
+    "date": "2026-09-20",
+    "title": "The field notes are now also an email",
+    "summary": "One mail a week with the forecasts against reality, the portfolios, the headlines and what changed. Double opt-in, no tracking of opens or clicks, one issue archive on the site.",
+    "url": "https://cryptooracle.moinsen.dev/newsletter/"
   }
 ]

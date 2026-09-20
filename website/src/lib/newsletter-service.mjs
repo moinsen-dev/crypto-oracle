@@ -34,12 +34,13 @@ export function createNewsletter({ db, sendBatch, secret, origin, operator, prev
     if (await count('confirmation', at - 3600) >= LIMITS.mailsPerHour || await count('confirmation', at - 86400) >= LIMITS.mailsPerDay) return { status: 'busy' };
     const secretToken = token(), id = existing?.id || randomBytes(16).toString('hex');
     const mail = renderConfirmation({ confirmUrl: `${origin}/newsletter/?confirm=${secretToken}`, operator });
+    // Mail first, record second: if the provider refuses, nothing is stored and the person can simply try again.
+    await sendBatch([{ from: FROM, to: [email], reply_to: operator.email, subject: mail.subject, html: mail.html, text: mail.text }], `confirmation/${sha(secretToken).slice(0, 32)}`);
     await db.batch([
       db.prepare('INSERT INTO newsletter_subscribers(id,email,status,token_hash,requested_at,consent_version,mails,last_mail_at) VALUES(?,?,?,?,?,?,1,?) ON CONFLICT(email) DO UPDATE SET token_hash=excluded.token_hash,consent_version=excluded.consent_version,mails=newsletter_subscribers.mails+1,last_mail_at=excluded.last_mail_at WHERE newsletter_subscribers.status=?')
         .bind(id, email, 'pending', sha(secretToken), at, CONSENT_VERSION, at, 'pending'),
       db.prepare('INSERT INTO newsletter_events(at,kind) VALUES(?,?)').bind(at, 'confirmation'),
     ]);
-    await sendBatch([{ from: FROM, to: [email], reply_to: operator.email, subject: mail.subject, html: mail.html, text: mail.text }], `confirmation/${sha(secretToken).slice(0, 32)}`);
     return { status: 'accepted' };
   }
 
