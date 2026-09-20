@@ -29,6 +29,7 @@ def main():
     subs.add_parser("forecast-publish", help="Publish the allowlisted forecast journal; no model calls")
     subs.add_parser("volband-report", help="Read the volatility-band shadow experiment snapshot")
     subs.add_parser("newsletter-report", help="Build the latest weekly issue without publishing it")
+    subs.add_parser("newsletter-preview", help="Mail the operator a rolling seven-day preview; no subscriber")
     jev_parser = subs.add_parser("jev", help="Evaluate recent headlines with JEV once")
     jev_parser.add_argument("--limit", type=int, default=1)
     report_parser = subs.add_parser("report")
@@ -99,6 +100,10 @@ def main():
         from .newsletter import build_issue
 
         print(json.dumps(build_issue(), indent=2))
+    elif args.command == "newsletter-preview":
+        from .newsletter import preview
+
+        print(json.dumps(preview(), indent=2))
     elif args.command == "volband-report":
         from .volband import summary
 

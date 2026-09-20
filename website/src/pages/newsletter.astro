@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { CONSENT_TEXT } from '../lib/newsletter.mjs';
+import site from '../data/site.json';
 import '../styles/newsletter.css';
 ---
 <Layout title="Field notes by email" description="One email a week from CryptoOracle: how the forecasts held up, what the paper portfolios did and why, the relevant headlines and what changed. Double opt-in, no tracking.">
@@ -10,7 +11,7 @@ import '../styles/newsletter.css';
     <div class="newsletter-layout">
       <section class="newsletter-signup" aria-labelledby="signup-title">
         <h2 id="signup-title">Get the field notes.</h2>
-        <form data-newsletter-form novalidate>
+        <form data-newsletter-form novalidate hidden={!site.newsletterOpen}>
           <label for="newsletter-email">Email address</label>
           <input id="newsletter-email" name="email" type="email" autocomplete="email" inputmode="email" required maxlength="254" placeholder="you@example.org" />
           <p class="newsletter-trap" aria-hidden="true"><label for="newsletter-website">Leave this field empty</label><input id="newsletter-website" name="website" type="text" tabindex="-1" autocomplete="off" /></p>
@@ -18,7 +19,7 @@ import '../styles/newsletter.css';
           <button class="button" type="submit">Send me the confirmation mail <span aria-hidden="true">→</span></button>
           <p class="newsletter-status" data-signup-status role="status"></p>
         </form>
-        <p class="fine-print" data-signup-closed hidden>Sign-up is not open yet. The archive below fills once the first issue has gone out.</p>
+        <p class="fine-print" data-signup-closed hidden={site.newsletterOpen}>Sign-up is not open yet. The field notes are in a trial run first: they have to be worth an inbox before we ask for yours.</p>
         <noscript><p class="notice">Signing up needs JavaScript. You can also ask by email; the address is in the <a href="/legal/">legal notice</a>.</p></noscript>
       </section>
       <aside class="newsletter-promise" aria-label="What happens with your address">

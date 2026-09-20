@@ -5,7 +5,7 @@ from datetime import UTC, datetime
 import httpx
 import pytest
 
-from oracle import config, newsletter, paper
+from oracle import config, newsletter, paper, volband
 from oracle.db import connect, digest, init, packed
 from oracle.forecast import evaluate, store_forecast
 from oracle.ingest import store_candles
@@ -90,7 +90,94 @@ def test_market_uses_only_closes_inside_the_week():
         candle("BTC", ts, close)
     with connect() as db:
         (btc,) = newsletter.market(db, START, MONDAY)
-    assert btc == {"asset": "BTC", "close": 110, "change": pytest.approx(0.1), "low": 80, "high": 110}
+    assert btc == {
+        "asset": "BTC",
+        "close": 110,
+        "change": pytest.approx(0.1),
+        "low": 80,
+        "high": 110,
+        "change_30d": None,
+        "swing": pytest.approx(0.3889, abs=1e-4),
+        "largest_move": None,  # the three closes are days apart; a gap is not an hourly move
+        "calmer_weeks": 0,
+        "compared_weeks": 0,
+    }
+
+
+def test_market_context_ranks_the_week_against_complete_earlier_weeks_only():
+    # Two complete earlier weeks: a flat one and a wild one. A third has holes and must not be compared.
+    for k, step in ((1, 0.0), (2, 0.05), (3, 0.05)):
+        for h in range(169):
+            if k == 3 and h % 2:
+                continue
+            candle("BTC", START - k * 7 * 86400 + h * 3600, 100 * (1 + step * (h % 2)))
+    for h in range(169):
+        candle("BTC", START + h * 3600, 100 * (1 + 0.01 * (h % 2)) if h != 50 else 90)
+    candle("BTC", MONDAY - 30 * 86400, 80)
+    with connect() as db:
+        (btc,) = newsletter.market(db, START, MONDAY)
+    assert btc["compared_weeks"] == 2 and btc["calmer_weeks"] == 1
+    assert btc["change_30d"] == pytest.approx(100 / 80 - 1)
+    assert btc["largest_move"] == {"at": START + 51 * 3600, "change": pytest.approx(101 / 90 - 1)}
+
+
+def band_forecast(model, origin, horizon, lower, upper):
+    path = [{"t": origin + horizon * 3600, "p": 100, "lo": lower, "hi": upper}]
+    return store_forecast(
+        "BTC",
+        model,
+        origin,
+        horizon,
+        100,
+        path,
+        {},
+        {},
+        0,
+        issued_at=origin + 60,
+        experiment=volband.EXPERIMENT,
+    )
+
+
+def test_outlook_quotes_only_claims_that_are_already_frozen_and_still_open():
+    origin = NOW - 2 * 3600
+    path = [{"t": origin + 86400, "p": 103, "lo": 98, "hi": 107}]
+    ident = store_forecast("BTC", "timesfm", origin, 24, 100, path, {}, {}, 1, issued_at=origin + 60)
+    band_forecast("volband", origin, 24, 96, 104)
+    # Neither an expired claim nor one from the future may appear.
+    store_forecast("ETH", "timesfm", NOW - 30 * 3600, 24, 100, path, {}, {}, 1, issued_at=NOW - 30 * 3600)
+    store_forecast("SOL", "timesfm", NOW + 3600, 24, 100, path, {}, {}, 1, issued_at=NOW + 3600)
+    day = int(NOW // 86400) * 86400
+    for days, close in ((0, 100), (7, 90), (14, 95), (28, 120), (56, 80)):
+        candle("BTC", day - days * 86400, close)
+    with connect() as db:
+        (btc,) = newsletter.outlook(db, NOW)
+    assert btc == {
+        "asset": "BTC",
+        "id": ident,
+        "origin": origin,
+        "target": origin + 86400,
+        "base": 100,
+        "predicted": pytest.approx(0.03),
+        "model_band": [pytest.approx(-0.02), pytest.approx(0.07)],
+        "volatility_band": [pytest.approx(-0.04), pytest.approx(0.04)],
+        "trend_positive": 3,
+    }
+
+
+def test_band_standings_pair_both_bands_on_the_same_outcome(monkeypatch):
+    for k, actual in enumerate((101, 109)):
+        origin = START + (k + 1) * 86400
+        candle("BTC", origin + 4 * 3600, actual)
+        band_forecast("volband", origin, 4, 95, 105)
+        band_forecast("timesfm_path", origin, 4, 99, 102)
+    band_forecast("volband", START + 3 * 86400, 4, 95, 105)  # no partner, no outcome: not counted
+    monkeypatch.setattr(time, "time", lambda: MONDAY - 3600)
+    evaluate()
+    with connect() as db:
+        (row,) = newsletter.bands(db, START, MONDAY)
+    assert (row["horizon"], row["n"], row["days"]) == (4, 2, 2)
+    assert row["volatility_band"]["inside"] == 1 and row["model_band"]["inside"] == 1
+    assert row["volatility_band"]["score"] > 0 and row["model_band"]["score"] > 0
 
 
 def test_forecast_scoreboard_pairs_the_model_with_the_last_price(monkeypatch):
@@ -141,6 +228,8 @@ def test_news_needs_relevance_materiality_and_in_week_classification():
     assert [x["title"] for x in result["items"]] == ["Exchange hacked, Bitcoin stolen"]
     assert result["items"][0]["assets"] == ["BTC"] and "material" not in result["items"][0]
     assert result["collected"] == 5 and result["classified"] == 4
+    # Three distinct stories were classified in the week; the syndicated copy does not count twice.
+    assert result["mix"] == {"events": {"security": 3}, "tones": {"negative": 3}}
 
 
 def test_changes_come_from_the_shipped_list_and_only_from_this_week(tmp_path, monkeypatch):
@@ -173,6 +262,8 @@ def test_issue_is_published_once_after_monday_morning_and_never_without_the_flag
     url, issue, auth = sent[0]
     assert url.endswith("/api/newsletter/issue") and auth == "Bearer test-token"
     assert issue["id"] == "2026-W38" and len(issue["market"]) == 3 and issue["generated_at"] == NOW
+    assert issue["schema"] == 2 and issue["outlook"] == [] and issue["bands"] == []
+    assert issue["explainer"] == json.loads(newsletter.EXPLAINERS.read_text())[38 % 8]
     assert "subscriber" not in json.dumps(issue) and "@" not in json.dumps(issue)
     assert newsletter.publish(NOW + 3600) == {"state": "published", "issue": "2026-W38"} and len(sent) == 1
     monkeypatch.setenv("ORACLE_NEWSLETTER_ENABLED", "0")
@@ -201,3 +292,38 @@ def test_worker_cycle_runs_the_weekly_digest_after_the_publications(monkeypatch)
     monkeypatch.setattr(runner, "job_end", lambda *a, **k: None)
     runner.cycle()
     assert seen[-1] == "newsletter" and seen.index("forecast-publication") < seen.index("newsletter")
+
+
+def test_shipped_explainers_fit_the_public_boundary():
+    entries = json.loads(newsletter.EXPLAINERS.read_text())
+    assert len(entries) >= 8 and len({e["title"] for e in entries}) == len(entries)
+    for e in entries:
+        assert set(e) == {"title", "text", "url"} and len(e["title"]) <= 120 and len(e["text"]) <= 600
+        assert e["url"].startswith("https://cryptooracle.moinsen.dev/")
+
+
+def test_operator_preview_is_rolling_and_never_recorded(monkeypatch):
+    now = NOW + 2 * 86400 + 1234
+    hour = int(now // 3600) * 3600
+    for asset in config.ASSETS:
+        candle(asset, hour - 7 * 86400, 100)
+        candle(asset, hour, 95)
+    sent = []
+
+    def post(url, content, timeout, headers):
+        sent.append((url, json.loads(content)))
+        return httpx.Response(200, json={"status": "previewed"})
+
+    monkeypatch.setattr(httpx, "post", post)
+    assert newsletter.preview(now) == {"state": "previewed", "issue": "preview-2026-09-23"}
+    url, issue = sent[0]
+    assert url.endswith("/api/newsletter/preview")
+    assert (issue["start"], issue["end"]) == (hour - 7 * 86400, hour) and issue["market"][0]["change"] < 0
+    newsletter.init_schema()
+    with connect() as db:
+        assert db.execute("SELECT COUNT(*) FROM newsletter_issues").fetchone()[0] == 0
+    # The preview does not consume the week: the regular issue is still built and published afterwards.
+    for asset in config.ASSETS:
+        candle(asset, START, 100)
+        candle(asset, MONDAY, 105)
+    assert newsletter.publish(now)["state"] == "published" and sent[-1][0].endswith("/api/newsletter/issue")

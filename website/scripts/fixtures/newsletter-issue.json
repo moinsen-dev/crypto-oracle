@@ -1,5 +1,5 @@
 {
- "schema": 1,
+ "schema": 2,
  "id": "2026-W38",
  "start": 1789344000,
  "end": 1789948800,
@@ -9,21 +9,95 @@
    "close": 104.71999999999998,
    "change": 0.0685714285714285,
    "low": 93.0,
-   "high": 106.67999999999999
+   "high": 106.67999999999999,
+   "change_30d": 0.0685714285714285,
+   "largest_move": {
+    "at": 1789606800,
+    "change": 0.10666666666666647
+   },
+   "swing": 0.156130197770714,
+   "calmer_weeks": 9,
+   "compared_weeks": 12
   },
   {
    "asset": "ETH",
    "close": 146.60799999999998,
    "change": 0.0685714285714285,
    "low": 93.0,
-   "high": 149.352
+   "high": 149.352,
+   "change_30d": 0.0685714285714285,
+   "largest_move": {
+    "at": 1789606800,
+    "change": 0.5493333333333332
+   },
+   "swing": 0.7911862127352718,
+   "calmer_weeks": 10,
+   "compared_weeks": 12
   },
   {
    "asset": "SOL",
    "close": 188.49599999999998,
    "change": 0.0685714285714285,
    "low": 93.0,
-   "high": 192.024
+   "high": 192.024,
+   "change_30d": 0.0685714285714285,
+   "largest_move": {
+    "at": 1789606800,
+    "change": 0.9919999999999998
+   },
+   "swing": 1.2908109505259617,
+   "calmer_weeks": 10,
+   "compared_weeks": 12
+  }
+ ],
+ "outlook": [
+  {
+   "asset": "BTC",
+   "id": "0c55e1d08c140fe212d7d26675f7135383d8838fb58fc56c1679c7fe307af6d7",
+   "origin": 1789970400,
+   "target": 1790056800,
+   "base": 106.0,
+   "predicted": 0.0040000000000000036,
+   "model_band": [
+    -0.020000000000000018,
+    0.02499999999999991
+   ],
+   "volatility_band": [
+    -0.028000000000000025,
+    0.028000000000000025
+   ],
+   "trend_positive": 4
+  },
+  {
+   "asset": "ETH",
+   "id": "c48df204f3e0f6b50c8d1a43b217a5bd8c78f7c595f249b39b1dedcc3a4cb676",
+   "origin": 1789970400,
+   "target": 1790056800,
+   "base": 148.4,
+   "predicted": 0.001000000000000112,
+   "model_band": [
+    -0.019999999999999907,
+    0.02499999999999991
+   ],
+   "volatility_band": [
+    -0.028000000000000025,
+    0.028000000000000025
+   ],
+   "trend_positive": 4
+  },
+  {
+   "asset": "SOL",
+   "id": "bd7817d9c372d2d8601fd12929d75ec15f389982fa0f929c991c88e353b1d9ee",
+   "origin": 1789970400,
+   "target": 1790056800,
+   "base": 190.8,
+   "predicted": -0.0020000000000000018,
+   "model_band": [
+    -0.020000000000000018,
+    0.02499999999999991
+   ],
+   "volatility_band": null,
+   "trend_positive": 4
   }
  ],
  "forecasts": {
@@ -85,6 +159,34 @@
    }
   ]
  },
+ "bands": [
+  {
+   "horizon": 4,
+   "n": 12,
+   "days": 4,
+   "volatility_band": {
+    "inside": 3,
+    "score": 0.1539884585098772
+   },
+   "model_band": {
+    "inside": 0,
+    "score": 0.20924044542177622
+   }
+  },
+  {
+   "horizon": 24,
+   "n": 12,
+   "days": 4,
+   "volatility_band": {
+    "inside": 9,
+    "score": 0.08321106358538784
+   },
+   "model_band": {
+    "inside": 3,
+    "score": 0.15601070389064495
+   }
+  }
+ ],
  "portfolios": [
   {
    "run": "paper-v3-a30412605673",
@@ -200,6 +302,16 @@
  "news": {
   "collected": 3,
   "classified": 3,
+  "mix": {
+   "events": {
+    "security": 1,
+    "network": 2
+   },
+   "tones": {
+    "negative": 2,
+    "positive": 1
+   }
+  },
   "items": [
    {
     "title": "Solana validators report a brief outage & recovery <update>",
@@ -238,12 +350,6 @@
  },
  "changes": [
   {
-   "date": "2026-09-18",
-   "title": "Three virtual portfolios start with $10,000 each",
-   "summary": "Every decision to buy, sell or wait is recorded with its market checks, costs and reason. A second run gives all three the same starting holdings.",
-   "url": "https://cryptooracle.moinsen.dev/paper-portfolio/"
-  },
-  {
    "date": "2026-09-19",
    "title": "The forecast journal scores every prediction in public",
    "summary": "Each forecast is frozen before its deadline and compared with the observed price afterwards. Misses stay on the record.",
@@ -272,7 +378,18 @@
    "title": "A simple volatility band challenges the model's own range",
    "summary": "Four fitted numbers against the forecasting model's uncertainty band, from one hour to three days ahead, scored on identical forecasts with a fixed 28-day review.",
    "url": "https://cryptooracle.moinsen.dev/forecasts/?model=volband&horizon=4&status=all"
+  },
+  {
+   "date": "2026-09-20",
+   "title": "The field notes are now also an email",
+   "summary": "One mail a week with the forecasts against reality, the portfolios, the headlines and what changed. Double opt-in, no tracking of opens or clicks, one issue archive on the site.",
+   "url": "https://cryptooracle.moinsen.dev/newsletter/"
   }
  ],
+ "explainer": {
+  "title": "What a headline classification is, and is not",
+  "text": "The news radar labels a headline by coin, event type and tone. That describes the text. It is not a statement that the news is true, and it is not a price forecast. In the paper portfolios a material negative headline can only block a buy; it never adds or subtracts percent from a forecast.",
+  "url": "https://cryptooracle.moinsen.dev/method/"
+ },
  "generated_at": 1789977600
 }

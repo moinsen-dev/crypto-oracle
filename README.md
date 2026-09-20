@@ -75,7 +75,10 @@ uv run crypto-oracle status
 uv run crypto-oracle report --scope live
 uv run crypto-oracle paper-report
 uv run crypto-oracle forecast-report
+uv run crypto-oracle newsletter-report
 ```
+
+`uv run crypto-oracle newsletter-preview` mails the operator, and nobody else, a preview of the last seven days through the public site; it needs the publication token and records nothing.
 
 `uv run crypto-oracle study` reproduces the exploratory field notes behind the public [evidence page](https://cryptooracle.moinsen.dev/evidence/): forecast skill at every stored path step, the raw model band against a volatility band, and a fixed-rule trend filter on public Binance daily closes since 2020, with delayed-execution, doubled-cost and ten-coin variants. It makes no model calls, writes `data/study-report.json` and caches the daily closes in `data/study-daily.json` (`--refresh` fetches them again). These are backtests, reported in full; none is a forward claim.
 

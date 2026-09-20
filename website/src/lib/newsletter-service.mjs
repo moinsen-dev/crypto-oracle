@@ -16,6 +16,8 @@ export function createNewsletter({ db, sendBatch, secret, origin, operator, prev
   const unsubscribeUrl = id => `${origin}/newsletter/?unsubscribe=${unsubscribeToken(id)}`;
   const oneClickUrl = id => `${origin}/api/newsletter/unsubscribe?token=${unsubscribeToken(id)}`;
   const approveUrl = issue => `${origin}/newsletter/?approve=${issue.id}&token=${mac(`approve:${issue.id}:${issue.payload_hash}`)}`;
+  // Operator mails carry a notice above the issue exactly as a subscriber would see it.
+  const noticed = (html, notice) => html.replace('<body', '<body data-preview="1"').replace(/(<table role="presentation" width="600"[^>]*><tr><td>)/, `$1<p style="font:14px/1.5 sans-serif;background:#fff0de;border:1px solid #d7b793;padding:12px 14px;margin:0 0 22px">${notice}</p>`);
   const count = async (kind, since) => (await db.prepare('SELECT COUNT(*) AS n FROM newsletter_events WHERE kind=? AND at>?').bind(kind, since).first()).n;
 
   async function subscribe({ email: input, consent, website = '' }) {
@@ -68,16 +70,27 @@ export function createNewsletter({ db, sendBatch, secret, origin, operator, prev
     await db.prepare('INSERT INTO newsletter_issues(id,received_at,week_end,title,payload,payload_hash,status) VALUES(?,?,?,?,?,?,?)').bind(issue.id, at, issue.end, headline(issue), payload, payload_hash, 'draft').run();
     // Nothing reaches subscribers until the operator has seen exactly this payload and approved it.
     const mail = renderIssue(issue, { unsubscribeUrl: `${origin}/newsletter/`, archiveUrl: `${origin}/newsletter/?issue=${issue.id}`, operator });
-    const note = `PREVIEW — not sent to subscribers yet.\nApprove and send: ${approveUrl({ id: issue.id, payload_hash })}\n\n`;
-    await sendBatch([{ from: FROM, to: [previewTo], subject: `[preview] ${mail.subject}`, text: note + mail.text, html: mail.html.replace('<body', `<body data-preview="1"`).replace(/(<table role="presentation" width="600"[^>]*><tr><td>)/, `$1<p style="font:14px/1.5 sans-serif;background:#fff0de;border:1px solid #d7b793;padding:12px 14px;margin:0 0 22px">Preview. Not sent to subscribers yet. <a href="${approveUrl({ id: issue.id, payload_hash })}">Approve and send this issue</a></p>`) }], `preview/${issue.id}/${payload_hash.slice(0, 16)}`);
+    const approval = approveUrl({ id: issue.id, payload_hash }), note = `PREVIEW — not sent to subscribers yet.\nApprove and send: ${approval}\n\n`;
+    await sendBatch([{ from: FROM, to: [previewTo], subject: `[preview] ${mail.subject}`, text: note + mail.text, html: noticed(mail.html, `Preview. Not sent to subscribers yet. <a href="${approval}">Approve and send this issue</a>`) }], `preview/${issue.id}/${payload_hash.slice(0, 16)}`);
     return { status: 'draft' };
+  }
+
+  // The operator's look at the last seven days, whenever they ask. Nothing is stored and nobody else is mailed.
+  async function previewIssue(data) {
+    const issue = validateIssue(data, { preview: true });
+    const mail = renderIssue(issue, { unsubscribeUrl: `${origin}/newsletter/`, archiveUrl: `${origin}/newsletter/`, operator });
+    const notice = 'Rolling preview of the last seven days. Stored nowhere and sent to nobody else.';
+    await sendBatch([{ from: FROM, to: [previewTo], subject: `[preview] ${mail.subject}`, text: `${notice.toUpperCase()}\n\n${mail.text}`, html: noticed(mail.html, notice) }], `preview/${issue.id}/${sha(JSON.stringify(issue)).slice(0, 16)}`);
+    return { status: 'previewed' };
   }
 
   async function approve(id, signature) {
     const issue = typeof id === 'string' && /^\d{4}-W\d{2}$/.test(id) ? await db.prepare('SELECT * FROM newsletter_issues WHERE id=?').bind(id).first() : null;
     if (!issue || typeof signature !== 'string' || !same(signature, mac(`approve:${issue.id}:${issue.payload_hash}`))) return { status: 'invalid' };
     if (issue.status === 'sent') return { status: 'sent', recipients: issue.recipients };
-    const data = JSON.parse(issue.payload);
+    // A draft stored under an earlier issue format can no longer be rendered, so it can no longer be sent.
+    let data;
+    try { data = validateIssue(JSON.parse(issue.payload)); } catch { return { status: 'invalid' }; }
     let delivered = 0;
     for (let round = 0; round < LIMITS.batchesPerCall; round++) {
       const rows = (await db.prepare('SELECT id,email FROM newsletter_subscribers s WHERE status=? AND NOT EXISTS (SELECT 1 FROM newsletter_sends d WHERE d.issue_id=? AND d.subscriber_id=s.id) ORDER BY id LIMIT ?').bind('confirmed', issue.id, LIMITS.batch).all()).results;
@@ -108,5 +121,5 @@ export function createNewsletter({ db, sendBatch, secret, origin, operator, prev
     return row ? JSON.parse(row.payload) : null;
   }
 
-  return { subscribe, confirm, unsubscribe, storeIssue, approve, issues, issue };
+  return { subscribe, confirm, unsubscribe, storeIssue, previewIssue, approve, issues, issue };
 }

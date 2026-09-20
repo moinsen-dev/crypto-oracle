@@ -138,3 +138,36 @@ test('a provider failure during sign-up leaves nothing behind, so the next attem
   assert.deepEqual(await flaky.subscribe({ email: 'retry@example.org', consent: true }), { status: 'accepted' });
   assert.equal(s.sent.length, 1); assert.equal(s.sqlite.prepare('SELECT status FROM newsletter_subscribers').get().status, 'pending');
 });
+test('an operator preview reaches the operator only and leaves no trace', async () => {
+  const s = setup();
+  await member(s, 'reader@example.org');
+  const rolling = structuredClone(issue);
+  rolling.id = 'preview-2026-09-23'; rolling.start += 2 * 86400 + 10 * 3600; rolling.end = rolling.start + 604800; rolling.generated_at = rolling.end + 600;
+  rolling.outlook = []; rolling.market.forEach(m => { m.largest_move = null; }); rolling.portfolios.forEach(p => { p.trades = p.trades.filter(t => t.at >= rolling.start); });
+  const before = s.sent.length;
+  assert.deepEqual(await s.service.previewIssue(rolling), { status: 'previewed' });
+  assert.equal(s.sent.length, before + 1);
+  const { mails, key } = s.sent.at(-1);
+  assert.deepEqual(mails.map(m => m.to), [['operator@example.org']]); assert.match(key, /^preview\/preview-2026-09-23\/[a-f0-9]{16}$/);
+  assert.ok(mails[0].subject.startsWith('[preview] ') && mails[0].html.includes('Stored nowhere and sent to nobody else') && !mails[0].html.includes('approve='));
+  assert.equal(s.sqlite.prepare('SELECT COUNT(*) AS n FROM newsletter_issues').get().n, 0);
+  assert.equal(s.sqlite.prepare('SELECT COUNT(*) AS n FROM newsletter_sends').get().n, 0);
+  // A real week is not a preview, and a preview can never be stored as an issue.
+  await assert.rejects(s.service.previewIssue(issue), /Invalid newsletter issue/);
+  await assert.rejects(s.service.storeIssue(rolling), /Invalid newsletter issue/);
+});
+test('a draft stored in an earlier issue format can no longer be sent', async () => {
+  const s = setup();
+  await member(s, 'reader@example.org');
+  await s.service.storeIssue(issue);
+  const approval = new URL(s.sent.at(-1).mails[0].text.match(/Approve and send: (\S+)/)[1]);
+  // The stored payload is frozen by a trigger, so an old draft is simulated the way it would really exist: inserted as such.
+  const old = structuredClone(issue); old.schema = 1; old.id = '2026-W37';
+  s.sqlite.prepare('INSERT INTO newsletter_issues(id,received_at,week_end,title,payload,payload_hash,status) VALUES(?,?,?,?,?,?,?)').run(old.id, 1, old.end, 't', JSON.stringify(old), 'h'.repeat(64), 'draft');
+  const { createHmac } = await import('node:crypto');
+  const signature = createHmac('sha256', 'test-secret').update(`approve:${old.id}:${'h'.repeat(64)}`).digest('hex');
+  const before = s.sent.length;
+  assert.deepEqual(await s.service.approve(old.id, signature), { status: 'invalid' });
+  assert.equal(s.sent.length, before);
+  assert.equal((await s.service.approve(approval.searchParams.get('approve'), approval.searchParams.get('token'))).status, 'sent');
+});

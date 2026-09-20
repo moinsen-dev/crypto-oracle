@@ -4,6 +4,7 @@ import { timingSafeEqual } from 'node:crypto';
 import { createNewsletter } from './src/lib/newsletter-service.mjs';
 import { issueView } from './src/lib/newsletter.mjs';
 import operator from './src/data/operator.json';
+import site from './src/data/site.json';
 
 const headers = {
   'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store',
@@ -37,6 +38,7 @@ type NewsletterEnv = Env & { RESEND_API_KEY?: string; NEWSLETTER_SECRET?: string
 async function newsletter(request: Request, env: NewsletterEnv, url: URL) {
   const route = url.pathname.slice('/api/newsletter/'.length), post = request.method === 'POST';
   const enabled = Boolean(env.RESEND_API_KEY && env.NEWSLETTER_SECRET && env.NEWSLETTER_PREVIEW_TO);
+  // `enabled` tells the page whether to show the sign-up form: configured AND opened by the operator in src/data/site.json.
   if (route === 'issues' && request.method === 'GET' && !enabled) return json({ enabled: false, issues: [] });
   if (!enabled) return json({ error: 'newsletter_not_configured' }, 503);
   const service = createNewsletter({
@@ -50,25 +52,26 @@ async function newsletter(request: Request, env: NewsletterEnv, url: URL) {
   });
   if (route === 'issues' && request.method === 'GET') {
     const id = url.searchParams.get('id');
-    if (!id) return json({ enabled: true, issues: await service.issues() });
+    if (!id) return json({ enabled: site.newsletterOpen, issues: await service.issues() });
     const issue = await service.issue(id);
     return issue ? json({ issue: issueView(issue) }) : json({ error: 'issue_not_found' }, 404);
   }
   if (!post) return json({ error: 'not_found' }, 404);
-  if (route === 'issue') {
+  if (route === 'issue' || route === 'preview') {
     const supplied = new TextEncoder().encode(request.headers.get('Authorization') || ''), expected = new TextEncoder().encode(`Bearer ${env.PUBLISH_TOKEN}`);
     if (!env.PUBLISH_TOKEN || supplied.length !== expected.length || !timingSafeEqual(supplied, expected)) return json({ error: 'unauthorized' }, 401);
     let data;
     try { data = JSON.parse(await boundedBody(request)); } catch { return json({ error: 'invalid_issue' }, 400); }
     if (typeof data?.generated_at !== 'number' || Math.abs(data.generated_at - Date.now() / 1000) > 180) return json({ error: 'stale_publication' }, 409);
     let result;
-    try { result = await service.storeIssue(data); } catch (error) { if (String(error).includes('Invalid newsletter issue')) return json({ error: 'invalid_issue' }, 400); throw error; }
+    try { result = route === 'preview' ? await service.previewIssue(data) : await service.storeIssue(data); } catch (error) { if (String(error).includes('Invalid newsletter issue')) return json({ error: 'invalid_issue' }, 400); throw error; }
     return json(result, result.status === 'conflict' ? 409 : 200);
   }
   // Mail clients send the one-click removal as a form post to the address in the List-Unsubscribe header.
   if (route === 'unsubscribe' && url.searchParams.get('token')) return json(await service.unsubscribe(url.searchParams.get('token')));
   let body: Record<string, unknown>;
   try { const text = await boundedBody(request); ensureSmall(text); body = JSON.parse(text); } catch { return json({ error: 'invalid_request' }, 400); }
+  if (route === 'subscribe' && !site.newsletterOpen) return json({ error: 'signup_closed' }, 503);
   if (route === 'subscribe') { const result = await service.subscribe({ email: body.email, consent: body.consent, website: typeof body.website === 'string' ? body.website : '' }); return json(result, result.status === 'invalid' ? 400 : result.status === 'busy' ? 429 : 200); }
   if (route === 'confirm') return json(await service.confirm(body.token));
   if (route === 'unsubscribe') return json(await service.unsubscribe(body.token));

@@ -9,11 +9,12 @@ import math
 import os
 import time
 from datetime import UTC, datetime
+from itertools import pairwise
 from pathlib import Path
 
 import httpx
 
-from . import config, paper
+from . import config, paper, paper_trend, volband
 from .db import connect, digest, packed
 from .jev import VERSION as JEV_VERSION
 
@@ -21,6 +22,7 @@ WEEK = 7 * 86400
 SEND_AFTER = 7 * 3600  # Monday 07:00 UTC, once the week's last forecasts have had time to settle
 HEADLINES = 5
 CHANGES = Path(__file__).with_name("changes.json")
+EXPLAINERS = Path(__file__).with_name("explainers.json")
 
 
 def init_schema():
@@ -45,17 +47,34 @@ def week(now):
     return end - WEEK, end, f"{year}-W{number:02d}"
 
 
+def swing(closes):
+    """Realised size of the week's hourly moves, as one number: root of the summed squared log returns."""
+    return math.sqrt(sum(math.log(b / a) ** 2 for a, b in pairwise(closes)))
+
+
 def market(db, start, end):
     result = []
     for asset in config.ASSETS:
-        closes = [
-            r["close"]
-            for r in db.execute(
-                "SELECT close FROM candles WHERE asset=? AND ts>=? AND ts<=? ORDER BY ts", (asset, start, end)
-            )
-        ]
+        rows = db.execute(
+            "SELECT ts,close FROM candles WHERE asset=? AND ts>=? AND ts<=? ORDER BY ts",
+            (asset, start - 12 * WEEK, end),
+        ).fetchall()
+        inside = [r for r in rows if r["ts"] >= start]
+        closes = [r["close"] for r in inside]
         if len(closes) < 2:
             continue
+        # The largest move between two consecutive hourly closes; a gap in the candles is not an hourly move.
+        hourly = [
+            (b["close"] / a["close"] - 1, b["ts"]) for a, b in pairwise(inside) if b["ts"] - a["ts"] == 3600
+        ]
+        largest = max(hourly, key=lambda x: abs(x[0]), default=None)
+        # How this week's swings compare with each of the twelve weeks before it, where those weeks are complete.
+        earlier = []
+        for k in range(1, 13):
+            week_closes = [r["close"] for r in rows if start - k * WEEK <= r["ts"] <= end - k * WEEK]
+            if len(week_closes) >= 160:
+                earlier.append(swing(week_closes))
+        month = [r["close"] for r in rows if r["ts"] == end - 30 * 86400]
         result.append(
             {
                 "asset": asset,
@@ -63,6 +82,88 @@ def market(db, start, end):
                 "change": closes[-1] / closes[0] - 1,
                 "low": min(closes),
                 "high": max(closes),
+                "change_30d": closes[-1] / month[0] - 1 if month else None,
+                "largest_move": {"at": largest[1], "change": largest[0]} if largest else None,
+                "swing": swing(closes),
+                "calmer_weeks": sum(x < swing(closes) for x in earlier),
+                "compared_weeks": len(earlier),
+            }
+        )
+    return result
+
+
+def outlook(db, now):
+    """What the system currently claims about the next 24 hours. Each claim is already frozen in the journal."""
+    result = []
+    for asset in config.ASSETS:
+        row = db.execute(
+            "SELECT * FROM forecasts WHERE experiment=? AND scope='live' AND model='timesfm' AND asset=? "
+            "AND horizon=24 AND origin<=? AND target>? ORDER BY origin DESC LIMIT 1",
+            (config.EXPERIMENT, asset, now, now),
+        ).fetchone()
+        if row is None:
+            continue
+        band = db.execute(
+            "SELECT lower,upper FROM forecasts WHERE experiment=? AND scope='live' AND model='volband' "
+            "AND asset=? AND horizon=24 AND origin=?",
+            (volband.EXPERIMENT, asset, row["origin"]),
+        ).fetchone()
+        signal, _ = paper_trend.trend(db, asset, now)
+        result.append(
+            {
+                "asset": asset,
+                "id": row["id"],
+                "origin": row["origin"],
+                "target": row["target"],
+                "base": row["base"],
+                "predicted": row["prediction"] / row["base"] - 1,
+                "model_band": [row["lower"] / row["base"] - 1, row["upper"] / row["base"] - 1],
+                "volatility_band": [band["lower"] / row["base"] - 1, band["upper"] / row["base"] - 1]
+                if band
+                else None,
+                "trend_positive": sum(x["positive"] for x in signal["lookbacks"]) if signal else None,
+            }
+        )
+    return result
+
+
+def bands(db, start, end):
+    """The band experiment for targets inside the week: both bands on identical forecasts, pooled over coins."""
+    rows = [
+        dict(r)
+        for r in db.execute(
+            "SELECT f.model,f.asset,f.horizon,f.origin,f.lower,f.upper,e.actual,e.actual_hash,e.covered "
+            "FROM forecasts f JOIN evaluations e ON e.forecast_id=f.id WHERE f.experiment=? AND f.scope='live' "
+            "AND f.target>=? AND f.target<? AND e.evaluated_at<=?",
+            (volband.EXPERIMENT, start, end, end + SEND_AFTER),
+        )
+    ]
+    result = []
+    for horizon in volband.POLICY["horizons"]:
+        groups = {
+            m: {(r["asset"], r["origin"]): r for r in rows if r["model"] == m and r["horizon"] == horizon}
+            for m in volband.MODELS
+        }
+        paired = [
+            k
+            for k in groups["volband"]
+            if k in groups["timesfm_path"]
+            and groups["volband"][k]["actual_hash"] == groups["timesfm_path"][k]["actual_hash"]
+        ]
+        if not paired:
+            continue
+        result.append(
+            {
+                "horizon": horizon,
+                "n": len(paired),
+                "days": len({k[1] // 86400 for k in paired}),
+                **{
+                    name: {
+                        "inside": sum(bool(groups[m][k]["covered"]) for k in paired),
+                        "score": sum(volband.interval_score(groups[m][k]) for k in paired) / len(paired),
+                    }
+                    for name, m in (("volatility_band", "volband"), ("model_band", "timesfm_path"))
+                },
             }
         )
     return result
@@ -194,12 +295,22 @@ def news(db, start, end):
             }
         )
     items.sort(key=lambda x: (-x["material"], -(x["published_at"] or 0)))
+    # The week's mix counts each story once, whatever its relevance; syndicated copies share a cluster.
+    stories, mix = set(), {"events": {}, "tones": {}}
+    for r in rows:
+        if r["cluster"] in stories:
+            continue
+        stories.add(r["cluster"])
+        answers = json.loads(r["answers"])
+        for kind, key in (("events", "event"), ("tones", "tone")):
+            mix[kind][answers[key]["choice"]] = mix[kind].get(answers[key]["choice"], 0) + 1
     collected = db.execute(
         "SELECT COUNT(*) FROM news WHERE first_seen>=? AND first_seen<?", (start, end)
     ).fetchone()[0]
     return {
         "collected": collected,
         "classified": len(rows),
+        "mix": mix,
         "items": [{k: v for k, v in x.items() if k != "material"} for x in items[:HEADLINES]],
     }
 
@@ -212,20 +323,35 @@ def changes(start, end):
     return sorted(inside, key=lambda e: e["date"])[-6:]
 
 
-def build_issue(now=None):
-    start, end, ident = week(now or time.time())
+def explainer(ident):
+    entries = json.loads(EXPLAINERS.read_text())
+    return entries[int(ident[-2:]) % len(entries)]
+
+
+def build_issue(now=None, rolling=False):
+    """One completed ISO week, or with `rolling` the seven days up to the last full hour for an operator preview."""
+    now = now or time.time()
+    start, end, ident = week(now)
+    if rolling:
+        end = int(now // 3600) * 3600
+        start = end - WEEK
+        ident = "preview-" + datetime.fromtimestamp(end, UTC).strftime("%Y-%m-%d")
     paper.init_schema()
+    volband.init_schema()
     with connect() as db:
         issue = {
-            "schema": 1,
+            "schema": 2,
             "id": ident,
             "start": start,
             "end": end,
             "market": market(db, start, end),
+            "outlook": outlook(db, now),
             "forecasts": forecasts(db, start, end),
+            "bands": bands(db, start, end),
             "portfolios": portfolios(db, start, end),
             "news": news(db, start, end),
             "changes": changes(start, end),
+            "explainer": explainer(datetime.fromtimestamp(end - 86400, UTC).strftime("%G-W%V")),
         }
     # A non-finite number would make the public boundary reject the whole issue; fail here with the reason.
     packed(issue)
@@ -268,3 +394,26 @@ def publish(now=None):
             (ident, int(now), digest(issue), packed(issue)),
         )
     return {"state": "published", "issue": ident, "headlines": len(issue["news"]["items"])}
+
+
+def preview(now=None):
+    """Mail the operator a rolling seven-day issue right now. Stores nothing anywhere and reaches no subscriber."""
+    token = os.getenv("ORACLE_PUBLIC_TOKEN")
+    if not token:
+        return {"state": "not_configured"}
+    now = now or time.time()
+    issue = build_issue(now, rolling=True)
+    if not issue["market"]:
+        return {"state": "no_market_data"}
+    try:
+        response = httpx.post(
+            "https://crypto-oracle-public.developer-331.workers.dev/api/newsletter/preview",
+            content=packed({**issue, "generated_at": int(now)}),
+            timeout=25,
+            headers={"Authorization": "Bearer " + token, "Content-Type": "application/json"},
+        )
+        if response.status_code != 200:
+            raise RuntimeError(f"Newsletter preview rejected (HTTP {response.status_code})")
+    except httpx.HTTPError:
+        raise RuntimeError("Newsletter preview unavailable") from None
+    return {"state": "previewed", "issue": issue["id"]}

@@ -51,15 +51,17 @@
 
   function showIssue(view) {
     const box = $('issue'); box.hidden = false;
-    box.replaceChildren(node('p', `FIELD NOTES ${view.id} · ${view.period.toUpperCase()}`, 'eyebrow'), node('h3', view.title));
+    box.replaceChildren(node('p', `FIELD NOTES ${view.id} · ${view.period.toUpperCase()}`, 'eyebrow'), node('h3', view.title), node('p', view.lead, 'newsletter-lead'));
     for (const block of view.blocks) {
       box.append(node('h4', block.title));
       const list = node('dl');
-      for (const row of block.rows) { list.append(node('dt', row[0])); const dd = node('dd', row[1]); if (row[2]) dd.append(node('small', row[2])); list.append(dd); }
+      for (const row of block.rows) { list.append(node('dt', row.label)); const dd = node('dd', row.main); for (const sub of row.subs) dd.append(node('small', sub)); if (row.link) { const a = node('a', row.link.text + ' →'); a.href = new URL(row.link.url).pathname + new URL(row.link.url).search; dd.append(node('small')); dd.lastChild.append(a); } list.append(dd); }
       box.append(list, node('p', block.note, 'fine-print'));
     }
     const links = (title, items, note) => { if (!items.length && !note) return; box.append(node('h4', title)); for (const item of items) { const p = node('p', undefined, 'newsletter-link'); const a = node('a', item.title); a.href = item.url; a.rel = 'external noreferrer'; p.append(a, node('small', item.meta || item.summary)); box.append(p); } if (note) box.append(node('p', note, 'fine-print')); };
     links('News radar', view.news.items, view.news.note); links('What changed in the system', view.changes);
+    const idea = node('a', 'Read more on the site →'); idea.href = new URL(view.explainer.url).pathname + new URL(view.explainer.url).hash;
+    box.append(node('h4', 'One idea from the notebook'), node('p', view.explainer.title, 'newsletter-idea'), node('p', view.explainer.text), idea);
     if (wanted) box.scrollIntoView({ block: 'start' });
   }
   async function open(id) { const result = await call('issues?id=' + encodeURIComponent(id)); if (result.ok) showIssue(result.data.issue); else $('archive-note').textContent = 'That issue is not in the archive.'; }
