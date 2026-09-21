@@ -1,6 +1,9 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import study from '../data/study.json';
+import news from '../data/news-study.json';
+import signals from '../data/signals-study.json';
+import momentum from '../data/momentum-study.json';
 import EvidenceBars from '../components/EvidenceBars.astro';
 import '../styles/evidence.css';
 
@@ -37,17 +40,50 @@ const base = project.scenarios.base, harsh = project.scenarios['delay-and-double
 const scenarioNames: Record<string, string> = { base: 'As specified', 'one-day-delay': 'Trades one day late', 'double-costs': 'Doubled costs', 'delay-and-double-costs': 'Late and doubled costs' };
 const variants = [['BTC · ETH · SOL', project], ['Ten large caps of Oct 2020', largeCaps]] as const;
 const month = study.trend.universes.project.next_week_mean_log_return['28'];
+
+// Field notes 005-008: each reads the unedited output of one study command.
+const friendly: Record<string, string> = { 'all headlines': 'All headlines', 'not noise': 'Without opinion pieces', 'noise (opinion, listicle, prediction)': 'Opinion, lists and predictions', 'echo of a move': 'Reports a price move', 'no move in the headline': 'No price move in the headline', fresh: 'no price move in the headline', 'event:security': 'hacks and thefts', 'event:failure': 'bankruptcies', 'event:enforcement': 'lawsuits, bans and charges', 'event:etf': 'ETF news', 'event:approval': 'approvals', 'event:adoption': 'purchases and launches', 'event:macro': 'interest rates and inflation', 'event:network': 'mining and network', 'event:other': 'everything else', 'tone:negative': 'negative tone', 'tone:neutral': 'neutral tone', 'tone:positive': 'positive tone' };
+const naming = (name: string) => { const text = name.split(' · ').map(part => friendly[part] ?? part).join(', '); return text[0].toUpperCase() + text.slice(1); };
+const times = (v: number) => `×${v.toFixed(2)}`;
+const headline = (name: string, horizon: number) => news.table.find(r => r.class === name && r.horizon === horizon)!;
+const pooled = (r: ReturnType<typeof headline>, key: 'mean' | 'before_24h') => (r.fit[key] * r.fit.n + r.test[key] * r.test.n) / (r.fit.n + r.test.n);
+const headlines = news.headlines.fit + news.headlines.test;
+const negative = headline('tone:negative', 24), positive = headline('tone:positive', 24);
+const echoRows = ([['Negative', negative], ['Neutral', headline('tone:neutral', 24)], ['Positive', positive]] as const).flatMap(([label, r]) => [{ label, sub: 'before', value: pooled(r, 'before_24h') }, { label, sub: 'after', value: pooled(r, 'mean') }]);
+const newsHolds = news.table.filter(r => r.holds).length;
+const everyHeadline = headline('all headlines', 1);
+const sizeRows = [1, 4, 24].flatMap(h => { const r = headline('all headlines', h); return [{ label: `${h}h`, sub: 'raw', value: r.test.size - 1 }, { label: `${h}h`, sub: 'control', value: r.test.extra - 1 }]; });
+const sizeTable = ['all headlines', 'tone:negative', 'echo of a move', 'event:enforcement', 'event:macro', 'event:security'].map(name => headline(name, 1));
+
+const signalNames: Record<string, string> = { funding_7d: 'Funding rate, 7-day average', implied_vol: 'Implied volatility', vol_premium: 'Implied minus realised volatility', stable_30d: 'Stablecoin supply, 30-day growth', mood: 'Fear & Greed index', taker_7d: 'Buyer-initiated volume, 7 days' };
+const effect = (signal: string, side: string) => signals.effects.find(e => e.asset === 'BTC' && e.signal === signal && e.side === side && e.horizon === 7);
+const cell = (e: ReturnType<typeof effect>) => e ? `${signed(e.fit.mean)} · ${signed(e.test.mean)}` : 'too few days';
+const overlay = signals.trend_overlays, overlays = [...overlay.overlays].sort((a, b) => b.fit.sharpe_gap - a.fit.sharpe_gap);
+const gap = (v: number) => `${v > 0 ? '+' : v < 0 ? '−' : ''}${Math.abs(v).toFixed(2)}`;
+const bestOverlay = Math.max(...overlay.overlays.map(o => o.test.sharpe_gap));
+
+const thirty = momentum.universes['30'], strength = thirty.fifths['1'];
+const fifthRows = (period: 'fit' | 'test') => strength[period].weakest_to_strongest.map((value, i) => ({ label: ['Weakest', '2nd', '3rd', '4th', 'Strongest'][i], value }));
+type Stats = { cagr: number; sharpe: number; max_drawdown: number };
+const since: Record<string, Stats> = thirty.portfolios['test · cost 0.3%'], costly: Record<string, Stats> = thirty.portfolios['test · cost 0.5%'];
+const portfolioNames: Record<string, string> = { 'all coins equally': 'All thirty coins, equally', 'bitcoin only': 'Bitcoin alone', 'strongest fifth · 1w': 'Strongest fifth · 1-week strength', 'strongest fifth · 2w': 'Strongest fifth · 2-week strength (the rule fixed in advance)', 'strongest fifth · 4w': 'Strongest fifth · 4-week strength', 'strongest fifth · 2w · market trend': 'Strongest fifth · 2-week strength, scaled by the market trend', 'all coins equally · market trend': 'All thirty coins, scaled by the market trend' };
 ---
-<Layout title="The evidence" description="Four fixed-rule studies behind CryptoOracle: forecast skill at every horizon, the quality of uncertainty bands, and the one price pattern that held up against costs.">
+<Layout title="The evidence" description="The fixed-rule studies behind CryptoOracle: forecast skill at every horizon, uncertainty bands, a slow trend filter, and four more places we looked: headlines, market signals and other coins.">
   <div class="wrap">
-    <header class="page-hero"><p class="eyebrow">THE EVIDENCE / FIELD NOTES 002–004</p><h1>Where we looked.<br /> <em>What survived.</em></h1><p>The first benchmark showed a model losing to the last price. So we asked the obvious follow-up questions. The rules were fixed before the results; every variant we ran is on this page.</p></header>
+    <header class="page-hero"><p class="eyebrow">THE EVIDENCE / FIELD NOTES 002–008</p><h1>Where we looked.<br /> <em>What survived.</em></h1><p>The first benchmark showed a model losing to the last price. So we asked the obvious follow-up questions, and then the less obvious ones: the news, the state of the market, other coins. The rules were fixed before the results; every variant we ran is on this page.</p></header>
     <div class="evidence-strip" aria-label="Summary of three findings">
       <a href="#horizons"><span class="index">002 / HORIZONS</span><strong>{signed(last.skill)}</strong><span>forecast error against the last price, {last.horizon} hours ahead</span></a>
       <a href="#bands"><span class="index">003 / UNCERTAINTY</span><strong>{signed(bandRows.at(-1)!.value, 0)}</strong><span>better band score from four volatility numbers than from the model</span></a>
       <a href="#trend"><span class="index">004 / TREND</span><strong>{pct(base.rebalanced.max_drawdown)} → {pct(base.trend_filter.max_drawdown)}</strong><span>deepest loss with a slow trend filter, at similar growth</span></a>
     </div>
+    <div class="evidence-strip four" aria-label="Summary of four later findings">
+      <a href="#headlines"><span class="index">005 / HEADLINES</span><strong>{newsHolds} of {news.tests}</strong><span>kinds of headline that say which way Bitcoin goes next, in both periods</span></a>
+      <a href="#size"><span class="index">006 / HEADLINES</span><strong>{times(everyHeadline.test.size)} → {times(everyHeadline.test.extra)}</strong><span>size of the next hour’s move after a headline, before and after one control</span></a>
+      <a href="#state"><span class="index">007 / MARKET STATE</span><strong>{signals.effects.filter(e => e.holds).length} of {signals.tests}</strong><span>extreme readings of six market signals that say anything about the next days</span></a>
+      <a href="#coins"><span class="index">008 / OTHER COINS</span><strong>{signed(since['all coins equally'].cagr, 0)} · {signed(since['bitcoin only'].cagr, 0)}</strong><span>a year since 2023: the thirty most traded coins, and Bitcoin alone</span></a>
+    </div>
     <div class="reading-layout">
-      <aside class="contents"><p class="eyebrow">ON THIS PAGE</p><a href="#horizons">002 · No horizon rescues the model</a><a href="#bands">003 · Uncertainty is forecastable</a><a href="#trend">004 · A slow trend filter</a><a href="#limits">What this does not show</a></aside>
+      <aside class="contents"><p class="eyebrow">ON THIS PAGE</p><a href="#horizons">002 · No horizon rescues the model</a><a href="#bands">003 · Uncertainty is forecastable</a><a href="#trend">004 · A slow trend filter</a><a href="#headlines">005 · Headlines tell what happened</a><a href="#size">006 · Nor how far it will move</a><a href="#state">007 · Signals move with the trend</a><a href="#coins">008 · The strongest coins</a><a href="#limits">What this does not show</a></aside>
       <div class="reading-content">
         <section id="horizons"><p class="eyebrow">FIELD NOTE 002 / HORIZONS</p><h2>No horizon rescues the model.</h2>
           <p>Perhaps a day is simply too far. Every stored backtest forecast contains a full hourly path, so we scored all {first.n.toLocaleString('en-GB')} paths at eight distances without running the model again.</p>
@@ -99,10 +135,71 @@ const month = study.trend.universes.project.next_week_mean_log_return['28'];
           <p>The smaller loss held in all eight. The better return per unit of risk is only suggestive: as specified the interval stays above zero, but traded late at doubled costs it runs from {harsh.sharpe_gap_ci95[0] > 0 ? '+' : '−'}{Math.abs(harsh.sharpe_gap_ci95[0]).toFixed(2)} to +{harsh.sharpe_gap_ci95[1].toFixed(2)}, and with ten coins it includes zero throughout.</p>
           <div class="callout"><b>What we take from it</b><p>This is a rule about when to be exposed, not a prediction that a coin will rise. It is the first idea here that survives its costs, so it earns a prospective test: frozen, in its own virtual portfolio, against a rebalanced benchmark.</p></div>
         </section>
+        <section id="headlines"><p class="eyebrow">FIELD NOTE 005 / HEADLINES</p><h2>A headline tells you what just happened.</h2>
+          <p>The next idea was the obvious one: read the news. Before building anything that turns headlines into buy and sell decisions, we checked whether headlines carry something to decide on. {headlines.toLocaleString('en-GB')} timestamped Bitcoin headlines from 2018 to 2025, each labelled from its words alone: the kind of event, whether it merely reports a price move, whether it is opinion, and the tone our production sentiment model assigns. A headline counts from the first full hour after our feed could have seen it, {news.delay_seconds / 60} minutes after publication.</p>
+          <figure class="evidence-figure">
+            <div class="chart-label"><span>Bitcoin before and after a headline, by the headline’s tone</span><span>24 hours each</span></div>
+            <EvidenceBars id="echo" title="Bitcoin in the day before and the day after a headline, by tone" rows={echoRows} low={-0.02} high={0.016} step={0.01} digits={2} />
+            <figcaption class="fine-print">Before: Bitcoin’s move in the 24 hours up to the point where we could act. After: the following 24 hours against the average of the same month. Both periods pooled, weighted by headlines.</figcaption>
+          </figure>
+          <p>Negative headlines appear after Bitcoin has fallen {signed(-pooled(negative, 'before_24h'), 1).replace('+', '')} in a day, positive ones after it has risen {signed(pooled(positive, 'before_24h'), 1).replace('+', '')}. Once they are out, nothing follows. The tone of a headline describes the day before it.</p>
+          <p>We tested {news.tests} combinations of event type, tone and distance, from one hour to three days. To count, an effect had to be clear of zero in the years before 2023 and again, with the same sign, in the years after. {newsHolds === 0 ? 'None did' : `${newsHolds} did`}; chance alone would produce about {news.expected_false_positives.toFixed(1)}. Hacks, bankruptcies, lawsuits: the sign of what followed flipped from one period to the next.</p>
+          <div class="table-scroll" role="region" aria-label="Trading rules chosen before 2023 and run afterwards" tabindex="0"><table><caption>The six strongest patterns of 2018–2022, turned into rules and run once on 2023 onwards, {pct(0.0015, 2)} cost per trade.</caption><thead><tr><th scope="col">After a headline about</th><th scope="col">Rule</th><th scope="col">Result</th><th scope="col">Holding Bitcoin</th></tr></thead><tbody>
+            {news.rules.map(r => <tr><th scope="row">{naming(r.class)}</th><td>{r.action === 'step aside' ? `Out of the market for ${r.horizon}h` : `In the market for ${r.horizon}h only`}</td><td>{signed(r.return, 0)}</td><td>{signed(r.hold_return, 0)}</td></tr>)}
+          </tbody></table></div>
+          <div class="callout"><b>What we take from it</b><p>By the time a headline is written, collected and acted on at the next full hour, the market has moved. A better classifier does not fix lateness. This covers Bitcoin headlines only; shocks that hit one smaller coin are not tested here.</p></div>
+        </section>
+        <section id="size"><p class="eyebrow">FIELD NOTE 006 / HEADLINES</p><h2>Nor how far it will move.</h2>
+          <p>Field note 003 found that the size of a move is easier to forecast than its direction. So perhaps news says how far. At first sight it does: from 2023 on, in the hour after a headline Bitcoin moved {signed(everyHeadline.test.size - 1, 0).replace('+', '')} more than in an average hour of the same month.</p>
+          <figure class="evidence-figure">
+            <div class="chart-label"><span>Size of Bitcoin’s move after a headline · 2023–2025</span><span>Against the usual move ↑</span></div>
+            <EvidenceBars id="size" title="Size of the move after a headline, as measured and controlled" rows={sizeRows} low={-0.16} high={0.28} step={0.1} digits={0} />
+            <figcaption class="fine-print">Raw: against the average move of the same month. Control: against what the volatility of the previous 24 hours implies, compared with other hours of the same month at the same time of day. {everyHeadline.test.n.toLocaleString('en-GB')} headlines.</figcaption>
+          </figure>
+          <p>But news is written when markets are already moving, and at the busy times of day. Measured against what the last day’s volatility and the hour already imply, the extra is {signed(everyHeadline.test.extra - 1, 0)}. One to three days later, moves are smaller than implied: headlines cluster at the peaks of volatility, and peaks fade. A volatility band knows both without reading a word.</p>
+          <div class="table-scroll" role="region" aria-label="Size of the next hour's move by kind of headline" tabindex="0"><table><caption>Size of the move in the following hour, as a multiple of the usual. First number 2018–2022, second 2023–2025.</caption><thead><tr><th scope="col">Headlines</th><th scope="col">As measured</th><th scope="col">Controlled</th><th scope="col">Count</th></tr></thead><tbody>
+            {sizeTable.map(r => <tr><th scope="row">{naming(r.class)}</th><td>{times(r.fit.size)} · {times(r.test.size)}</td><td>{times(r.fit.extra)} · {times(r.test.extra)}</td><td>{r.fit.n.toLocaleString('en-GB')} · {r.test.n.toLocaleString('en-GB')}</td></tr>)}
+          </tbody></table></div>
+          <div class="callout"><b>What we take from it</b><p>An effect that vanishes under one obvious control was never an effect. The control stays in the published study, so the next idea has to pass it too.</p></div>
+        </section>
+        <section id="state"><p class="eyebrow">FIELD NOTE 007 / MARKET STATE</p><h2>Funding, fear and stablecoins move with the trend.</h2>
+          <p>If news is too fast for us, slower readings of the market might not be: what leveraged traders pay to stay long, what options imply about volatility, how fast the supply of stablecoins grows, the Fear &amp; Greed index, and who is doing the buying. All from free public sources. A value counts only if it was stamped before the daily decision; each signal is ranked against its own previous year, and the days in its lowest and highest fifth are compared with the period’s average over the following 1 to 14 days.</p>
+          <p>{signals.tests} combinations of signal, coin, extreme and distance. {signals.effects.filter(e => e.holds).length === 0 ? 'None holds' : `${signals.effects.filter(e => e.holds).length} hold`} in both periods.</p>
+          <div class="table-scroll" role="region" aria-label="Bitcoin in the seven days after an extreme reading" tabindex="0"><table><caption>Bitcoin over the next seven days against the period’s average. First number before 2023, second from 2023. No interval in this table is clear of zero.</caption><thead><tr><th scope="col">Signal</th><th scope="col">When in its lowest fifth</th><th scope="col">When in its highest fifth</th></tr></thead><tbody>
+            {Object.entries(signalNames).map(([key, name]) => <tr><th scope="row">{name}</th><td>{cell(effect(key, 'low'))}</td><td>{cell(effect(key, 'high'))}</td></tr>)}
+          </tbody></table></div>
+          <p>Where the signs agree, they tell one story: greed, expensive leverage and fast stablecoin growth go with prices that keep rising. That is the trend seen through another window, not a warning to sell. So we tried each signal as an addition to the trend rule of field note 004: step aside on the days a signal sits in one extreme. The three best of 2020–2022 were named in advance.</p>
+          <div class="table-scroll" role="region" aria-label="Every signal as an addition to the trend rule" tabindex="0"><table><caption>Change in return per unit of risk against the trend rule alone. The interval is a 95% block bootstrap on {day(overlay.split_day)} to {day(overlay.last_day)}.</caption><thead><tr><th scope="col">Step aside when</th><th scope="col">2020–2022</th><th scope="col">From 2023</th><th scope="col">Interval</th></tr></thead><tbody>
+            {overlays.map(o => <tr><th scope="row">{signalNames[o.signal]} is {o.step_aside_when}{overlay.chosen_before_split.includes(`${o.signal}:${o.step_aside_when}`) ? ' · named in advance' : ''}</th><td>{gap(o.fit.sharpe_gap)}</td><td>{gap(o.test.sharpe_gap)}</td><td>{gap(o.test.sharpe_gap_ci95[0])} to {gap(o.test.sharpe_gap_ci95[1])}</td></tr>)}
+          </tbody></table></div>
+          <div class="evidence-pair"><div><span class="eyebrow">DEEPEST LOSS SINCE 2023 · REBALANCED</span><strong>−{pct(overlay.rebalanced.test.max_drawdown)}</strong></div><div><span class="eyebrow">DEEPEST LOSS SINCE 2023 · TREND RULE</span><strong>−{pct(overlay.trend_rule.test.max_drawdown)}</strong></div></div>
+          <p>None of the twelve improves the rule on the unseen years; the best adds {gap(bestOverlay)}, with an interval around zero. The rule itself kept its character after 2022: {pct(overlay.trend_rule.test.cagr)} a year against {pct(overlay.rebalanced.test.cagr)} for the rebalanced portfolio, at less than half the deepest loss.</p>
+          <div class="callout"><b>What we take from it</b><p>These signals are real, and they are already in the price trend. A rule that reads the trend does not get better by reading them as well.</p></div>
+        </section>
+        <section id="coins"><p class="eyebrow">FIELD NOTE 008 / OTHER COINS</p><h2>Buying the strongest coins stopped working.</h2>
+          <p>The best documented pattern in crypto research is momentum across coins: last week’s winners keep winning. We tested it without the usual flattery. Daily prices of all {momentum.pairs} pairs the exchange still reports, {momentum.pairs_no_longer_trading} of which no longer trade. The universe is rebuilt every Monday from the thirty most traded coins of the month before, each listed for at least sixty days. A position in a pair that stops trading loses half of what is left, which happened {thirty.forced_exits} times. The rule was fixed in advance: hold the strongest fifth, equally weighted, for one week, at {pct(0.003, 1)} per trade.</p>
+          <figure class="evidence-figure">
+            <div class="chart-label"><span>Next week’s return by last week’s strength · before 2023</span><span>Against all thirty coins ↑</span></div>
+            <EvidenceBars id="fifths-before" title="Next week's return by strength fifth, before 2023" rows={fifthRows('fit')} low={-0.016} high={0.012} step={0.004} digits={2} tickDigits={1} />
+            <figcaption class="fine-print">{thirty.weeks.fit} weeks from {day(thirty.first_week)}. Average weekly return of each fifth relative to the whole universe, before costs.</figcaption>
+          </figure>
+          <figure class="evidence-figure">
+            <div class="chart-label"><span>The same · from 2023</span><span>Against all thirty coins ↑</span></div>
+            <EvidenceBars id="fifths-after" title="Next week's return by strength fifth, from 2023" rows={fifthRows('test')} low={-0.016} high={0.012} step={0.004} digits={2} tickDigits={1} />
+            <figcaption class="fine-print">{thirty.weeks.test} weeks to {day(thirty.last_week)}. Strongest minus weakest: {signed(strength.test.strongest_minus_weakest, 2)} a week, interval {signed(strength.test.ci95[0], 2)} to {signed(strength.test.ci95[1], 2)}.</figcaption>
+          </figure>
+          <p>Before 2023 the strongest fifth beat the weakest by {signed(strength.fit.strongest_minus_weakest, 1).replace('+', '')} a week. Most of that came from losers that kept losing, which a portfolio that only buys cannot use: it did not beat holding all thirty coins. From 2023 the difference is gone.</p>
+          <div class="table-scroll" role="region" aria-label="Portfolios from 2023" tabindex="0"><table><caption>From 2023, 60% invested as in our paper portfolios, {pct(0.003, 1)} per trade. With {pct(0.005, 1)} the strongest-fifth rows lose a further {Math.round((since['strongest fifth · 2w'].cagr - costly['strongest fifth · 2w'].cagr) * 100)} points a year.</caption><thead><tr><th scope="col">Portfolio</th><th scope="col">Growth a year</th><th scope="col">Deepest loss</th><th scope="col">Return per risk</th></tr></thead><tbody>
+            {Object.entries(portfolioNames).map(([key, name]) => <tr><th scope="row">{name}</th><td>{signed(since[key].cagr, 0)}</td><td>{pct(since[key].max_drawdown)}</td><td>{since[key].sharpe.toFixed(2)}</td></tr>)}
+          </tbody></table></div>
+          <p>The striking number is not about momentum. Since 2023 the thirty most traded coins, held equally, lost {signed(-since['all coins equally'].cagr, 0).replace('+', '')} a year. Bitcoin alone, at the same exposure, made {signed(since['bitcoin only'].cagr, 0).replace('+', '')}. Staying with three large coins was the better choice, and not one we can claim to have made on evidence.</p>
+          <div class="callout"><b>What we take from it</b><p>Four more places to look, and no edge on direction in any of them. What holds up is what held up before: measured uncertainty, and a slow trend rule for deciding how much to hold.</p></div>
+        </section>
         <section id="limits"><p class="eyebrow">LIMITATIONS</p><h2>What this does not show.</h2>
-          <ul class="plain-list"><li>These are backtests. The trend rule came from published research, so part of this period is not new to it.</li><li>Six years of crypto contain two long declines. Two is a small number of independent tests for a rule whose whole benefit is avoiding declines.</li><li>Coins that still trade today are survivors. The ten-coin list was fixed in 2020, yet delisted coins are still missing from it.</li><li>Daily closes, a flat cost and no order book. The paper portfolio’s execution checks are stricter than this study.</li><li>The band comparison covers one year and one split. Different periods can rank the two bands differently.</li><li>Nothing here is investment advice or a statement about future prices.</li></ul>
-          <p>Measured on {day(study.created_at)} from the stored backtest and public Binance daily closes. The study is one command in the <a href="https://github.com/moinsen-dev/crypto-oracle" rel="external noreferrer">public source</a>: <code>crypto-oracle study</code>.</p>
+          <ul class="plain-list"><li>These are backtests. The trend rule came from published research, so part of this period is not new to it.</li><li>Six years of crypto contain two long declines. Two is a small number of independent tests for a rule whose whole benefit is avoiding declines.</li><li>Coins that still trade today are survivors. The ten-coin list was fixed in 2020, yet delisted coins are still missing from it.</li><li>Daily closes, a flat cost and no order book. The paper portfolio’s execution checks are stricter than this study.</li><li>The band comparison covers one year and one split. Different periods can rank the two bands differently.</li><li>The headline study covers Bitcoin and reads headlines, not articles. Event types come from keyword rules, so rare material events are mixed with minor ones.</li><li>Implied volatility exists since March 2021, which leaves its early period short. Solana borrows Bitcoin’s index.</li><li>The coin study uses one exchange and daily closes, assumes a 50% loss on pairs that stop trading, and only ever buys.</li><li>Nothing here is investment advice or a statement about future prices.</li></ul>
+          <p>Measured on {day(study.created_at)} from the stored backtest and public Binance daily closes. Field notes 002–004 are one command in the <a href="https://github.com/moinsen-dev/crypto-oracle" rel="external noreferrer">public source</a>: <code>crypto-oracle study</code>. Field notes 005–008 were measured on {day(news.created_at)} from public data and are three more: <code>news-study</code>, <code>signals-study</code> and <code>momentum-study</code>.</p>
           <div class="benchmark-foot"><span>Frozen snapshot · measured {day(study.created_at)}</span><a href="/data/study.json" download="crypto-oracle-study.json">Download the data ↓</a></div>
+          <div class="benchmark-foot"><span>Field notes 005–008 · every class and variant</span><span class="evidence-downloads"><a href="/data/news-study.json" download="crypto-oracle-news-study.json">Headlines ↓</a><a href="/data/signals-study.json" download="crypto-oracle-signals-study.json">Market signals ↓</a><a href="/data/momentum-study.json" download="crypto-oracle-momentum-study.json">Other coins ↓</a></span></div>
         </section>
       </div>
     </div>

@@ -263,7 +263,8 @@ def test_issue_is_published_once_after_monday_morning_and_never_without_the_flag
     assert url.endswith("/api/newsletter/issue") and auth == "Bearer test-token"
     assert issue["id"] == "2026-W38" and len(issue["market"]) == 3 and issue["generated_at"] == NOW
     assert issue["schema"] == 2 and issue["outlook"] == [] and issue["bands"] == []
-    assert issue["explainer"] == json.loads(newsletter.EXPLAINERS.read_text())[38 % 8]
+    ideas = json.loads(newsletter.EXPLAINERS.read_text())
+    assert issue["explainer"] == ideas[38 % len(ideas)]
     assert "subscriber" not in json.dumps(issue) and "@" not in json.dumps(issue)
     assert newsletter.publish(NOW + 3600) == {"state": "published", "issue": "2026-W38"} and len(sent) == 1
     monkeypatch.setenv("ORACLE_NEWSLETTER_ENABLED", "0")

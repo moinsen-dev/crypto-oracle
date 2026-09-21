@@ -1,18 +1,24 @@
 import assert from 'node:assert/strict';
 import { readFile, readdir } from 'node:fs/promises';
 import { join } from 'node:path';
-import { validateResearch, validateStudy, assertPublicText } from './public-data.mjs';
+import { validateResearch, validateStudy, validateNewsStudy, validateSignalsStudy, validateMomentumStudy, assertPublicText } from './public-data.mjs';
 
 const research = JSON.parse(await readFile(new URL('../src/data/research.json', import.meta.url), 'utf8'));
 const operator = JSON.parse(await readFile(new URL('../src/data/operator.json', import.meta.url), 'utf8'));
 validateResearch(research);
 const study = JSON.parse(await readFile(new URL('../src/data/study.json', import.meta.url), 'utf8'));
 validateStudy(study);
+// The later field notes: each file is the unedited output of one study command.
+const notes = {};
+for (const [name, validate] of [['news-study', validateNewsStudy], ['signals-study', validateSignalsStudy], ['momentum-study', validateMomentumStudy]]) {
+  notes[name] = JSON.parse(await readFile(new URL(`../src/data/${name}.json`, import.meta.url), 'utf8'));
+  validate(notes[name]);
+}
 assert.match(operator.email, /^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'A verified public contact email is required before release');
 for (const field of ['name', 'street', 'postalCode', 'city', 'country', 'vatId', 'source']) assert.ok(operator[field]?.trim(), `Missing operator field: ${field}`);
 
 const directory = new URL('../dist/', import.meta.url);
-const allowed = new Set(['index.html', 'method/index.html', 'build-notes/index.html', 'paper-portfolio/index.html', 'forecasts/index.html', 'evidence/index.html', 'newsletter/index.html', 'legal/index.html', 'privacy/index.html', '404.html', 'data/research.json', 'data/study.json', 'scripts/benchmark.js', 'scripts/home.js', 'scripts/paper.js', 'scripts/forecasts.js', 'scripts/newsletter.js', 'favicon.svg', 'og.png', 'sitemap.xml', 'robots.txt', '_headers', '.assetsignore']);
+const allowed = new Set(['index.html', 'method/index.html', 'build-notes/index.html', 'paper-portfolio/index.html', 'forecasts/index.html', 'evidence/index.html', 'newsletter/index.html', 'legal/index.html', 'privacy/index.html', '404.html', 'data/research.json', 'data/study.json', 'data/news-study.json', 'data/signals-study.json', 'data/momentum-study.json', 'scripts/benchmark.js', 'scripts/home.js', 'scripts/paper.js', 'scripts/forecasts.js', 'scripts/newsletter.js', 'favicon.svg', 'og.png', 'sitemap.xml', 'robots.txt', '_headers', '.assetsignore']);
 let count = 0;
 async function inspect(relative = '') {
   for (const entry of await readdir(new URL(relative, directory), { withFileTypes: true })) {
@@ -28,6 +34,7 @@ await inspect();
 const output = JSON.parse(await readFile(new URL('data/research.json', directory), 'utf8'));
 assert.deepEqual(output, research, 'Public result export must match the reviewed snapshot exactly');
 assert.deepEqual(JSON.parse(await readFile(new URL('data/study.json', directory), 'utf8')), study, 'Public study export must match the reviewed snapshot exactly');
+for (const [name, snapshot] of Object.entries(notes)) assert.deepEqual(JSON.parse(await readFile(new URL(`data/${name}.json`, directory), 'utf8')), snapshot, `Public ${name} export must match the reviewed snapshot exactly`);
 for (const page of ['index.html', 'method/index.html', 'build-notes/index.html', 'paper-portfolio/index.html', 'forecasts/index.html', 'evidence/index.html', 'newsletter/index.html', 'legal/index.html', 'privacy/index.html', '404.html']) {
   const html = await readFile(new URL(page, directory), 'utf8');
   assert.match(html, /<html lang="en"/);

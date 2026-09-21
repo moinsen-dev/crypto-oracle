@@ -50,12 +50,13 @@ const farthest = study.horizon_skill.at(-1)!, longBand = study.bands.at(-1)!, tr
     </section>
     <div id="evidence" class="anchor-section"><Benchmark /></div>
     <section class="section" aria-labelledby="follow-ups">
-      <div class="section-heading"><p class="eyebrow">THE EVIDENCE / 002–004</p><h2 id="follow-ups">Then we asked<br /> the follow-up questions.</h2><p>Shorter horizons, the uncertainty bands, slower signals. Fixed rules, every variant reported — including the ones that went nowhere.</p></div>
+      <div class="section-heading"><p class="eyebrow">THE EVIDENCE / 002–008</p><h2 id="follow-ups">Then we asked<br /> the follow-up questions.</h2><p>Shorter horizons, the uncertainty bands, slower signals, and then the news, the state of the market and other coins. Fixed rules, every variant reported, including the ones that went nowhere.</p></div>
       <div class="evidence-teaser">
         <a href="/evidence/#horizons"><span class="index">002 / HORIZONS</span><strong>{signed(farthest.skill)}</strong><p>No horizon rescues the model. From one hour to three days, the last price stays the better forecast.</p><span class="text-link">Read the note <span aria-hidden="true">↗</span></span></a>
         <a href="/evidence/#bands"><span class="index">003 / UNCERTAINTY</span><strong>{signed(1 - longBand.volatility_band.interval_score / longBand.timesfm_raw.interval_score)}</strong><p>How far a price may move is forecastable. Four volatility numbers beat the model’s own band.</p><span class="text-link">Read the note <span aria-hidden="true">↗</span></span></a>
         <a href="/evidence/#trend"><span class="index">004 / TREND</span><strong>{pct(trend.rebalanced.max_drawdown)} → {pct(trend.trend_filter.max_drawdown)}</strong><p>One idea survived its costs: a slow trend filter halved the deepest loss. It did not earn more.</p><span class="text-link">Read the note <span aria-hidden="true">↗</span></span></a>
       </div>
+      <p class="evidence-more">Four more places we looked, 005–008: headlines, market signals and other coins. None of them says which way the price goes. <a class="text-link" href="/evidence/#headlines">Read what we found <span aria-hidden="true">↗</span></a></p>
     </section>
     <section class="section architecture-preview" aria-labelledby="behind-scenes">
       <div><p class="eyebrow">BEHIND THE SCENES</p><h2 id="behind-scenes">A small system.<br /> <em>A visible paper trail.</em></h2><p>Models run on a dedicated research server. The public site delivers a curated, dated snapshot. Browsing this page does not contact the models or the private dashboard.</p><a class="text-link" href="/method/">Walk through the architecture <span aria-hidden="true">↗</span></a></div>
@@ -67,7 +68,7 @@ const farthest = study.horizon_skill.at(-1)!, longBand = study.bands.at(-1)!, tr
       </div>
     </section>
     <section class="paper-teaser" aria-labelledby="paper-title">
-      <div><p class="eyebrow">THE LIVE PAPER EXPERIMENT</p><h2 id="paper-title">$10,000.<br /> Entirely virtual.</h2><p>The virtual portfolios now record decisions, simulated trades and changing balances — with costs, data checks and a reason for every action.</p><a class="button button-light" href="/paper-portfolio/">Follow the portfolios <span aria-hidden="true">↗</span></a></div>
+      <div><p class="eyebrow">THE LIVE PAPER EXPERIMENT</p><h2 id="paper-title">$10,000.<br /> Entirely virtual.</h2><p>The virtual portfolios record decisions, simulated trades and changing balances, with costs, data checks and a reason for every action. The newest one follows the one rule that survived our tests: a slow trend filter, against a rebalanced benchmark.</p><a class="button button-light" href="/paper-portfolio/">Follow the portfolios <span aria-hidden="true">↗</span></a></div>
       <div class="paper-stamp"><span class="pill pill-light">VIRTUAL · OBSERVING LIVE</span><p>Starting capital</p><strong>$10,000<span>USD</span></strong><div class="paper-line"></div><p>Recorded decisions.<br /> Transparent simulated results.</p></div>
     </section>
     <section class="closing-note"><p class="eyebrow">BUILT TO BE QUESTIONED</p><h2>The useful part is what we learn.</h2><p>Follow the decisions, the checks and the things that did not work as hoped.</p><a class="text-link" href="/build-notes/">Read the development journal <span aria-hidden="true">↗</span></a></section>

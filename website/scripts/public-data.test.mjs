@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { validateResearch, validateStudy, assertPublicText } from './public-data.mjs';
+import { validateResearch, validateStudy, validateNewsStudy, validateSignalsStudy, validateMomentumStudy, assertPublicText } from './public-data.mjs';
 const snapshot = JSON.parse(await readFile(new URL('../src/data/research.json', import.meta.url), 'utf8'));
 const study = JSON.parse(await readFile(new URL('../src/data/study.json', import.meta.url), 'utf8'));
 
@@ -47,4 +47,31 @@ test('the study snapshot stays a labelled backtest with every variant reported',
   const extra = structuredClone(study);
   extra.bands[0].holdings = 1;
   assert.throws(() => validateStudy(extra), /Unapproved/);
+});
+
+const note = async name => JSON.parse(await readFile(new URL(`../src/data/${name}.json`, import.meta.url), 'utf8'));
+test('the later field notes stay labelled backtests that report everything they tested', async () => {
+  const news = await note('news-study'), signals = await note('signals-study'), momentum = await note('momentum-study');
+  validateNewsStudy(news); validateSignalsStudy(signals); validateMomentumStudy(momentum);
+  for (const [data, validate] of [[news, validateNewsStudy], [signals, validateSignalsStudy], [momentum, validateMomentumStudy]]) {
+    const relabelled = structuredClone(data); relabelled.kind = 'live trading result';
+    assert.throws(() => validate(relabelled), /relabelled/);
+  }
+  // Dropping the classes that did not work, or calling a one-period effect a finding, fails the build.
+  const selective = structuredClone(news); selective.table = selective.table.slice(0, 50);
+  assert.throws(() => validateNewsStudy(selective), /Every class/);
+  const relaxed = structuredClone(news); const row = relaxed.table.find(r => r.fit.clear && !r.test.clear); row.holds = true;
+  assert.throws(() => validateNewsStudy(relaxed), /both-periods rule/);
+  const early = structuredClone(news); early.delay_seconds = 0;
+  assert.throws(() => validateNewsStudy(early), /before the live feed/);
+  const cherry = structuredClone(signals); cherry.trend_overlays.chosen_before_split = ['stable_30d:low', 'taker_7d:low', 'mood:low'];
+  assert.throws(() => validateSignalsStudy(cherry), /before the split/);
+  const fewer = structuredClone(signals); fewer.effects = fewer.effects.filter(e => e.signal !== 'mood'); fewer.tests = fewer.effects.length;
+  assert.throws(() => validateSignalsStudy(fewer), /Every signal/);
+  const tuned = structuredClone(momentum); tuned.primary.weeks = 1;
+  assert.throws(() => validateMomentumStudy(tuned), /fixed in advance/);
+  const survivors = structuredClone(momentum); survivors.pairs_no_longer_trading = 0;
+  assert.throws(() => validateMomentumStudy(survivors), /no longer trade/);
+  const hidden = structuredClone(momentum); delete hidden.universes['30'].portfolios['test · cost 0.5%'];
+  assert.throws(() => validateMomentumStudy(hidden), /Both periods/);
 });

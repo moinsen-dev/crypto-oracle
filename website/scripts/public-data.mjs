@@ -98,3 +98,82 @@ export function assertPublicText(text, filename) {
     assert.ok(!/<link[^>]+rel=["'](?:stylesheet|preconnect|dns-prefetch|prefetch)["'][^>]+href=["']https?:/i.test(text), `External automatic connection in ${filename}`);
   }
 }
+
+// The later field notes. Each file is the unedited output of one study command; these checks make sure it still
+// says what it is, reports every class or variant it tested, and keeps the rule that was fixed in advance.
+const finite = (...values) => values.every(v => Number.isFinite(v));
+const span = v => Array.isArray(v) && v.length === 2 && finite(...v) && v[0] <= v[1];
+function labelled(data, keys) {
+  exactKeys(data, keys);
+  assert.equal(data.schema, 1);
+  assert.match(data.kind, /^exploratory historical/, 'A backtest must not be relabelled as a forward result');
+  assert.match(data.kind, /not a forward claim$/, 'A backtest must not be relabelled as a forward result');
+  assert.ok(Number.isInteger(data.created_at) && data.created_at > 1_700_000_000 && data.split === 1672531200);
+}
+
+export function validateNewsStudy(data) {
+  labelled(data, ['schema', 'kind', 'created_at', 'corpus', 'delay_seconds', 'split', 'headlines', 'tests', 'expected_false_positives', 'table', 'rules']);
+  assert.equal(data.corpus, 'https://huggingface.co/datasets/edaschau/bitcoin_news/resolve/main/BTC_match_title.csv');
+  assert.ok(data.delay_seconds >= 900, 'A headline must not count before the live feed could have seen it');
+  exactKeys(data.headlines, ['fit', 'test']);
+  assert.equal(data.table.length, data.tests, 'Every class must be reported');
+  assert.ok(data.tests >= 200 && data.rules.length === 6);
+  for (const row of data.table) {
+    exactKeys(row, ['class', 'horizon', 'fit', 'test', 'holds', 'size_holds', 'extra_holds']);
+    assert.ok([1, 4, 24, 72].includes(row.horizon) && typeof row.class === 'string' && row.class.length < 80);
+    for (const part of [row.fit, row.test]) {
+      exactKeys(part, ['n', 'days', 'mean', 'ci95', 'clear', 'size', 'size_ci95', 'size_clear', 'extra', 'extra_ci95', 'extra_clear', 'before_24h']);
+      assert.ok(Number.isInteger(part.n) && part.n >= 40 && part.days <= part.n && finite(part.mean, part.size, part.extra, part.before_24h) && span(part.ci95) && span(part.size_ci95) && span(part.extra_ci95));
+      assert.equal(part.clear, part.ci95[0] > 0 || part.ci95[1] < 0);
+    }
+    // An effect counts only when both periods are clear of zero and agree in sign.
+    assert.equal(row.holds, row.fit.clear && row.test.clear && (row.fit.mean > 0) === (row.test.mean > 0), 'The both-periods rule must not be relaxed');
+  }
+  for (const rule of data.rules) {
+    exactKeys(rule, ['class', 'horizon', 'fit_mean', 'action', 'hours', 'hours_held', 'switches', 'return', 'max_drawdown', 'hold_return', 'hold_max_drawdown']);
+    assert.ok(['step aside', 'hold only then'].includes(rule.action) && finite(rule.return, rule.hold_return, rule.max_drawdown));
+  }
+}
+
+export function validateSignalsStudy(data) {
+  labelled(data, ['schema', 'kind', 'created_at', 'split', 'tests', 'expected_false_positives', 'effects', 'trend_overlays']);
+  assert.equal(data.effects.length, data.tests, 'Every combination must be reported');
+  const signals = ['funding_7d', 'implied_vol', 'mood', 'stable_30d', 'taker_7d', 'vol_premium'];
+  assert.deepEqual([...new Set(data.effects.map(e => e.signal))].sort(), signals, 'Every signal must be reported');
+  for (const e of data.effects) {
+    exactKeys(e, ['asset', 'signal', 'side', 'horizon', 'fit', 'test', 'holds']);
+    assert.ok(['BTC', 'ETH', 'SOL'].includes(e.asset) && ['low', 'high'].includes(e.side) && [1, 3, 7, 14].includes(e.horizon));
+    for (const part of [e.fit, e.test]) { exactKeys(part, ['days', 'mean', 'ci95', 'clear']); assert.ok(part.days >= 40 && finite(part.mean) && span(part.ci95)); assert.equal(part.clear, part.ci95[0] > 0 || part.ci95[1] < 0); }
+    assert.equal(e.holds, e.fit.clear && e.test.clear && (e.fit.mean > 0) === (e.test.mean > 0), 'The both-periods rule must not be relaxed');
+  }
+  const o = data.trend_overlays;
+  exactKeys(o, ['first_day', 'split_day', 'last_day', 'trend_rule', 'rebalanced', 'chosen_before_split', 'overlays']);
+  assert.ok(o.first_day < o.split_day && o.split_day < o.last_day && o.chosen_before_split.length === 3);
+  assert.deepEqual(o.overlays.map(x => `${x.signal}:${x.step_aside_when}`).sort(), signals.flatMap(s => [`${s}:high`, `${s}:low`]).sort(), 'Every overlay must be reported');
+  // The three overlays named in advance are the three best of the years before the split, nothing else.
+  assert.deepEqual([...o.overlays].sort((a, b) => b.fit.sharpe_gap - a.fit.sharpe_gap).slice(0, 3).map(x => `${x.signal}:${x.step_aside_when}`), o.chosen_before_split, 'Overlays must be chosen on the years before the split');
+  for (const x of o.overlays) { exactKeys(x, ['signal', 'step_aside_when', 'fit', 'test']); exactKeys(x.test, ['cagr', 'sharpe', 'max_drawdown', 'sharpe_gap', 'sharpe_gap_ci95']); assert.ok(finite(x.fit.sharpe_gap, x.test.sharpe_gap) && span(x.test.sharpe_gap_ci95)); }
+  for (const part of [o.trend_rule, o.rebalanced]) for (const period of [part.fit, part.test]) { exactKeys(period, ['cagr', 'sharpe', 'max_drawdown']); assert.ok(finite(period.cagr, period.sharpe) && period.max_drawdown > 0 && period.max_drawdown < 1); }
+}
+
+export function validateMomentumStudy(data) {
+  labelled(data, ['schema', 'kind', 'created_at', 'pairs', 'pairs_no_longer_trading', 'split', 'primary', 'universes']);
+  assert.deepEqual(data.primary, { weeks: 2, universe: 30, cost: 0.003, trend: false }, 'Changing the rule fixed in advance needs a new reviewed study');
+  assert.ok(data.pairs > 300 && data.pairs_no_longer_trading > 50, 'The universe must include pairs that no longer trade');
+  assert.deepEqual(Object.keys(data.universes).sort(), ['30', '50']);
+  const rows = ['all coins equally', 'all coins equally · market trend', 'bitcoin only', ...[1, 2, 4].flatMap(w => [`strongest fifth · ${w}w`, `strongest fifth · ${w}w · market trend`])].sort();
+  for (const u of Object.values(data.universes)) {
+    exactKeys(u, ['first_week', 'last_week', 'weeks', 'distinct_coins', 'forced_exits', 'fifths', 'portfolios']);
+    assert.ok(u.first_week < data.split && u.last_week > data.split && u.weeks.fit > 100 && u.weeks.test > 100 && Number.isInteger(u.forced_exits));
+    assert.deepEqual(Object.keys(u.fifths).sort(), ['1', '2', '4'], 'Every lookback must be reported');
+    for (const lookback of Object.values(u.fifths)) for (const period of [lookback.fit, lookback.test]) {
+      exactKeys(period, ['weakest_to_strongest', 'strongest_minus_weakest', 'ci95', 'strongest_vs_universe_ci95']);
+      assert.ok(period.weakest_to_strongest.length === 5 && finite(...period.weakest_to_strongest, period.strongest_minus_weakest) && span(period.ci95) && span(period.strongest_vs_universe_ci95));
+    }
+    assert.deepEqual(Object.keys(u.portfolios).sort(), ['fit · cost 0.3%', 'fit · cost 0.5%', 'test · cost 0.3%', 'test · cost 0.5%'], 'Both periods and both cost levels must be reported');
+    for (const table of Object.values(u.portfolios)) {
+      assert.deepEqual(Object.keys(table).sort(), rows, 'Every variant must be reported');
+      for (const stats of Object.values(table)) assert.ok(finite(stats.cagr, stats.sharpe) && stats.max_drawdown >= 0 && stats.max_drawdown < 1);
+    }
+  }
+}
