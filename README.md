@@ -86,6 +86,8 @@ uv run crypto-oracle newsletter-report
 
 `uv run crypto-oracle signals-study` does the same for slow market-state signals from free public sources: Binance funding rates, Deribit's implied-volatility index and its gap to realised volatility, 30-day growth of the total stablecoin supply (DefiLlama), the Fear & Greed index and seven-day taker order flow. A value counts only if it was stamped before the daily decision at 00:00 UTC, each signal is ranked against its own trailing year, the days in its lowest and highest fifth are compared with the period average over the next 1 to 14 days with intervals from 30-day blocks, and every signal is also tried as a step-aside overlay on the frozen trend rule, chosen on 2020-2022 and run once on 2023 onwards. It writes `data/signals-study-report.json`. Exploratory, not a forward claim.
 
+`uv run crypto-oracle momentum-study` tests the best documented crypto anomaly, buying the strongest coins of the last weeks, without the usual flattery: it downloads daily candles of every USDT pair the exchange still reports (about 670, a good quarter of them no longer trading), rebuilds the universe for every Monday from the thirty or fifty most traded coins of the month before, requires sixty days of listing, assumes that a position in a pair that stops trading loses half of what is left, and charges 0.3% or 0.5% per side. The rule (strongest fifth, equally weighted, one week) was fixed in advance; one-, two- and four-week strength, with and without the market trend, before and after 2023 are all reported against the whole universe and against Bitcoin alone. The first run takes about ten minutes and writes `data/momentum-study-report.json`. Exploratory, not a forward claim.
+
 ## Docker operation
 
 After configuring `.env`:
