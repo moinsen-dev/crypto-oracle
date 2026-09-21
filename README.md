@@ -82,6 +82,8 @@ uv run crypto-oracle newsletter-report
 
 `uv run crypto-oracle study` reproduces the exploratory field notes behind the public [evidence page](https://cryptooracle.moinsen.dev/evidence/): forecast skill at every stored path step, the raw model band against a volatility band, and a fixed-rule trend filter on public Binance daily closes since 2020, with delayed-execution, doubled-cost and ten-coin variants. It makes no model calls, writes `data/study-report.json` and caches the daily closes in `data/study-daily.json` (`--refresh` fetches them again). These are backtests, reported in full; none is a forward claim.
 
+`uv run crypto-oracle news-study` asks the same kind of question of the news: what did Bitcoin do after which kind of headline? It downloads a public corpus of about 27,000 timestamped Bitcoin headlines (2018 to 2025, [edaschau/bitcoin_news](https://huggingface.co/datasets/edaschau/bitcoin_news)) and hourly Binance closes, labels each headline from its words alone (event type, whether it merely reports a move, opinion pieces, and the production FinBERT tone), lets a headline count only from the first full hour after the live feed could have seen it, and measures the following 1 to 72 hours against the same month's average. Every class is reported with an interval that resamples whole days; rules are chosen on the years before 2023 and run once on the years after. The size of the move is also measured against what the last day's volatility and the time of day already imply. It writes `data/news-study-report.json`. Exploratory, Bitcoin only, not a forward claim.
+
 ## Docker operation
 
 After configuring `.env`:
