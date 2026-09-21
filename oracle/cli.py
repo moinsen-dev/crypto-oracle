@@ -28,6 +28,11 @@ def main():
     subs.add_parser("forecast-report", help="Read the public forecast and learning snapshot")
     subs.add_parser("forecast-publish", help="Publish the allowlisted forecast journal; no model calls")
     subs.add_parser("volband-report", help="Read the volatility-band shadow experiment snapshot")
+    signals_study = subs.add_parser(
+        "signals-study",
+        help="Do funding, implied volatility, stablecoins, mood or order flow say anything about the next days?",
+    )
+    signals_study.add_argument("--refresh", action="store_true", help="Fetch every source again")
     news_study = subs.add_parser(
         "news-study", help="Event study on a public headline corpus: Bitcoin after each kind of news"
     )
@@ -102,6 +107,11 @@ def main():
         from .public_forecasts import publish, snapshot
 
         print(json.dumps(snapshot() if args.command == "forecast-report" else publish(), indent=2))
+    elif args.command == "signals-study":
+        from .signals_study import build
+
+        report = build(args.refresh)
+        print(json.dumps({k: v for k, v in report.items() if k != "effects"}, indent=2))
     elif args.command == "news-study":
         from .news_study import build
 
