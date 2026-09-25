@@ -1,0 +1,320 @@
+{
+  "git" : {
+    "current_branch" : "main",
+    "github_url" : "https:\/\/github.com\/moinsen-dev\/crypto-oracle",
+    "has_uncommitted_changes" : true,
+    "is_repo" : true,
+    "last_commit_author" : "Ulrich Diedrichsen",
+    "last_commit_date" : "2026-09-21T13:02:30Z",
+    "last_commit_message" : "Publish field notes 005-008: headlines, market signals, other coins",
+    "stale_days" : 3,
+    "total_commits" : 16,
+    "uncommitted_files_count" : 1
+  },
+  "last_scanned" : "2026-09-25T11:14:09Z",
+  "project_path" : "\/Users\/udi\/work\/moinsen\/ideas\/crypto_oracle",
+  "pumuckl_version" : 1,
+  "report" : {
+    "accent" : "#f5a623",
+    "ai_note" : "CryptoOracle ist bereits live und ehrlich dokumentiert: eine seltene Mischung aus funktionierender Pipeline und wissenschaftlicher Redlichkeit, auf die du stolz sein kannst.",
+    "ai_suggestion" : "Setze einen ersten versionierten Release-Tag (v0.1.0) mit CHANGELOG und einem CI-Workflow, der Tests und Website-Schema-Checks vor jedem Deploy ausführt.",
+    "architecture" : [
+      {
+        "lbl" : "Datenquellen",
+        "mods" : [
+          "Market Candles (Binance\/Coinbase\/Kraken)",
+          "Timestamped News",
+          "Deribit\/DefiLlama\/Fear&Greed"
+        ]
+      },
+      {
+        "lbl" : "Research Worker",
+        "mods" : [
+          "oracle\/ collection",
+          "TimesFM 2.5 Forecasts",
+          "FinBERT",
+          "Evaluation",
+          "Paper Accounting",
+          "Calibration Learner"
+        ]
+      },
+      {
+        "lbl" : "JEV Adapter",
+        "mods" : [
+          "jev\/ AI SDK",
+          "Vercel AI Gateway"
+        ]
+      },
+      {
+        "lbl" : "Private Dashboard",
+        "mods" : [
+          "FastAPI",
+          "HTTP Basic Auth"
+        ]
+      },
+      {
+        "lbl" : "Evidence Store",
+        "mods" : [
+          "SQLite WAL",
+          "immutable Inputs\/Outputs",
+          "append-only Journal"
+        ]
+      },
+      {
+        "lbl" : "Export",
+        "mods" : [
+          "authentifizierte, allowlisted Exports"
+        ]
+      },
+      {
+        "lbl" : "Public Backend",
+        "mods" : [
+          "Cloudflare Worker",
+          "D1",
+          "read-only APIs"
+        ]
+      },
+      {
+        "lbl" : "Website",
+        "mods" : [
+          "Astro",
+          "Forecast Journal",
+          "Paper Portfolios",
+          "Build Notes",
+          "Evidence"
+        ]
+      }
+    ],
+    "dimensions" : [
+      {
+        "g" : "Der Learner sammelt noch Evidenz; ein prospektiver Prognosevorsprung ist nicht belegt.",
+        "k" : "funktion",
+        "l" : "Funktion",
+        "v" : 82
+      },
+      {
+        "g" : "Klare Layer-Trennung; die vielen Feature-Flags erhöhen allerdings die Konfigurationskomplexität.",
+        "k" : "code",
+        "l" : "Code & Struktur",
+        "v" : 78
+      },
+      {
+        "g" : "Tests für Integrität, Chronologie und Accounting existieren, laufen aber nicht nachweislich automatisiert in CI.",
+        "k" : "tests",
+        "l" : "Tests & Stabilität",
+        "v" : 62
+      },
+      {
+        "g" : "Sehr ausführlich; es fehlen ein kompaktes Betriebs-Runbook und ein CHANGELOG.",
+        "k" : "doku",
+        "l" : "Dokumentation",
+        "v" : 90
+      },
+      {
+        "g" : "Die öffentliche Seite ist minimalistisch; das private Dashboard und die CLI-Vielfalt sind für Einsteiger schwer zu überblicken.",
+        "k" : "design",
+        "l" : "Usability & Design",
+        "v" : 68
+      },
+      {
+        "g" : "Live deployt, aber ohne versionierte Releases, CHANGELOG und automatisierte Deploy-Pipeline.",
+        "k" : "release",
+        "l" : "Release-Reife",
+        "v" : 38
+      }
+    ],
+    "edges" : [
+      {
+        "f" : "Datenquellen",
+        "t" : "Research Worker"
+      },
+      {
+        "f" : "Research Worker",
+        "t" : "JEV Adapter"
+      },
+      {
+        "f" : "Research Worker",
+        "t" : "Evidence Store"
+      },
+      {
+        "f" : "Private Dashboard",
+        "t" : "Evidence Store"
+      },
+      {
+        "f" : "Evidence Store",
+        "t" : "Export"
+      },
+      {
+        "f" : "Export",
+        "t" : "Public Backend"
+      },
+      {
+        "f" : "Public Backend",
+        "t" : "Website"
+      }
+    ],
+    "effort_to_complete" : 35,
+    "history" : [
+      "In 16 Commits von der Idee zu einer live laufenden Forschungsplattform mit TimesFM-Prognosen, News-Klassifikation, drei virtuellen Portfolios und öffentlicher Astro-Website gewachsen. Zuletzt wurden die explorativen Field Notes 005 bis 008 zu Headlines, Marktsignalen und weiteren Coins veröffentlicht."
+    ],
+    "impact" : 72,
+    "last_state" : [
+      {
+        "meta" : "vor 3 Tagen · Explorative Studien (news-study, signals-study, weitere Coins) auf der Evidence-Seite veröffentlicht",
+        "msg" : "Publish field notes 005-008: headlines, market signals, other coins",
+        "wip" : false
+      },
+      {
+        "meta" : "benötigt ≥120 qualifizierte Beispiele über 21 Tage, danach ein fester 28-Tage-Vergleich",
+        "msg" : "Kalibrierungs-Shadow sammelt Beispiele",
+        "wip" : true
+      },
+      {
+        "meta" : "optionale Features über .env-Flags gesteuert",
+        "msg" : "Paper-Portfolios V1\/V2\/V3 und Volband-Shadow laufen",
+        "wip" : true
+      }
+    ],
+    "overall_gem_score" : 84,
+    "progress" : 78,
+    "re_entry_action" : "Einen reproduzierbaren Release-Prozess anlegen: GitHub-Actions-Workflow für `uv run pytest` und die Website-Schema-Checks, dazu CHANGELOG.md und den ersten Tag v0.1.0 inklusive gepinnter Modell-Revisionen.",
+    "re_entry_effort" : "~1 Tag",
+    "re_entry_why" : "Release-Reife ist die schwächste Dimension. Ein Projekt, das Unveränderlichkeit und Nachvollziehbarkeit verspricht, braucht auch versionierte, geprüfte Code-Stände, damit jede veröffentlichte Prognose einer eindeutigen Softwareversion zugeordnet werden kann.",
+    "recency" : 90,
+    "resumption_ease" : 82,
+    "roadmap" : [
+      {
+        "d" : "GitHub Actions für Tests und Schema-Checks, CHANGELOG, Tag v0.1.0",
+        "next" : true,
+        "t" : "Release-Prozess & CI",
+        "tag" : "NEXT"
+      },
+      {
+        "d" : "Nach 120 Beispielen über 21 Tage den festen 28-Tage-Vergleich veröffentlichen",
+        "next" : false,
+        "t" : "Kalibrierungs-Vergleich auswerten",
+        "tag" : "SOON"
+      },
+      {
+        "d" : "Gleiche Methodik mit Tages-Resampling-Intervallen und Out-of-Sample-Split",
+        "next" : false,
+        "t" : "News-Study auf ETH\/SOL erweitern",
+        "tag" : "LATER"
+      },
+      {
+        "d" : "Live-Skill von TimesFM gegenüber den Baselines ehrlich berichten",
+        "next" : false,
+        "t" : "Prospektive Ergebnisse als Field Note",
+        "tag" : "LATER"
+      }
+    ],
+    "score_breakdown" : [
+      {
+        "c" : "#30d158",
+        "k" : "Aktivität",
+        "v" : 88
+      },
+      {
+        "c" : "#0a84ff",
+        "k" : "Qualität",
+        "v" : 82
+      },
+      {
+        "c" : "#ff9f0a",
+        "k" : "Wartung",
+        "v" : 70
+      },
+      {
+        "c" : "#bf5af2",
+        "k" : "Doku",
+        "v" : 92
+      },
+      {
+        "c" : "#64d2ff",
+        "k" : "Klarheit",
+        "v" : 86
+      }
+    ],
+    "stack" : [
+      {
+        "n" : "Python",
+        "p" : "68%"
+      },
+      {
+        "n" : "TypeScript\/Astro",
+        "p" : "20%"
+      },
+      {
+        "n" : "JavaScript",
+        "p" : "6%"
+      },
+      {
+        "n" : "SQL",
+        "p" : "4%"
+      },
+      {
+        "n" : "Shell\/Config",
+        "p" : "2%"
+      }
+    ],
+    "threads" : [
+      {
+        "c" : "#bf5af2",
+        "icon" : "🧪",
+        "s" : "LEARNING.md",
+        "t" : "Kalibrierungs-Learner: Auswertung nach 120 Beispielen \/ 21 Tagen"
+      },
+      {
+        "c" : "#ff453a",
+        "icon" : "📉",
+        "s" : "oracle\/ · Evidence-Seite",
+        "t" : "TimesFM schlechter als Persistenz: prospektiv weiter prüfen"
+      },
+      {
+        "c" : "#0a84ff",
+        "icon" : "📰",
+        "s" : "crypto-oracle news-study",
+        "t" : "News-Study nur für Bitcoin: Ausweitung auf ETH\/SOL offen"
+      },
+      {
+        "c" : "#30d158",
+        "icon" : "✉️",
+        "s" : "website\/README.md",
+        "t" : "Wöchentlicher Newsletter-Digest und Preview-Flow"
+      },
+      {
+        "c" : "#ff9f0a",
+        "icon" : "📐",
+        "s" : "PAPER.md",
+        "t" : "Frozen Trend Rule V3 und Signal-Overlays out-of-sample beobachten"
+      }
+    ],
+    "vision" : "CryptoOracle ist ein öffentliches, überprüfbares Forschungsnotizbuch für Krypto-Prognosen. Jede Vorhersage wird vor ihrem Zieltermin festgehalten und danach ehrlich mit dem Ergebnis verglichen. Das Projekt steht für Rechenschaft statt Hype: Paper-Trading ohne echte Orders, transparente Baselines und die offene Aussage, dass eine laufende Pipeline noch keinen Vorsprung beweist."
+  },
+  "scan" : {
+    "deep" : {
+      "at" : "2026-09-25T11:14:09Z",
+      "head" : "2af9402",
+      "mtime" : 1790324760.8379989
+    },
+    "fast" : {
+      "at" : "2026-09-25T11:14:09Z",
+      "head" : "2af9402",
+      "mtime" : 1790324760.8379989
+    },
+    "git" : {
+      "at" : "2026-09-25T11:08:34Z",
+      "head" : "2af9402",
+      "mtime" : 1790324760.8379989
+    }
+  },
+  "scoring" : {
+    "ai_note" : "CryptoOracle ist bereits live und ehrlich dokumentiert: eine seltene Mischung aus funktionierender Pipeline und wissenschaftlicher Redlichkeit, auf die du stolz sein kannst.",
+    "ai_suggestion" : "Setze einen ersten versionierten Release-Tag (v0.1.0) mit CHANGELOG und einem CI-Workflow, der Tests und Website-Schema-Checks vor jedem Deploy ausführt.",
+    "effort_to_complete" : 35,
+    "impact" : 72,
+    "overall_gem_score" : 84,
+    "progress" : 78,
+    "recency" : 90
+  }
+}
