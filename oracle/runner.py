@@ -56,10 +56,10 @@ def cycle():
         {"ok": sum(results), "total": len(results)},
         error=None if all(results) else "Some collectors/models failed; see individual job status",
     )
-    # The optional evaluator is a separate experiment; its outage must not stop price forecasts.
-    from .jev import collect as collect_jev
+    # The optional annotator is a separate experiment; its outage must not stop price forecasts.
+    from .laya_news import collect as collect_laya
 
-    task("jev-news", collect_jev)
+    task("laya-news", collect_laya)
     from .paper import cycle as paper_cycle
     from .paper import publish as publish_paper
 

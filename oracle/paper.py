@@ -61,6 +61,9 @@ POLICY_V3 = {
     "max_divergence": market.MAX_DIVERGENCE,
 }
 RUN_V3 = "paper-v3-" + digest(POLICY_V3)[:12]
+# The v1/v2 news guard was defined on these JEV annotations. JEV is no longer called; a guard fed
+# by another classifier would be a new run, so these runs see no new news evidence.
+NEWS_VERSION = "jev-headlines-v1-8fed3bf7390c"
 POLICIES = {RUN: POLICY, RUN_V2: POLICY_V2, RUN_V3: POLICY_V3}
 
 
@@ -281,14 +284,12 @@ def signal(db, asset, now, quality, policy=POLICY):
 
 
 def news_context(db, asset, now):
-    from .jev import VERSION
-
     rows = db.execute(
         "SELECT n.*,e.id AS evaluation_id,e.evaluated_at,e.answers,e.version FROM news n "
         "JOIN news_evaluations e ON e.news_id=n.id WHERE e.version=? AND n.source IN ('CoinDesk','Ethereum Blog') "
         "AND n.published_at>? AND n.published_at<=? AND n.first_seen<=? AND e.evaluated_at<=? "
         "ORDER BY n.first_seen DESC LIMIT 100",
-        (VERSION, now - POLICY["news_hours"] * 3600, now, now, now),
+        (NEWS_VERSION, now - POLICY["news_hours"] * 3600, now, now, now),
     ).fetchall()
     selected, seen_urls, clusters = [], set(), set()
     for r in rows:
@@ -336,7 +337,7 @@ def news_context(db, asset, now):
     return {
         "state": "available" if available and selected else "partial" if selected else "unavailable",
         "veto": veto,
-        "version": VERSION,
+        "version": NEWS_VERSION,
         "items": selected,
     }
 

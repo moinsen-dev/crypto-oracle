@@ -98,15 +98,6 @@ def init():
             BEGIN SELECT RAISE(ABORT, 'News evaluations are immutable'); END;
         CREATE TRIGGER IF NOT EXISTS no_delete_news_evaluations BEFORE DELETE ON news_evaluations
             BEGIN SELECT RAISE(ABORT, 'News evaluations are immutable'); END;
-        CREATE TABLE IF NOT EXISTS jev_attempts (
-            id TEXT PRIMARY KEY, news_id TEXT NOT NULL REFERENCES news(id), version TEXT NOT NULL,
-            started_at INTEGER NOT NULL, state TEXT NOT NULL, error TEXT
-        );
-        CREATE INDEX IF NOT EXISTS jev_attempt_time ON jev_attempts(started_at);
-        CREATE INDEX IF NOT EXISTS jev_attempt_news ON jev_attempts(news_id,version);
-        CREATE TABLE IF NOT EXISTS jev_backoff (
-            singleton INTEGER PRIMARY KEY CHECK(singleton=1), retry_at INTEGER NOT NULL
-        );
         """)
         for table in ("evaluations", "artifacts", "candle_revisions"):
             for action in ("UPDATE", "DELETE"):

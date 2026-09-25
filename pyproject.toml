@@ -7,6 +7,7 @@ dependencies = [
   "fastapi>=0.115,<1", "uvicorn>=0.34,<1", "httpx>=0.28,<1",
   "feedparser>=6.0,<7", "numpy>=1.26,<3", "timesfm[torch]==2.0.2",
   "transformers>=4.51,<5", "torch>=2.6,<3", "python-dotenv>=1,<2",
+  "laya==0.3.20",
 ]
 
 [dependency-groups]

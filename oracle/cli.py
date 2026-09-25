@@ -46,8 +46,8 @@ def main():
     )
     subs.add_parser("newsletter-report", help="Build the latest weekly issue without publishing it")
     subs.add_parser("newsletter-preview", help="Mail the operator a rolling seven-day preview; no subscriber")
-    jev_parser = subs.add_parser("jev", help="Evaluate recent headlines with JEV once")
-    jev_parser.add_argument("--limit", type=int, default=1)
+    laya_parser = subs.add_parser("laya", help="Annotate recent headlines with Laya once")
+    laya_parser.add_argument("--limit", type=int, default=8)
     report_parser = subs.add_parser("report")
     report_parser.add_argument("--scope", choices=("live", "backtest"), default="backtest")
     study_parser = subs.add_parser("study", help="Exploratory historical studies; no model calls")
@@ -139,8 +139,8 @@ def main():
         from .volband import summary
 
         print(json.dumps(summary(), indent=2))
-    elif args.command == "jev":
-        from .jev import collect
+    elif args.command == "laya":
+        from .laya_news import collect
 
         print(json.dumps(collect(args.limit), indent=2))
     elif args.command == "status":

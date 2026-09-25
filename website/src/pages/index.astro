@@ -44,7 +44,7 @@ const farthest = study.horizon_skill.at(-1)!, longBand = study.bands.at(-1)!, tr
       <div class="section-heading"><p class="eyebrow">THE QUESTION</p><h2 id="question">Can context make<br /> a forecast more useful?</h2><p>A convincing story is easy. A useful forecast has to survive comparison, data problems and the passage of time.</p></div>
       <div class="three-columns">
         <article class="principle"><span class="index">01 / OBSERVE</span><h3>Start with the series.</h3><p>TimesFM reads 512 completed hourly closing prices. Its forecasts are stored with the model revision, inputs and issue time.</p><span class="tag">Implemented</span></article>
-        <article class="principle"><span class="index">02 / UNDERSTAND</span><h3>Put news in context.</h3><p>FinBERT and JEV classify headlines. We preserve when each item became available. JEV annotations do not yet change a price forecast.</p><span class="tag">Collecting evidence</span></article>
+        <article class="principle"><span class="index">02 / UNDERSTAND</span><h3>Put news in context.</h3><p>FinBERT and Laya classify headlines. We preserve when each item became available. Laya annotations do not change a price forecast.</p><span class="tag">Collecting evidence</span></article>
         <article class="principle"><span class="index">03 / CHALLENGE</span><h3>Let reality answer.</h3><p>Compare forecasts with the actual outcome and simple baselines. A separate news experiment can progress when enough prospective data exists.</p><span class="tag tag-outline">Benefit still unproven</span></article>
       </div>
     </section>

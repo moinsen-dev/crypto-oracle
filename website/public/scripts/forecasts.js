@@ -141,7 +141,7 @@
     box.append(progress, node('p', `${l.training} training / ${l.calibration} calibration examples after excluding overlapping targets. Minimums: 60 / 30. Reaching a data threshold permits fitting; it does not demonstrate improvement.`, 'fine-print'));
     if (l.review) box.append(node('p', `Recorded 28-day review: ${l.review.status === 'supported_for_review' ? 'candidate supported for review' : 'inconclusive'}. ${l.review.n} common qualified origins. No trading policy was automatically promoted.`));
     else box.append(node('p', l.review_due ? `First fixed review can begin after ${date(l.review_due)}. Pending or missing outcomes may limit its conclusion.` : 'The 28-day future comparison begins when this candidate issues its first forecast. There is no automatic model or trading-policy promotion.', 'fine-print'));
-    if (n) box.append(node('p', `Separate FinBERT news experiment: ${n.samples} covered mature examples, ${number(n.span_days, 1)} days and ${n.news_ids} news IDs; ${n.issued} news-corrected forecasts issued. Its minimums are 120 examples, 21 days and 10 IDs. JEV remains a separate headline evaluator and paper buy guard.`, 'learning-news'));
+    if (n) box.append(node('p', `Separate FinBERT news experiment: ${n.samples} covered mature examples, ${number(n.span_days, 1)} days and ${n.news_ids} news IDs; ${n.issued} news-corrected forecasts issued. Its minimums are 120 examples, 21 days and 10 IDs. Laya annotates headlines separately and does not feed this correction.`, 'learning-news'));
     box.append(node('p', `Experiment ${summary.experiment} · activated ${date(summary.started_at)}`, 'fine-print'));
   }
   async function load(options = {}) {

@@ -9,7 +9,7 @@ from oracle import config, newsletter, paper, volband
 from oracle.db import connect, digest, init, packed
 from oracle.forecast import evaluate, store_forecast
 from oracle.ingest import store_candles
-from oracle.jev import VERSION
+from oracle.laya_news import MODEL, VERSION
 
 MONDAY = int(datetime(2026, 9, 21, tzinfo=UTC).timestamp())  # end of ISO week 2026-W38
 START = MONDAY - 7 * 86400
@@ -60,7 +60,7 @@ def headline(title, seen, answers, cluster=None, url=None, evaluated=None):
             (
                 digest([ident, VERSION]),
                 ident,
-                "typesafe-ai/jev",
+                MODEL,
                 VERSION,
                 evaluated or seen + 30,
                 ident,

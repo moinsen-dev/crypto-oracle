@@ -18,7 +18,8 @@ from pydantic import BaseModel, ConfigDict, Field
 from . import config
 from .db import connect, init
 from .forecast import metrics
-from .jev import VERSION as JEV_VERSION
+from .laya_news import MODEL as LAYA_MODEL
+from .laya_news import VERSION as LAYA_VERSION
 
 STATIC = Path(__file__).parent / "static"
 
@@ -150,15 +151,15 @@ def dashboard(
                 "AND json_extract(e.answers,?)>=0.5)) "
                 "AND (published_at IS NULL OR published_at>?) "
                 "ORDER BY first_seen DESC,published_at DESC LIMIT 30",
-                (asset, JEV_VERSION, "$." + asset + ".probability", now - 7 * 86400),
+                (asset, LAYA_VERSION, "$." + asset + ".probability", now - 7 * 86400),
             )
         ]
         for item in news:
             annotation = db.execute(
                 "SELECT answers,evaluated_at,version FROM news_evaluations WHERE news_id=? AND version=?",
-                (item["id"], JEV_VERSION),
+                (item["id"], LAYA_VERSION),
             ).fetchone()
-            item["jev"] = (
+            item["laya"] = (
                 {
                     "answers": json.loads(annotation["answers"]),
                     "evaluated_at": annotation["evaluated_at"],
@@ -167,10 +168,9 @@ def dashboard(
                 if annotation
                 else None
             )
-        jev_totals = db.execute(
-            "SELECT COUNT(*),AVG(latency_ms),SUM(json_extract(response,'$.usage.inputTokens')) "
-            "FROM news_evaluations WHERE version=?",
-            (JEV_VERSION,),
+        laya_totals = db.execute(
+            "SELECT COUNT(*),AVG(latency_ms) FROM news_evaluations WHERE version=?",
+            (LAYA_VERSION,),
         ).fetchone()
         journal = [
             dict(r)
@@ -208,11 +208,11 @@ def dashboard(
         "metrics": metrics(scope, horizon),
         "jobs": jobs,
         "counts": counts,
-        "jev": {
-            "evaluated": jev_totals[0],
-            "mean_latency_ms": jev_totals[1],
-            "input_tokens": jev_totals[2],
-            "version": JEV_VERSION,
+        "laya": {
+            "evaluated": laya_totals[0],
+            "mean_latency_ms": laya_totals[1],
+            "model": LAYA_MODEL,
+            "version": LAYA_VERSION,
         },
         "fusion": {
             "samples": fusion_rows[0],

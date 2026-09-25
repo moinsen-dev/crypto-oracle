@@ -16,7 +16,7 @@ import httpx
 
 from . import config, paper, paper_trend, volband
 from .db import connect, digest, packed
-from .jev import VERSION as JEV_VERSION
+from .laya_news import VERSION as LAYA_VERSION
 
 WEEK = 7 * 86400
 SEND_AFTER = 7 * 3600  # Monday 07:00 UTC, once the week's last forecasts have had time to settle
@@ -279,7 +279,7 @@ def news(db, start, end):
         "SELECT n.id,n.title,n.source,n.url,n.cluster,n.published_at,e.answers FROM news n "
         "JOIN news_evaluations e ON e.news_id=n.id WHERE e.version=? AND n.first_seen>=? AND n.first_seen<? "
         "AND e.evaluated_at<? ORDER BY n.first_seen",
-        (JEV_VERSION, start, end, end),
+        (LAYA_VERSION, start, end, end),
     ).fetchall()
     seen, items = set(), []
     for r in rows:

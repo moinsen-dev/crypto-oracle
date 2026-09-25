@@ -9,7 +9,7 @@ CryptoOracle observes BTC, ETH and SOL, preserves each forecast before its targe
 ## What runs today
 
 - **TimesFM 2.5:** 512 completed hourly log closes; 24-hour and 72-hour forecasts, pinned model revision, immutable inputs/outputs and persistence/momentum baselines.
-- **News:** local FinBERT classification and optional JEV evaluation through Vercel AI Gateway. Publication, collection and classification times stay distinct. JEV can veto a simulated buy; it does not numerically revise a price forecast.
+- **News:** local FinBERT classification and optional local Laya annotations (open-source, pinned checkpoint, no API key). Publication, collection and classification times stay distinct. Laya does not revise a price forecast or trade. Laya replaced the paid JEV evaluator; the v1/v2 paper veto keeps reading only the JEV annotations it was defined with.
 - **Virtual portfolios:** separate USD 10,000 accounts with costs, later execution quotes, allocation limits and an append-only journal. V2 gives all three accounts the same initial allocation; V1 remains a separate experiment.
 - **Outcome checks:** exact target closes, Coinbase/Kraken references and same-hour USDT/USD conversion. Missing, revised or unverifiable evidence is excluded from the calibration learner without rewriting the original score.
 - **Controlled learning:** a versioned calibration shadow waits for at least 120 qualified examples spanning 21 days. It preserves fitted artifacts and later receives a fixed 28-day comparison. It does not automatically change trading policies.
@@ -38,7 +38,6 @@ The public site cannot query the private research database or call model service
 | Directory | Purpose |
 | --- | --- |
 | `oracle/` | Collection, forecasting, evaluation, paper accounting, learning and private dashboard |
-| `jev/` | Small pinned AI SDK adapter for structured headline evaluation |
 | `tests/` | Data integrity, chronology, accounting and publication checks |
 | `website/` | Astro pages, Cloudflare Worker, D1 migrations and public schema checks |
 | `PAPER.md` | Frozen virtual-trading rules and their limitations |
@@ -47,7 +46,7 @@ The public site cannot query the private research database or call model service
 
 ## Local research service
 
-Requires **Python 3.12**, [uv](https://docs.astral.sh/uv/), and network access for market data and the initial model downloads. JEV additionally needs Node.js 24 and your own Vercel AI Gateway key. The optional paid API is disabled by default.
+Requires **Python 3.12**, [uv](https://docs.astral.sh/uv/), and network access for market data and the initial model downloads. Laya downloads a pinned ~850 MB checkpoint on its first run.
 
 ```sh
 git clone https://github.com/moinsen-dev/crypto-oracle.git
@@ -64,9 +63,9 @@ Set a unique `ORACLE_AUTH_PASSWORD` in the private `.env`. The dashboard default
 uv run crypto-oracle worker
 ```
 
-The first run downloads the pinned TimesFM and FinBERT weights. Missing model results remain missing; there is no substitute presented as TimesFM. The worker preserves gaps and does not invent historical predictions or missing news coverage.
+The first run downloads the pinned TimesFM and FinBERT weights. `ORACLE_LAYA_REAL=1 uv run pytest -q tests/test_laya_news.py` also loads the pinned Laya checkpoint. Missing model results remain missing; there is no substitute presented as TimesFM. The worker preserves gaps and does not invent historical predictions or missing news coverage.
 
-Optional features are explicit in `.env.example`: `ORACLE_PAPER_ENABLED`, `ORACLE_PAPER_V2_ENABLED`, `ORACLE_PAPER_V3_ENABLED` (the frozen trend rule, see [PAPER.md](PAPER.md)), `ORACLE_LEARNING_ENABLED`, `ORACLE_VOLBAND_ENABLED` (the volatility-band shadow experiment, see [LEARNING.md](LEARNING.md)), `ORACLE_NEWSLETTER_ENABLED` (the weekly digest handed to the website; subscriber data never reaches this server, see [website/README.md](website/README.md)) and `ORACLE_JEV_ENABLED`. For JEV, first run `npm ci --prefix jev` and privately configure `AI_GATEWAY_API_KEY`. Its request cap counts failed attempts too and is not a monetary spending limit.
+Optional features are explicit in `.env.example`: `ORACLE_PAPER_ENABLED`, `ORACLE_PAPER_V2_ENABLED`, `ORACLE_PAPER_V3_ENABLED` (the frozen trend rule, see [PAPER.md](PAPER.md)), `ORACLE_LEARNING_ENABLED`, `ORACLE_VOLBAND_ENABLED` (the volatility-band shadow experiment, see [LEARNING.md](LEARNING.md)), `ORACLE_NEWSLETTER_ENABLED` (the weekly digest handed to the website; subscriber data never reaches this server, see [website/README.md](website/README.md)) and `ORACLE_LAYA_ENABLED` (local headline annotations; about 2 GB more worker memory).
 
 Useful read-only reports:
 
@@ -110,8 +109,6 @@ See [website/README.md](website/README.md) for local preview, deployment, D1 set
 ```sh
 uv run pytest -q
 uv run ruff check oracle tests
-npm ci --prefix jev
-node --test jev/evaluate.test.mjs
 cd website
 npm ci
 npm run check

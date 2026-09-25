@@ -1,7 +1,0 @@
-{
-  "name": "crypto-oracle-jev",
-  "private": true,
-  "type": "module",
-  "scripts": {"test": "node --test"},
-  "dependencies": {"ai": "7.0.106"}
-}

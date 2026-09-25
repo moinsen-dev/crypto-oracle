@@ -158,8 +158,6 @@ def test_forecast_information_boundary_and_no_fallback_model():
 
 
 def test_jev_is_a_veto_not_a_price_multiplier_and_future_annotations_are_excluded():
-    from oracle.jev import VERSION
-
     forecasts()
     answers = {a: {"probability": 0.9} for a in config.ASSETS}
     answers.update(material={"probability": 0.9}, tone={"choice": "negative"}, event={"choice": "security"})
@@ -183,7 +181,7 @@ def test_jev_is_a_veto_not_a_price_multiplier_and_future_annotations_are_exclude
         )
         db.execute(
             "INSERT INTO news_evaluations VALUES(?,?,?,?,?,?,?,?,?,?,?)",
-            ("c" * 64, ident, "typesafe-ai/jev", VERSION, NOW, ident, "{}", packed(answers), "{}", 1, "test"),
+            ("c" * 64, ident, "typesafe-ai/jev", paper.NEWS_VERSION, NOW, ident, "{}", packed(answers), "{}", 1, "t"),
         )
         assert paper.news_context(db, "BTC", NOW - 1)["items"] == []
     run()
@@ -192,6 +190,38 @@ def test_jev_is_a_veto_not_a_price_multiplier_and_future_annotations_are_exclude
     data = paper.public_snapshot()
     assert "Untrusted title" not in json.dumps(data)
     assert "https://example.com" not in json.dumps(data)
+
+
+def test_laya_annotations_never_feed_the_frozen_v1_v2_news_guard():
+    from oracle import laya_news
+
+    # Changing the guard's classifier would change the experiment; it stays on the JEV annotations.
+    assert paper.NEWS_VERSION == "jev-headlines-v1-8fed3bf7390c"
+    assert laya_news.VERSION != paper.NEWS_VERSION
+    forecasts()
+    answers = {a: {"type": "boolean", "probability": 0.99} for a in config.ASSETS}
+    answers.update(
+        material={"type": "boolean", "probability": 0.99},
+        tone={"type": "choice", "choice": "negative"},
+        event={"type": "choice", "choice": "security"},
+    )
+    ident = "d" * 64
+    with connect() as db:
+        db.execute(
+            "INSERT INTO news(id,source,url,title,published_at,first_seen,content_hash,cluster,assets,event_type) "
+            "VALUES(?,?,?,?,?,?,?,?,?,?)",
+            (ident, "CoinDesk", "https://example.com/l", "Adverse title", NOW - 600, NOW - 500, ident, ident,
+             "BTC,ETH,SOL", "security"),
+        )
+        db.execute(
+            "INSERT INTO news_evaluations VALUES(?,?,?,?,?,?,?,?,?,?,?)",
+            ("e" * 64, ident, laya_news.MODEL, laya_news.VERSION, NOW - 400, ident, "{}", packed(answers), "{}", 1,
+             laya_news.PACKAGE),
+        )
+        assert paper.news_context(db, "BTC", NOW)["items"] == []
+    run()
+    assert paper.balance(ledger(), "news-guarded")["fills"] == 3
+    assert paper.balance(ledger(), "price-only")["fills"] == 3
 
 
 def test_expired_order_and_pre_decision_quote_never_fill():

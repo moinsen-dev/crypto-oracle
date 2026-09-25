@@ -71,13 +71,13 @@ function render() {
   $('forecast-origin').textContent = f ? 'Start: ' + date(f.origin) : '—';
   $('forecast-range').textContent = f?.lower != null ? `${num(f.lower)} – ${num(f.upper)}` : '—';
   drawChart(d.chart, f);
-  const jevJob = d.jobs.find(j => j.name === 'jev-news');
-  const jevDetail = jevJob ? JSON.parse(jevJob.detail || '{}') : {};
-  const jevStatus = {disabled:'noch nicht aktiviert', missing_key:'Zugang fehlt', request_limit:'Anfragelimit erreicht', rate_limited:'wartet nach Anbieterlimit', active:'aktiv'};
-  $('jev-status').textContent = `JEV ${jevJob?.last_error ? 'Abruf gestört' : jevStatus[jevDetail.state] || 'wartet auf ersten Lauf'} · ${num(d.jev?.evaluated || 0,0)} Titel eingeordnet${jevDetail.state === 'rate_limited' ? ' · frühestens ' + date(jevDetail.retry_at) : ''}`;
+  const layaJob = d.jobs.find(j => j.name === 'laya-news');
+  const layaDetail = layaJob ? JSON.parse(layaJob.detail || '{}') : {};
+  const layaStatus = {disabled:'noch nicht aktiviert', active:'aktiv'};
+  $('laya-status').textContent = `Laya ${layaJob?.last_error ? 'Einordnung gestört' : layaStatus[layaDetail.state] || 'wartet auf ersten Lauf'} · ${num(d.laya?.evaluated || 0,0)} Titel eingeordnet`;
   $('news-list').innerHTML = d.news.length ? d.news.map(n => {
     const tone = n.sentiment == null ? 'Einordnung ausstehend' : n.sentiment > .3 ? 'Positive Tonalität' : n.sentiment < -.3 ? 'Negative Tonalität' : 'Neutrale Tonalität';
-    return `<article class="news-item"><div class="news-meta"><span>${esc(n.source)}</span><time>${date(n.published_at || n.first_seen)}</time></div><a href="${esc(n.url)}" target="_blank" rel="noopener noreferrer">${esc(n.title)} ↗</a><div class="news-tags"><span>${esc(n.event_type)}</span><span class="${n.sentiment == null ? '' : signClass(n.sentiment)}">FinBERT: ${tone}</span></div>${jevAnnotation(n.jev)}<div class="news-meta"><span>Erfasst ${date(n.first_seen)}</span></div></article>`;
+    return `<article class="news-item"><div class="news-meta"><span>${esc(n.source)}</span><time>${date(n.published_at || n.first_seen)}</time></div><a href="${esc(n.url)}" target="_blank" rel="noopener noreferrer">${esc(n.title)} ↗</a><div class="news-tags"><span>${esc(n.event_type)}</span><span class="${n.sentiment == null ? '' : signClass(n.sentiment)}">FinBERT: ${tone}</span></div>${layaAnnotation(n.laya)}<div class="news-meta"><span>Erfasst ${date(n.first_seen)}</span></div></article>`;
   }).join('') : '<div class="empty"><strong>Noch keine passenden Meldungen.</strong>Der Sammler ergänzt neue Quellenfunde automatisch.</div>';
   const fusionReady = d.forecasts.some(f => f.model === 'fusion_news');
   $('fusion-badge').textContent = fusionReady ? 'Experiment läuft' : 'Sammelphase';
@@ -90,12 +90,12 @@ function render() {
   $('last-updated').textContent = `Aktualisiert ${date(d.now)} · ${d.experiment}`;
 }
 
-function jevAnnotation(jev) {
-  if (!jev) return '<div class="news-meta">JEV: noch keine Einordnung</div>';
+function layaAnnotation(laya) {
+  if (!laya) return '<div class="news-meta">Laya: noch keine Einordnung</div>';
   const tones = {positive:'positiv',negative:'negativ',neutral:'neutral',unclear:'unklar'};
   const events = {security:'Sicherheitsvorfall',regulation:'Regulierung',network:'Netzwerk',exchange:'Börse',market:'Markt',other:'Sonstiges'};
-  const a = jev.answers;
-  return `<div class="news-tags"><span>JEV: ${esc(tones[a.tone.choice])}</span><span>${esc(events[a.event.choice])}</span></div><div class="news-meta">${state.asset}-Bezug: ${num(a[state.asset].probability*100,0)} % · Ereignisrelevanz: ${num(a.material.probability*100,0)} %</div><div class="news-meta">JEV bewertet ${date(jev.evaluated_at)}</div>`;
+  const a = laya.answers;
+  return `<div class="news-tags"><span>Laya: ${esc(tones[a.tone.choice])}</span><span>${esc(events[a.event.choice])}</span></div><div class="news-meta">${state.asset}-Bezug: ${num(a[state.asset].probability*100,0)} % · Ereignisrelevanz: ${num(a.material.probability*100,0)} %</div><div class="news-meta">Laya bewertet ${date(laya.evaluated_at)}</div>`;
 }
 
 function drawChart(candles, forecast) {
